@@ -94,7 +94,7 @@ public class ClimbingRigController : MonoBehaviour
     private Vector3 rLegNormal = Vector3.back;
 
     private Vector3 dbgBody, dbgCenter;
-
+    private Vector3 _prevBodyPos;
     // ─────────────────────────────────────────────
     void Start()
     {
@@ -106,6 +106,7 @@ public class ClimbingRigController : MonoBehaviour
         GrabLimb(leftLegIK, ref lLegPos, ref lLegGrabbed);
         GrabLimb(rightLegIK, ref rLegPos, ref rLegGrabbed);
 
+        _prevBodyPos = body.position; // ← 추가
         SetCursor(false);
     }
 
@@ -175,23 +176,72 @@ public class ClimbingRigController : MonoBehaviour
         float mx = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float my = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        GetSurfaceTangents(out Vector3 surfRight, out Vector3 surfUp);
-
         Transform target = activeIK.data.target;
-        Vector3 pos = target.position
-                    + surfRight * mx
-                    + surfUp * my;
+        Vector3 pos = target.position;
 
-        Ray ray = new Ray(pos + surfaceNormal * 2f, -surfaceNormal);
-        if (Physics.Raycast(ray, out RaycastHit hit, 5f, wallLayer))
-            pos = hit.point + hit.normal * handRadius;
+        // ── body 법선이 아닌 타깃 현재 위치의 법선을 구함 ──────
+        // body 위치 기준 surfaceNormal로 이동하면
+        // 원통 곡면에서 타깃이 점점 안쪽으로 drift하는 원인
+        Vector3 localNormal = GetNormalAtPoint(pos);
 
+        // 타깃 위치 법선 기준 접선 좌표계
+        Vector3 worldRef = Mathf.Abs(Vector3.Dot(localNormal, Vector3.up)) > 0.9f
+            ? Vector3.forward : Vector3.up;
+        Vector3 localRight = Vector3.Cross(localNormal, worldRef).normalized;
+        Vector3 localUp = Vector3.Cross(localRight, localNormal).normalized;
+
+        // 타깃 위치의 접선 평면 위에서 이동
+        pos += localRight * mx + localUp * my;
+
+        // 이동 후 위치에서 다시 법선 구해서 표면 스냅
+        Vector3 snapNormal = GetNormalAtPoint(pos);
+
+        Ray ray1 = new Ray(pos + snapNormal * 2f, -snapNormal);
+        if (Physics.Raycast(ray1, out RaycastHit hit1, 5f, wallLayer))
+        {
+            pos = hit1.point + hit1.normal * handRadius;
+        }
+        else
+        {
+            // 이미 표면 안쪽인 경우 반대 방향으로 시도
+            Ray ray2 = new Ray(pos - snapNormal * 0.1f, snapNormal);
+            if (Physics.Raycast(ray2, out RaycastHit hit2, 3f, wallLayer))
+                pos = hit2.point + hit2.normal * handRadius;
+            else
+                pos = target.position; // 실패 시 이동 취소
+        }
+
+        // 리치 제한
         float reach = IsLeg(activeIK) ? maxReachLeg : maxReachArm;
         Vector3 toRoot = pos - activeIK.data.root.position;
         if (toRoot.magnitude > reach)
             pos = activeIK.data.root.position + toRoot.normalized * reach;
 
         target.position = pos;
+    }
+
+    // 특정 월드 위치에서 가장 가까운 벽 법선을 구함
+    // body surfaceNormal을 힌트로 사용해 레이 방향 결정
+    Vector3 GetNormalAtPoint(Vector3 worldPos)
+    {
+        // 바깥→안쪽
+        Ray r1 = new Ray(worldPos + surfaceNormal * 1.5f, -surfaceNormal);
+        if (Physics.Raycast(r1, out RaycastHit h1, 4f, wallLayer))
+            return h1.normal;
+
+        // 안쪽→바깥쪽 (이미 표면 안에 있을 때)
+        Ray r2 = new Ray(worldPos - surfaceNormal * 0.1f, surfaceNormal);
+        if (Physics.Raycast(r2, out RaycastHit h2, 3f, wallLayer))
+            return h2.normal;
+
+        // 전방향 SphereCast로 가장 가까운 법선 탐색
+        RaycastHit[] hits = Physics.SphereCastAll(
+            worldPos, 0.5f, Vector3.up, 0.01f, wallLayer);
+        if (hits.Length > 0)
+            return hits[0].normal;
+
+        // 모두 실패 시 body의 surfaceNormal 사용
+        return surfaceNormal;
     }
 
     // ── 플래깅 ────────────────────────────────────
@@ -624,38 +674,36 @@ public class ClimbingRigController : MonoBehaviour
     // ── 자유 사지 추종 ─────────────────────────────
     void UpdateFreeLimbs()
     {
-        UpdateFreeLimb(leftArmIK, false, -1f);
-        UpdateFreeLimb(rightArmIK, false, 1f);
-        UpdateFreeLimb(leftLegIK, true, -1f);
-        UpdateFreeLimb(rightLegIK, true, 1f);
+        // body가 이동한 delta
+        Vector3 bodyDelta = body.position - _prevBodyPos;
+        _prevBodyPos = body.position;
+
+        UpdateFreeLimb(leftArmIK, false, bodyDelta);
+        UpdateFreeLimb(rightArmIK, false, bodyDelta);
+        UpdateFreeLimb(leftLegIK, true, bodyDelta);
+        UpdateFreeLimb(rightLegIK, true, bodyDelta);
     }
 
-    void UpdateFreeLimb(TwoBoneIKConstraint ik, bool isLeg, float side)
+    void UpdateFreeLimb(TwoBoneIKConstraint ik, bool isLeg, Vector3 bodyDelta)
     {
         if (ik == null) return;
         if (IsLimbGrabbed(ik)) return;
         if (ik == activeIK) return;
 
-        GetSurfaceTangents(out Vector3 surfRight, out Vector3 surfUp);
+        // ── 핵심 ──────────────────────────────────────────────
+        // 자연 위치를 계산해서 lerp하지 않음
+        // body가 움직인 만큼만 같이 이동 → 월드 위치 유지
+        // 끌려오는 경향 완전 제거
+        // ─────────────────────────────────────────────────────
+        ik.data.target.position += bodyDelta;
 
-        Vector3 offset = isLeg ? freeLegOffset : freeArmOffset;
-        offset.x *= side;
-
-        Vector3 naturalPos = body.position
-                           + surfRight * offset.x
-                           + surfUp * offset.z
-                           + surfaceNormal * offset.y;
-
+        // 리치 초과 시에만 클램프 (너무 멀어지면 당겨옴)
         float reach = isLeg ? maxReachLeg : maxReachArm;
-        Vector3 toRoot = naturalPos - ik.data.root.position;
+        Vector3 toRoot = ik.data.target.position - ik.data.root.position;
         if (toRoot.magnitude > reach)
-            naturalPos = ik.data.root.position + toRoot.normalized * reach;
-
-        ik.data.target.position = Vector3.Lerp(
-            ik.data.target.position, naturalPos,
-            Time.deltaTime * freeLimbFollowSpeed);
+            ik.data.target.position = ik.data.root.position
+                                     + toRoot.normalized * reach;
     }
-
     // ── 유틸리티 ──────────────────────────────────
     Vector3 ClampToLimb3D(Vector3 desiredBody, TwoBoneIKConstraint ik, float reach)
     {
