@@ -14,6 +14,7 @@ public class ClimbingRigController : MonoBehaviour
     [Header("조작")]
     public float mouseSensitivity = 5f;
     public LayerMask wallLayer;
+    public LayerMask holdLayer;   // 그랩 가능한 홀드 전용 레이어
 
     [Header("리치")]
     public float maxReachArm = 2.4f;
@@ -179,39 +180,35 @@ public class ClimbingRigController : MonoBehaviour
         Transform target = activeIK.data.target;
         Vector3 pos = target.position;
 
-        // ── body 법선이 아닌 타깃 현재 위치의 법선을 구함 ──────
-        // body 위치 기준 surfaceNormal로 이동하면
-        // 원통 곡면에서 타깃이 점점 안쪽으로 drift하는 원인
         Vector3 localNormal = GetNormalAtPoint(pos);
 
-        // 타깃 위치 법선 기준 접선 좌표계
         Vector3 worldRef = Mathf.Abs(Vector3.Dot(localNormal, Vector3.up)) > 0.9f
             ? Vector3.forward : Vector3.up;
         Vector3 localRight = Vector3.Cross(localNormal, worldRef).normalized;
         Vector3 localUp = Vector3.Cross(localRight, localNormal).normalized;
 
-        // 타깃 위치의 접선 평면 위에서 이동
         pos += localRight * mx + localUp * my;
 
-        // 이동 후 위치에서 다시 법선 구해서 표면 스냅
         Vector3 snapNormal = GetNormalAtPoint(pos);
 
+        // ── 이동 시: wallLayer + holdLayer 둘 다 감지 ──────
+        // 홀드 위에 올라가도 표면 스냅이 자연스럽게 동작
+        LayerMask moveLayer = wallLayer | holdLayer;
+
         Ray ray1 = new Ray(pos + snapNormal * 2f, -snapNormal);
-        if (Physics.Raycast(ray1, out RaycastHit hit1, 5f, wallLayer))
+        if (Physics.Raycast(ray1, out RaycastHit hit1, 5f, moveLayer))
         {
             pos = hit1.point + hit1.normal * handRadius;
         }
         else
         {
-            // 이미 표면 안쪽인 경우 반대 방향으로 시도
             Ray ray2 = new Ray(pos - snapNormal * 0.1f, snapNormal);
-            if (Physics.Raycast(ray2, out RaycastHit hit2, 3f, wallLayer))
+            if (Physics.Raycast(ray2, out RaycastHit hit2, 3f, moveLayer))
                 pos = hit2.point + hit2.normal * handRadius;
             else
-                pos = target.position; // 실패 시 이동 취소
+                pos = target.position;
         }
 
-        // 리치 제한
         float reach = IsLeg(activeIK) ? maxReachLeg : maxReachArm;
         Vector3 toRoot = pos - activeIK.data.root.position;
         if (toRoot.magnitude > reach)
@@ -224,23 +221,21 @@ public class ClimbingRigController : MonoBehaviour
     // body surfaceNormal을 힌트로 사용해 레이 방향 결정
     Vector3 GetNormalAtPoint(Vector3 worldPos)
     {
-        // 바깥→안쪽
+        LayerMask combined = wallLayer | holdLayer;
+
         Ray r1 = new Ray(worldPos + surfaceNormal * 1.5f, -surfaceNormal);
-        if (Physics.Raycast(r1, out RaycastHit h1, 4f, wallLayer))
+        if (Physics.Raycast(r1, out RaycastHit h1, 4f, combined))
             return h1.normal;
 
-        // 안쪽→바깥쪽 (이미 표면 안에 있을 때)
         Ray r2 = new Ray(worldPos - surfaceNormal * 0.1f, surfaceNormal);
-        if (Physics.Raycast(r2, out RaycastHit h2, 3f, wallLayer))
+        if (Physics.Raycast(r2, out RaycastHit h2, 3f, combined))
             return h2.normal;
 
-        // 전방향 SphereCast로 가장 가까운 법선 탐색
         RaycastHit[] hits = Physics.SphereCastAll(
-            worldPos, 0.5f, Vector3.up, 0.01f, wallLayer);
+            worldPos, 0.5f, Vector3.up, 0.01f, combined);
         if (hits.Length > 0)
             return hits[0].normal;
 
-        // 모두 실패 시 body의 surfaceNormal 사용
         return surfaceNormal;
     }
 
@@ -607,31 +602,39 @@ public class ClimbingRigController : MonoBehaviour
         Vector3 pos = activeIK.data.target.position;
         Vector3 grabNormal = surfaceNormal;
 
-        Collider[] hits = Physics.OverlapSphere(pos, grabRange, wallLayer);
-        if (hits.Length > 0)
+        // ── 그랩 시: holdLayer만 체크 ─────────────────────
+        // holdLayer에 없으면 그랩 자체가 성립하지 않음
+        // wallLayer 위에서 마우스를 눌러도 그랩 안 됨
+        Collider[] hits = Physics.OverlapSphere(pos, grabRange, holdLayer);
+
+        if (hits.Length == 0)
         {
-            Collider col = hits[0];
-
-            // 그랩 지점의 정확한 표면 법선 획득
-            Ray normalRay = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
-            if (Physics.Raycast(normalRay, out RaycastHit normalHit, 2f, wallLayer))
-                grabNormal = normalHit.normal;
-
-            bool canUseClosestPoint = col is BoxCollider
-                                   || col is SphereCollider
-                                   || col is CapsuleCollider
-                                   || (col is MeshCollider mc && mc.convex);
-
-            if (canUseClosestPoint)
-            {
-                Vector3 contact = Physics.ClosestPoint(pos, col,
-                                      col.transform.position,
-                                      col.transform.rotation);
-                pos = contact + (pos - contact).normalized * handRadius;
-            }
+            // holdLayer에 히트 없음 → 그랩 실패, 조용히 무시
+            return;
         }
 
-        // 법선 저장 후 그랩 확정
+        Collider col = hits[0];
+
+        // 홀드 표면 법선 획득
+        Ray normalRay = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
+        if (Physics.Raycast(normalRay, out RaycastHit normalHit,
+                            2f, holdLayer | wallLayer))
+            grabNormal = normalHit.normal;
+
+        // ClosestPoint 가능 여부 체크
+        bool canUseClosestPoint = col is BoxCollider
+                               || col is SphereCollider
+                               || col is CapsuleCollider
+                               || (col is MeshCollider mc && mc.convex);
+
+        if (canUseClosestPoint)
+        {
+            Vector3 contact = Physics.ClosestPoint(pos, col,
+                                  col.transform.position,
+                                  col.transform.rotation);
+            pos = contact + (pos - contact).normalized * handRadius;
+        }
+
         StoreGrabNormal(activeIK, grabNormal);
         GrabAt(activeIK, pos);
         activeIK.data.target.position = pos;
