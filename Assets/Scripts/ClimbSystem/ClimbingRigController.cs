@@ -79,6 +79,20 @@ public class ClimbingRigController : MonoBehaviour
     public float gravityScale = 2f;          // 개인 중력 배율 (0이면 무중력)
     public float maxGravitySpeed = 20f;
 
+    [Header("중력 사지 반응")]
+    [Tooltip("중력 방향으로 사지가 끌려가는 속도")]
+    public float gravityLimbDrift = 1.5f;
+    [Tooltip("중력 사지 반응 최대 오프셋")]
+    public float gravityLimbMaxOffset = 0.4f;
+    [Tooltip("중력 사지 반응 활성 여부")]
+    public bool enableGravityLimbDrift = true;
+
+    // 사지별 드리프트 누적값
+    private Vector3 _lArmDrift = Vector3.zero;
+    private Vector3 _rArmDrift = Vector3.zero;
+    private Vector3 _lLegDrift = Vector3.zero;
+    private Vector3 _rLegDrift = Vector3.zero;
+
     private Vector3 _externalVelocity = Vector3.zero;
 
     // ── 내부 상태 ─────────────────────────────────
@@ -120,19 +134,21 @@ public class ClimbingRigController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (lArmGrabbed) leftArmIK.data.target.position = lArmPos;
-        if (rArmGrabbed) rightArmIK.data.target.position = rArmPos;
-        if (lLegGrabbed) leftLegIK.data.target.position = lLegPos;
-        if (rLegGrabbed) rightLegIK.data.target.position = rLegPos;
+        if (lArmGrabbed && activeIK != leftArmIK) leftArmIK.data.target.position = lArmPos;
+        if (rArmGrabbed && activeIK != rightArmIK) rightArmIK.data.target.position = rArmPos;
+        if (lLegGrabbed && activeIK != leftLegIK) leftLegIK.data.target.position = lLegPos;
+        if (rLegGrabbed && activeIK != rightLegIK) rightLegIK.data.target.position = rLegPos;
 
         UpdateSurfaceNormal();
         UpdateFreeLimbs();
+        ApplyGrabbedLimbDrift();
         ApplyFlagging();
         UpdateBody();
         UpdateRotation();
         UpdateGrabbedLimbRotations();
         UpdateFreeLimbRotations();
     }
+
 
     // ── 표면 법선 (단일 레이, 느린 lerp) ────────────
     void UpdateSurfaceNormal()
@@ -342,6 +358,63 @@ public class ClimbingRigController : MonoBehaviour
         _externalVelocity = Vector3.Lerp(
             _externalVelocity, Vector3.zero,
             Time.deltaTime * externalDamping);
+    }
+    // 중력 하중
+    void ApplyGrabbedLimbDrift()
+    {
+        if (!enableGravityLimbDrift) return;
+        if (GravitySystem.Instance == null) return;
+
+        Vector3 gravity = GravitySystem.Instance.CurrentGravity;
+
+        if (gravity.sqrMagnitude < 0.01f)
+        {
+            _lArmDrift = Vector3.Lerp(_lArmDrift, Vector3.zero, Time.deltaTime * 3f);
+            _rArmDrift = Vector3.Lerp(_rArmDrift, Vector3.zero, Time.deltaTime * 3f);
+            _lLegDrift = Vector3.Lerp(_lLegDrift, Vector3.zero, Time.deltaTime * 3f);
+            _rLegDrift = Vector3.Lerp(_rLegDrift, Vector3.zero, Time.deltaTime * 3f);
+            return;
+        }
+
+        Vector3 gravityDir = gravity.normalized;
+        float gravityStrength = gravity.magnitude;
+        float driftSpeed = gravityLimbDrift * (gravityStrength / 9.8f) * Time.deltaTime;
+
+        if (lArmGrabbed) AccumulateDrift(ref _lArmDrift, gravityDir, driftSpeed);
+        if (rArmGrabbed) AccumulateDrift(ref _rArmDrift, gravityDir, driftSpeed);
+        if (lLegGrabbed) AccumulateDrift(ref _lLegDrift, gravityDir, driftSpeed);
+        if (rLegGrabbed) AccumulateDrift(ref _rLegDrift, gravityDir, driftSpeed);
+    }
+
+    void AccumulateDrift(ref Vector3 drift, Vector3 gravityDir, float driftSpeed)
+    {
+        drift += gravityDir * driftSpeed;
+        if (drift.magnitude > gravityLimbMaxOffset)
+            drift = drift.normalized * gravityLimbMaxOffset;
+    }
+
+    void ApplyDriftToGrab(
+        ref Vector3 grabPos,
+        ref Vector3 drift,
+        Vector3 gravityDir,
+        float driftSpeed,
+        TwoBoneIKConstraint ik,
+        float reach)
+    {
+        // 드리프트 누적
+        drift += gravityDir * driftSpeed;
+
+        // 최대 오프셋 클램프
+        if (drift.magnitude > gravityLimbMaxOffset)
+            drift = drift.normalized * gravityLimbMaxOffset;
+
+        // 그랩 위치에 드리프트 반영
+        grabPos += gravityDir * driftSpeed;
+
+        // 리치 초과 클램프
+        Vector3 toRoot = grabPos - ik.data.root.position;
+        if (toRoot.magnitude > reach)
+            grabPos = ik.data.root.position + toRoot.normalized * reach;
     }
     /// <summary>
     /// 외부에서 body에 즉각적인 충격을 가합니다.
@@ -599,29 +672,25 @@ public class ClimbingRigController : MonoBehaviour
     {
         if (activeIK == null) return;
 
+        // 확정 시점에 grabbed 해제
+        if (activeIK == leftArmIK) lArmGrabbed = false;
+        if (activeIK == rightArmIK) rArmGrabbed = false;
+        if (activeIK == leftLegIK) lLegGrabbed = false;
+        if (activeIK == rightLegIK) rLegGrabbed = false;
+
         Vector3 pos = activeIK.data.target.position;
         Vector3 grabNormal = surfaceNormal;
 
-        // ── 그랩 시: holdLayer만 체크 ─────────────────────
-        // holdLayer에 없으면 그랩 자체가 성립하지 않음
-        // wallLayer 위에서 마우스를 눌러도 그랩 안 됨
         Collider[] hits = Physics.OverlapSphere(pos, grabRange, holdLayer);
-
-        if (hits.Length == 0)
-        {
-            // holdLayer에 히트 없음 → 그랩 실패, 조용히 무시
-            return;
-        }
+        if (hits.Length == 0) return;
 
         Collider col = hits[0];
 
-        // 홀드 표면 법선 획득
         Ray normalRay = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
         if (Physics.Raycast(normalRay, out RaycastHit normalHit,
                             2f, holdLayer | wallLayer))
             grabNormal = normalHit.normal;
 
-        // ClosestPoint 가능 여부 체크
         bool canUseClosestPoint = col is BoxCollider
                                || col is SphereCollider
                                || col is CapsuleCollider
@@ -652,10 +721,10 @@ public class ClimbingRigController : MonoBehaviour
 
     void GrabAt(TwoBoneIKConstraint ik, Vector3 pos)
     {
-        if (ik == leftArmIK) { lArmPos = pos; lArmGrabbed = true; }
-        else if (ik == rightArmIK) { rArmPos = pos; rArmGrabbed = true; }
-        else if (ik == leftLegIK) { lLegPos = pos; lLegGrabbed = true; }
-        else if (ik == rightLegIK) { rLegPos = pos; rLegGrabbed = true; }
+        if (ik == leftArmIK) { lArmPos = pos; lArmGrabbed = true; _lArmDrift = Vector3.zero; }
+        else if (ik == rightArmIK) { rArmPos = pos; rArmGrabbed = true; _rArmDrift = Vector3.zero; }
+        else if (ik == leftLegIK) { lLegPos = pos; lLegGrabbed = true; _lLegDrift = Vector3.zero; }
+        else if (ik == rightLegIK) { rLegPos = pos; rLegGrabbed = true; _rLegDrift = Vector3.zero; }
     }
 
     void GrabLimb(TwoBoneIKConstraint ik, ref Vector3 lockPos, ref bool grabbed)
@@ -693,20 +762,77 @@ public class ClimbingRigController : MonoBehaviour
         if (IsLimbGrabbed(ik)) return;
         if (ik == activeIK) return;
 
-        // ── 핵심 ──────────────────────────────────────────────
-        // 자연 위치를 계산해서 lerp하지 않음
-        // body가 움직인 만큼만 같이 이동 → 월드 위치 유지
-        // 끌려오는 경향 완전 제거
-        // ─────────────────────────────────────────────────────
         ik.data.target.position += bodyDelta;
 
-        // 리치 초과 시에만 클램프 (너무 멀어지면 당겨옴)
+        if (!enableGravityLimbDrift || GravitySystem.Instance == null)
+        {
+            ClampLimbReach(ik, isLeg);
+            return;
+        }
+
+        Vector3 gravity = GravitySystem.Instance.CurrentGravity;
+        ref Vector3 drift = ref GetDriftRef(ik);
+
+        if (gravity.sqrMagnitude > 0.01f)
+        {
+            AccumulateDrift(ref drift, gravity.normalized,
+                gravityLimbDrift * (gravity.magnitude / 9.8f) * Time.deltaTime);
+        }
+        else
+        {
+            drift = Vector3.Lerp(drift, Vector3.zero, Time.deltaTime * 3f);
+        }
+
+        float reach = isLeg ? maxReachLeg : maxReachArm;
+        Vector3 biasedRoot = ik.data.root.position + drift;
+        Vector3 toTarget = ik.data.target.position - biasedRoot;
+
+        if (toTarget.magnitude > reach)
+        {
+            // ── 벽 체크 후 클램프 ────────────────────
+            Vector3 clampedPos = biasedRoot + toTarget.normalized * reach;
+            ik.data.target.position = ClampPositionToWall(ik.data.target.position, clampedPos);
+        }
+    }
+    /// <summary>
+    /// from → to 이동 시 wallLayer/holdLayer와 충돌하면
+    /// 벽 표면 바로 앞에서 멈추는 위치를 반환합니다.
+    /// </summary>
+    Vector3 ClampPositionToWall(Vector3 from, Vector3 to)
+    {
+        Vector3 dir = to - from;
+        float dist = dir.magnitude;
+
+        if (dist < 0.001f) return to;
+
+        LayerMask combined = wallLayer | holdLayer;
+
+        // from → to 방향으로 레이캐스트
+        if (Physics.Raycast(from, dir.normalized, out RaycastHit hit, dist, combined))
+        {
+            // 벽 표면에서 handRadius만큼 띄워서 멈춤
+            return hit.point + hit.normal * handRadius;
+        }
+
+        return to;
+    }
+
+    void ClampLimbReach(TwoBoneIKConstraint ik, bool isLeg)
+    {
         float reach = isLeg ? maxReachLeg : maxReachArm;
         Vector3 toRoot = ik.data.target.position - ik.data.root.position;
         if (toRoot.magnitude > reach)
-            ik.data.target.position = ik.data.root.position
-                                     + toRoot.normalized * reach;
+            ik.data.target.position = ik.data.root.position + toRoot.normalized * reach;
     }
+
+    ref Vector3 GetDriftRef(TwoBoneIKConstraint ik)
+    {
+        if (ik == leftArmIK) return ref _lArmDrift;
+        if (ik == rightArmIK) return ref _rArmDrift;
+        if (ik == leftLegIK) return ref _lLegDrift;
+        return ref _rLegDrift;
+    }
+
     // ── 유틸리티 ──────────────────────────────────
     Vector3 ClampToLimb3D(Vector3 desiredBody, TwoBoneIKConstraint ik, float reach)
     {

@@ -461,9 +461,6 @@ MonoBehaviour:
   fadeSpeed: 3
   minAlpha: 0
   maxAlpha: 1
-  ringX: {fileID: 1785938819}
-  ringY: {fileID: 1323583723}
-  ringZ: {fileID: 13488406}
   sphereRenderer: {fileID: 680069546}
   ringXRenderer: {fileID: 1785938821}
   ringYRenderer: {fileID: 1323583724}
@@ -536,7 +533,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: aaa63ba1859c44f4b89f615bad875384, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: aaa63ba1859c44f4b89f615bad875384, type: 3}
       propertyPath: m_IsActive
@@ -562,7 +559,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 835955971}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 73547b283e90b9b45a41f565806cce29, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1981,6 +1978,10 @@ PrefabInstance:
     - target: {fileID: 3506274590933929797, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.069
+      objectReference: {fileID: 0}
+    - target: {fileID: 8287442481446653868, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
