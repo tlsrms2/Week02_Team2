@@ -4,17 +4,35 @@ using UnityEngine.Animations.Rigging;
 
 public class ClimbingRigController : MonoBehaviour
 {
+    // ── 사지 데이터 ───────────────────────────────
+    [System.Serializable]
+    public class Limb
+    {
+        public TwoBoneIKConstraint ik;
+        public KeyCode key;
+        public bool isLeg;
+        public Renderer renderer;   // 아웃라인 대상 메쉬 렌더러
+
+        [HideInInspector] public Vector3 grabPos;
+        [HideInInspector] public Vector3 grabNormal;
+        [HideInInspector] public bool grabbed;
+
+        public float MaxReach(float arm, float leg) => isLeg ? leg : arm;
+    }
+
     [Header("참조")]
     public Transform body;
 
-    [Header("IK")]
-    public TwoBoneIKConstraint leftArmIK, rightArmIK;
-    public TwoBoneIKConstraint leftLegIK, rightLegIK;
+    [Header("사지 설정")]
+    public Limb leftArm = new() { key = KeyCode.Q, isLeg = false };
+    public Limb rightArm = new() { key = KeyCode.E, isLeg = false };
+    public Limb leftLeg = new() { key = KeyCode.A, isLeg = true };
+    public Limb rightLeg = new() { key = KeyCode.D, isLeg = true };
 
     [Header("조작")]
     public float mouseSensitivity = 5f;
     public LayerMask wallLayer;
-    public LayerMask holdLayer;   // 그랩 가능한 홀드 전용 레이어
+    public LayerMask holdLayer;
 
     [Header("리치")]
     public float maxReachArm = 2.4f;
@@ -22,664 +40,422 @@ public class ClimbingRigController : MonoBehaviour
     public float handRadius = 0.15f;
     public float grabRange = 0.6f;
 
-    [Header("몸통 추종")]
-    [Range(0f, 1f)] public float bodyFollowWeightXZ = 0.55f;
-    [Range(0f, 1f)] public float bodyFollowWeightY = 0.85f;
+    [Header("몸통")]
+    [Range(0f, 1f)] public float bodyFollowWeight = 0.55f;
     public float bodyLerpSpeed = 6f;
     public float rotationSpeed = 4f;
-
-    [Header("벽 오프셋")]
     public float wallStandoffDist = 0.7f;
     public float bodyWallOffset = 0.3f;
     public float normalTrackSpeed = 2f;
-
-    [Header("균형 보정")]
-    [Range(0f, 1f)] public float balanceWeight = 0.6f;
-    public float maxTiltAngle = 20f;
-    public float maxYawAngle = 30f;
-    public float tiltSmoothSpeed = 3f;
-    public float yawSmoothSpeed = 5f;
-    public float rollSmoothSpeed = 2f;
-
-    private float currentTilt = 0f;
-    private float currentYaw = 0f;
-    private float currentRoll = 0f;
-
-    [Header("자유 사지 추종")]
-    public float freeLimbFollowSpeed = 8f;
-    public Vector3 freeArmOffset = new Vector3(0.3f, 0.2f, 0.3f);
-    public Vector3 freeLegOffset = new Vector3(0.25f, -0.9f, 0.2f);
-
-    [Header("상승 보정")]
-    public float upwardBoost = 1.2f;
-    public float boostDeadzone = 0.3f;
-
-    [Header("팔 매달림")]
     public float naturalHangLength = 1.1f;
 
-    [Header("다리 바닥 역할")]
-    public float minLegBodyGap = 0.4f;
-    [Range(0f, 1f)] public float legPushThreshold = 0.5f;
+    [Header("균형")]
+    [Range(0f, 1f)] public float balanceWeight = 0.6f;
+    public float maxTiltAngle = 20f;
 
-    [Header("플래깅")]
-    [Range(0f, 1f)] public float flaggingStrength = 0.25f;
-    public float flaggingSpeed = 4f;
+    [Header("아웃라인")]
+    public Material outlineMaterial;
 
-    [Header("발/손 회전")]
-    public float footRotLerpSpeed = 8f;
-    public float toeAngle = 30f;
-    public float freeFootRotSpeed = 6f;
-
-    private Vector3 _externalVelocity = Vector3.zero;
+    [Header("슬라이드")]
+    public float slideSpeed = 3f;
+    public float slideDamping = 5f;
+    [Range(0f, 1f)] public float armSlideResistance = 0.7f;
 
     // ── 내부 상태 ─────────────────────────────────
-    private Vector3 lArmPos, rArmPos, lLegPos, rLegPos;
-    private bool lArmGrabbed, rArmGrabbed, lLegGrabbed, rLegGrabbed;
-    private TwoBoneIKConstraint activeIK;
-
+    private Limb[] limbs;
+    private Limb activeLimb;
     private Vector3 surfaceNormal = Vector3.back;
+    private Vector3 prevBodyPos;
 
-    // 그랩 시점의 표면 법선 저장
-    private Vector3 lArmNormal = Vector3.back;
-    private Vector3 rArmNormal = Vector3.back;
-    private Vector3 lLegNormal = Vector3.back;
-    private Vector3 rLegNormal = Vector3.back;
+    private LayerMask combinedLayer;
+    private float slideVelocity;
+    private float stretchVelocity;
 
-    private Vector3 dbgBody, dbgCenter;
-    private Vector3 _prevBodyPos;
-    // ─────────────────────────────────────────────
-    // 기존 변수들 아래에 추가
-    private int _limbCycleIndex = -1; // -1 = 아직 한 번도 안 눌림
-
-    // 순환 순서: 왼손 → 왼발 → 오른손 → 오른발
-    private TwoBoneIKConstraint[] _limbCycleOrder;
+    // ───────────────────────────────────────────────
     void Start()
     {
-        var rb = GetComponentInParent<RigBuilder>();
-        if (rb != null) rb.Build();
+        limbs = new[] { leftArm, rightArm, leftLeg, rightLeg };
+        combinedLayer = wallLayer | holdLayer;
 
-        GrabLimb(leftArmIK, ref lArmPos, ref lArmGrabbed);
-        GrabLimb(rightArmIK, ref rArmPos, ref rArmGrabbed);
-        GrabLimb(leftLegIK, ref lLegPos, ref lLegGrabbed);
-        GrabLimb(rightLegIK, ref rLegPos, ref rLegGrabbed);
+        GetComponentInParent<RigBuilder>()?.Build();
 
-        _prevBodyPos = body.position; // ← 추가
+        foreach (var limb in limbs) InitGrab(limb);
+
+        prevBodyPos = body.position;
         SetCursor(false);
-        // 기존 Start() 내용 아래에 추가
-        _limbCycleOrder = new TwoBoneIKConstraint[]
-        {
-        leftArmIK,   // 0: 왼손
-        leftLegIK,   // 1: 왼발
-        rightArmIK,  // 2: 오른손
-        rightLegIK   // 3: 오른발
-        };
     }
 
     void Update()
     {
-        HandleInput();
-        if (activeIK != null) MoveActiveTarget();
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Slide(6f);
+        }
+        if(Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SlideStretch(6f);
+        }
+        // 사지 선택
+        foreach (var limb in limbs)
+        {
+            if (Input.GetKeyDown(limb.key))
+            {
+                if (activeLimb != null) RemoveOutline(activeLimb);
+                activeLimb = limb;
+                limb.grabbed = false;
+                AddOutline(limb);
+                SetCursor(true);
+            }
+        }
+
+        // 활성 사지 마우스 이동
+        if (activeLimb != null) MoveActiveLimb();
+
+        // 클릭으로 그랩
         if (Input.GetMouseButtonDown(0)) TryGrab();
     }
 
     void LateUpdate()
     {
-        if (lArmGrabbed) leftArmIK.data.target.position = lArmPos;
-        if (rArmGrabbed) rightArmIK.data.target.position = rArmPos;
-        if (lLegGrabbed) leftLegIK.data.target.position = lLegPos;
-        if (rLegGrabbed) rightLegIK.data.target.position = rLegPos;
+        ProcessSlide();
+        ProcessStretchSlide();
+
+        // 그랩된 타겟 고정
+        foreach (var limb in limbs)
+            if (limb.grabbed)
+                limb.ik.data.target.position = limb.grabPos;
 
         UpdateSurfaceNormal();
         UpdateFreeLimbs();
-        ApplyFlagging();
         UpdateBody();
         UpdateRotation();
-        UpdateGrabbedLimbRotations();
-        UpdateFreeLimbRotations();
     }
 
-    // ── 표면 법선 (단일 레이, 느린 lerp) ────────────
+    // ── 슬라이드 ────────────────────────────────────
+    /// <summary>
+    /// 외부에서 호출. distance만큼 벽 표면을 따라 아래로 미끄러집니다.
+    /// </summary>
+    public void Slide(float distance)
+    {
+        slideVelocity += distance * slideSpeed;
+    }
+
+    void ProcessSlide()
+    {
+        if (Mathf.Abs(slideVelocity) < 0.001f) return;
+
+        GetSurfaceBasis(out _, out var surfUp);
+        float step = slideVelocity * Time.deltaTime;
+        Vector3 slideDelta = -surfUp * step;
+
+        foreach (var limb in limbs)
+        {
+            if (!limb.grabbed) continue;
+
+            Vector3 newPos = limb.grabPos + slideDelta;
+
+            // 벽 표면에 다시 붙이기
+            var ray = new Ray(newPos + surfaceNormal * 1f, -surfaceNormal);
+            if (Physics.Raycast(ray, out var hit, 3f, combinedLayer))
+                newPos = hit.point + hit.normal * handRadius;
+
+            limb.grabPos = newPos;
+        }
+
+        slideVelocity = Mathf.Lerp(slideVelocity, 0f,
+                                    Time.deltaTime * slideDamping);
+    }
+
+    /// <summary>
+    /// 외부에서 호출. 팔다리가 위로 당겨지며 미끄러집니다.
+    /// </summary>
+    public void SlideStretch(float distance)
+    {
+        stretchVelocity += distance * slideSpeed;
+    }
+
+    void ProcessStretchSlide()
+    {
+        if (Mathf.Abs(stretchVelocity) < 0.001f) return;
+
+        GetSurfaceBasis(out _, out var surfUp);
+        float step = stretchVelocity * Time.deltaTime;
+        Vector3 delta = -surfUp * step;
+
+        // 다리: 전속으로 끌려감 / 팔: 저항하며 천천히 끌려감
+        foreach (var limb in limbs)
+        {
+            if (!limb.grabbed) continue;
+
+            float rate = limb.isLeg ? 1f : (1f - armSlideResistance);
+            Vector3 newPos = limb.grabPos + delta * rate;
+
+            var ray = new Ray(newPos + surfaceNormal * 1f, -surfaceNormal);
+            if (Physics.Raycast(ray, out var hit, 3f, combinedLayer))
+                newPos = hit.point + hit.normal * handRadius;
+
+            limb.grabPos = newPos;
+        }
+
+        stretchVelocity = Mathf.Lerp(stretchVelocity, 0f,
+                                      Time.deltaTime * slideDamping);
+    }
+
+    // ── 표면 법선 ─────────────────────────────────
     void UpdateSurfaceNormal()
     {
-        Ray ray = new Ray(body.position + surfaceNormal * 0.1f, -surfaceNormal);
-        if (Physics.Raycast(ray, out RaycastHit hit,
-                            wallStandoffDist * 3f, wallLayer))
-        {
-            surfaceNormal = Vector3.Slerp(
-                surfaceNormal, hit.normal,
-                Time.deltaTime * normalTrackSpeed);
-        }
+        var ray = new Ray(body.position + surfaceNormal * 0.1f, -surfaceNormal);
+        if (Physics.Raycast(ray, out var hit, wallStandoffDist * 3f, wallLayer))
+            surfaceNormal = Vector3.Slerp(surfaceNormal, hit.normal,
+                                          Time.deltaTime * normalTrackSpeed);
     }
 
-    void GetSurfaceTangents(out Vector3 right, out Vector3 up)
+    void GetSurfaceBasis(out Vector3 right, out Vector3 up)
     {
-        Vector3 worldRef = Mathf.Abs(Vector3.Dot(surfaceNormal, Vector3.up)) > 0.9f
+        var worldRef = Mathf.Abs(Vector3.Dot(surfaceNormal, Vector3.up)) > 0.9f
             ? Vector3.forward : Vector3.up;
         right = Vector3.Cross(surfaceNormal, worldRef).normalized;
         up = Vector3.Cross(right, surfaceNormal).normalized;
     }
 
-    // ── 입력 ──────────────────────────────────────
-    void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Q)) Activate(leftArmIK, ref lArmGrabbed);
-        if (Input.GetKeyDown(KeyCode.E)) Activate(rightArmIK, ref rArmGrabbed);
-        if (Input.GetKeyDown(KeyCode.A)) Activate(leftLegIK, ref lLegGrabbed);
-        if (Input.GetKeyDown(KeyCode.D)) Activate(rightLegIK, ref rLegGrabbed);
-
-        // ── Tab: 손발 교차 순환 활성화 ──────────────────────
-        if (Input.GetKeyDown(KeyCode.H))
-            ActivateNextLimb();
-    }
-
-    void Activate(TwoBoneIKConstraint ik, ref bool grabbed)
-    {
-        activeIK = ik;
-        grabbed = false;
-        SetCursor(true);
-    }
-    void ActivateNextLimb()
-    {
-        // 다음 인덱스로 전진
-        _limbCycleIndex = (_limbCycleIndex + 1) % _limbCycleOrder.Length;
-
-        TwoBoneIKConstraint target = _limbCycleOrder[_limbCycleIndex];
-
-        // 해당 사지의 grabbed 플래그를 ref로 넘겨야 하므로 switch로 분기
-        switch (_limbCycleIndex)
-        {
-            case 0: Activate(leftArmIK, ref lArmGrabbed); break;
-            case 1: Activate(leftLegIK, ref lLegGrabbed); break;
-            case 2: Activate(rightArmIK, ref rArmGrabbed); break;
-            case 3: Activate(rightLegIK, ref rLegGrabbed); break;
-        }
-    }
-
-    // ── 활성 사지 이동 ─────────────────────────────
-    void MoveActiveTarget()
+    // ── 활성 사지 이동 ────────────────────────────
+    void MoveActiveLimb()
     {
         float mx = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float my = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        Transform target = activeIK.data.target;
-        Vector3 pos = target.position;
+        var target = activeLimb.ik.data.target;
+        var pos = target.position;
 
-        Vector3 localNormal = GetNormalAtPoint(pos);
-
-        Vector3 worldRef = Mathf.Abs(Vector3.Dot(localNormal, Vector3.up)) > 0.9f
+        // 표면 접선 기반 이동
+        var normal = GetNormalAt(pos);
+        var worldRef = Mathf.Abs(Vector3.Dot(normal, Vector3.up)) > 0.9f
             ? Vector3.forward : Vector3.up;
-        Vector3 localRight = Vector3.Cross(localNormal, worldRef).normalized;
-        Vector3 localUp = Vector3.Cross(localRight, localNormal).normalized;
+        var right = Vector3.Cross(normal, worldRef).normalized;
+        var up = Vector3.Cross(right, normal).normalized;
 
-        pos += localRight * mx + localUp * my;
+        pos += right * mx + up * my;
 
-        Vector3 snapNormal = GetNormalAtPoint(pos);
+        // 벽에 스냅
+        pos = SnapToSurface(pos, GetNormalAt(pos), target.position);
 
-        // ── 이동 시: wallLayer + holdLayer 둘 다 감지 ──────
-        // 홀드 위에 올라가도 표면 스냅이 자연스럽게 동작
-        LayerMask moveLayer = wallLayer | holdLayer;
-
-        Ray ray1 = new Ray(pos + snapNormal * 2f, -snapNormal);
-        if (Physics.Raycast(ray1, out RaycastHit hit1, 5f, moveLayer))
-        {
-            pos = hit1.point + hit1.normal * handRadius;
-        }
-        else
-        {
-            Ray ray2 = new Ray(pos - snapNormal * 0.1f, snapNormal);
-            if (Physics.Raycast(ray2, out RaycastHit hit2, 3f, moveLayer))
-                pos = hit2.point + hit2.normal * handRadius;
-            else
-                pos = target.position;
-        }
-
-        float reach = IsLeg(activeIK) ? maxReachLeg : maxReachArm;
-        Vector3 toRoot = pos - activeIK.data.root.position;
-        if (toRoot.magnitude > reach)
-            pos = activeIK.data.root.position + toRoot.normalized * reach;
+        // 리치 제한
+        pos = ClampReach(pos, activeLimb);
 
         target.position = pos;
     }
 
-    // 특정 월드 위치에서 가장 가까운 벽 법선을 구함
-    // body surfaceNormal을 힌트로 사용해 레이 방향 결정
-    Vector3 GetNormalAtPoint(Vector3 worldPos)
+    Vector3 SnapToSurface(Vector3 pos, Vector3 normal, Vector3 fallback)
     {
-        LayerMask combined = wallLayer | holdLayer;
+        var ray = new Ray(pos + normal * 2f, -normal);
+        if (Physics.Raycast(ray, out var hit, 5f, combinedLayer))
+            return hit.point + hit.normal * handRadius;
 
-        Ray r1 = new Ray(worldPos + surfaceNormal * 1.5f, -surfaceNormal);
-        if (Physics.Raycast(r1, out RaycastHit h1, 4f, combined))
-            return h1.normal;
+        ray = new Ray(pos - normal * 0.1f, normal);
+        if (Physics.Raycast(ray, out hit, 3f, combinedLayer))
+            return hit.point + hit.normal * handRadius;
 
-        Ray r2 = new Ray(worldPos - surfaceNormal * 0.1f, surfaceNormal);
-        if (Physics.Raycast(r2, out RaycastHit h2, 3f, combined))
-            return h2.normal;
+        return fallback;
+    }
 
-        RaycastHit[] hits = Physics.SphereCastAll(
-            worldPos, 0.5f, Vector3.up, 0.01f, combined);
-        if (hits.Length > 0)
-            return hits[0].normal;
+    Vector3 GetNormalAt(Vector3 pos)
+    {
+        var ray = new Ray(pos + surfaceNormal * 1.5f, -surfaceNormal);
+        if (Physics.Raycast(ray, out var hit, 4f, combinedLayer))
+            return hit.normal;
+
+        ray = new Ray(pos - surfaceNormal * 0.1f, surfaceNormal);
+        if (Physics.Raycast(ray, out hit, 3f, combinedLayer))
+            return hit.normal;
 
         return surfaceNormal;
     }
 
-    // ── 플래깅 ────────────────────────────────────
-    void ApplyFlagging()
+    // ── 그랩 ──────────────────────────────────────
+    void TryGrab()
     {
-        if (activeIK == null || flaggingStrength <= 0f) return;
+        if (activeLimb == null) return;
 
-        TwoBoneIKConstraint opp = GetDiagonalOpposite(activeIK);
-        if (opp == null) return;
-        if (IsLimbGrabbed(opp)) return;
-        if (IsLeg(opp) && !IsLeg(activeIK)) return;
+        var pos = activeLimb.ik.data.target.position;
+        var hits = Physics.OverlapSphere(pos, grabRange, holdLayer);
+        if (hits.Length == 0) return;
 
-        Vector3 activeDir = activeIK.data.target.position - body.position;
-        if (activeDir.sqrMagnitude < 0.001f) return;
+        var col = hits[0];
 
-        Vector3 targetPos = opp.data.target.position
-                          + (-activeDir.normalized) * flaggingStrength;
+        // 접촉점 보정
+        bool canSnap = col is BoxCollider or SphereCollider or CapsuleCollider
+                    || (col is MeshCollider mc && mc.convex);
+        if (canSnap)
+        {
+            var contact = Physics.ClosestPoint(pos, col,
+                              col.transform.position, col.transform.rotation);
+            pos = contact + (pos - contact).normalized * handRadius;
+        }
 
-        float reach = IsLeg(opp) ? maxReachLeg : maxReachArm;
-        Vector3 toRoot = targetPos - opp.data.root.position;
-        if (toRoot.magnitude > reach)
-            targetPos = opp.data.root.position + toRoot.normalized * reach;
+        // 법선 저장
+        var ray = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
+        activeLimb.grabNormal = Physics.Raycast(ray, out var hit, 2f, combinedLayer)
+            ? hit.normal : surfaceNormal;
 
-        opp.data.target.position = Vector3.Lerp(
-            opp.data.target.position, targetPos,
-            Time.deltaTime * flaggingSpeed);
+        activeLimb.grabPos = pos;
+        activeLimb.grabbed = true;
+        activeLimb.ik.data.target.position = pos;
+        RemoveOutline(activeLimb);
+        activeLimb = null;
+        SetCursor(false);
+    }
+
+    void InitGrab(Limb limb)
+    {
+        if (limb.ik == null) return;
+        var pos = limb.ik.data.tip.position;
+        limb.ik.data.target.position = pos;
+        limb.grabPos = pos;
+        limb.grabbed = true;
+
+        var ray = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
+        limb.grabNormal = Physics.Raycast(ray, out var hit, 2f, wallLayer)
+            ? hit.normal : surfaceNormal;
+    }
+
+    // ── 자유 사지 추종 ────────────────────────────
+    void UpdateFreeLimbs()
+    {
+        var delta = body.position - prevBodyPos;
+        prevBodyPos = body.position;
+
+        foreach (var limb in limbs)
+        {
+            if (limb.grabbed || limb == activeLimb) continue;
+
+            limb.ik.data.target.position += delta;
+            limb.ik.data.target.position =
+                ClampReach(limb.ik.data.target.position, limb);
+        }
     }
 
     // ── 몸통 위치 ─────────────────────────────────
     void UpdateBody()
     {
         var anchors = new List<Vector3>();
-        if (lArmGrabbed) anchors.Add(lArmPos);
-        if (rArmGrabbed) anchors.Add(rArmPos);
-        if (lLegGrabbed) anchors.Add(lLegPos);
-        if (rLegGrabbed) anchors.Add(rLegPos);
+        foreach (var limb in limbs)
+            if (limb.grabbed) anchors.Add(limb.grabPos);
         if (anchors.Count == 0) return;
 
-        Vector3 center = Vector3.zero;
+        // 앵커 중심
+        var center = Vector3.zero;
         foreach (var p in anchors) center += p;
         center /= anchors.Count;
-        dbgCenter = center;
 
+        // X: 활성 사지 방향으로 약간 치우침
         float targetX = center.x;
-        if (activeIK != null)
+        if (activeLimb != null)
             targetX = Mathf.Lerp(center.x,
-                                 activeIK.data.target.position.x,
-                                 bodyFollowWeightXZ);
+                      activeLimb.ik.data.target.position.x,
+                      bodyFollowWeight);
 
+        // Y: 팔 앵커 기준 매달림
         float targetY = ComputeBodyY();
 
-        Vector3 desired = new Vector3(targetX, targetY, center.z);
+        var desired = new Vector3(targetX, targetY, center.z);
         desired = ApplyWallStandoff(desired);
 
-        if (lArmGrabbed) desired = ClampToLimb3D(desired, leftArmIK, maxReachArm);
-        if (rArmGrabbed) desired = ClampToLimb3D(desired, rightArmIK, maxReachArm);
-        if (lLegGrabbed) desired = ClampToLimb3D(desired, leftLegIK, maxReachLeg);
-        if (rLegGrabbed) desired = ClampToLimb3D(desired, rightLegIK, maxReachLeg);
+        // 리치 제한
+        foreach (var limb in limbs)
+            if (limb.grabbed)
+                desired = ClampBodyToLimb(desired, limb);
 
-        dbgBody = desired;
         body.position = Vector3.Lerp(body.position, desired,
                                      Time.deltaTime * bodyLerpSpeed);
     }
-    Vector3 ApplyWallStandoff(Vector3 pos)
-    {
-        float totalDist = wallStandoffDist + bodyWallOffset;
 
-        Ray ray = new Ray(pos + surfaceNormal * (totalDist + 0.5f), -surfaceNormal);
-
-        if (Physics.Raycast(ray, out RaycastHit hit,
-                            totalDist + 2f, wallLayer))
-        {
-            return hit.point + hit.normal * totalDist;
-        }
-
-        return pos + surfaceNormal * bodyWallOffset;
-    }
-
-    // ── Y 계산 ────────────────────────────────────
     float ComputeBodyY()
     {
-        float armAnchorY = 0f;
-        int armCount = 0;
-        if (lArmGrabbed) { armAnchorY += lArmPos.y; armCount++; }
-        if (rArmGrabbed) { armAnchorY += rArmPos.y; armCount++; }
-
-        float baseY = armCount > 0
-            ? armAnchorY / armCount - naturalHangLength
-            : body.position.y;
-
-        float targetY = baseY;
-
-        if (activeIK != null)
+        float armY = 0f; int armCount = 0;
+        foreach (var limb in limbs)
         {
-            float activeY = activeIK.data.target.position.y;
-            if (!IsLeg(activeIK))
-            {
-                float desiredFromArm = activeY - naturalHangLength;
-                targetY = Mathf.Lerp(baseY, desiredFromArm, bodyFollowWeightY);
-
-                float heightDiff = activeY - body.position.y;
-                if (heightDiff > boostDeadzone)
-                    targetY += (heightDiff - boostDeadzone) * upwardBoost;
-            }
-            else
-            {
-                targetY = Mathf.Lerp(baseY, activeY + minLegBodyGap, 0.05f);
-            }
+            if (!limb.grabbed || limb.isLeg) continue;
+            armY += limb.grabPos.y;
+            armCount++;
         }
 
-        if (lLegGrabbed) targetY = Mathf.Max(targetY, lLegPos.y);
-        if (rLegGrabbed) targetY = Mathf.Max(targetY, rLegPos.y);
+        float baseY = armCount > 0
+            ? armY / armCount - naturalHangLength
+            : body.position.y;
 
-        return targetY;
+        // 활성 팔이 위로 가면 몸도 따라 올라감
+        if (activeLimb != null && !activeLimb.isLeg)
+        {
+            float activeY = activeLimb.ik.data.target.position.y;
+            baseY = Mathf.Lerp(baseY, activeY - naturalHangLength, 0.85f);
+        }
+
+        // 다리 앵커보다 아래로 내려가지 않음
+        foreach (var limb in limbs)
+            if (limb.grabbed && limb.isLeg)
+                baseY = Mathf.Max(baseY, limb.grabPos.y);
+
+        return baseY;
+    }
+
+    Vector3 ApplyWallStandoff(Vector3 pos)
+    {
+        float dist = wallStandoffDist + bodyWallOffset;
+        var ray = new Ray(pos + surfaceNormal * (dist + 0.5f), -surfaceNormal);
+
+        if (Physics.Raycast(ray, out var hit, dist + 2f, wallLayer))
+            return hit.point + hit.normal * dist;
+
+        return pos + surfaceNormal * bodyWallOffset;
     }
 
     // ── 몸통 회전 ─────────────────────────────────
     void UpdateRotation()
     {
-        GetSurfaceTangents(out Vector3 surfRight, out Vector3 surfUp);
+        GetSurfaceBasis(out var surfRight, out var surfUp);
+        var baseRot = Quaternion.LookRotation(-surfaceNormal, surfUp);
 
-        Quaternion baseRot = Quaternion.LookRotation(-surfaceNormal, surfUp);
+        // 좌우 높이차로 기울기
+        float tilt = 0f;
+        float leftH = 0f, rightH = 0f;
+        int lc = 0, rc = 0;
 
-        // Tilt (Z축 기울기)
-        float targetTilt = 0f;
-        {
-            float leftHeight = 0f; int leftCount = 0;
-            float rightHeight = 0f; int rightCount = 0;
+        if (leftArm.grabbed) { leftH += Vector3.Dot(leftArm.grabPos, surfUp); lc++; }
+        if (leftLeg.grabbed) { leftH += Vector3.Dot(leftLeg.grabPos, surfUp); lc++; }
+        if (rightArm.grabbed) { rightH += Vector3.Dot(rightArm.grabPos, surfUp); rc++; }
+        if (rightLeg.grabbed) { rightH += Vector3.Dot(rightLeg.grabPos, surfUp); rc++; }
 
-            if (lArmGrabbed) { leftHeight += Vector3.Dot(lArmPos, surfUp); leftCount++; }
-            if (lLegGrabbed) { leftHeight += Vector3.Dot(lLegPos, surfUp); leftCount++; }
-            if (rArmGrabbed) { rightHeight += Vector3.Dot(rArmPos, surfUp); rightCount++; }
-            if (rLegGrabbed) { rightHeight += Vector3.Dot(rLegPos, surfUp); rightCount++; }
+        if (lc > 0 && rc > 0)
+            tilt = Mathf.Clamp((leftH / lc - rightH / rc) * 15f,
+                               -maxTiltAngle, maxTiltAngle);
 
-            if (leftCount > 0 && rightCount > 0)
-            {
-                leftHeight /= leftCount;
-                rightHeight /= rightCount;
-                float heightDiff = leftHeight - rightHeight;
-                targetTilt = Mathf.Clamp(heightDiff * 15f,
-                                         -maxTiltAngle, maxTiltAngle);
-            }
-            else if (leftCount > 0)
-                targetTilt = Mathf.Clamp(-8f, -maxTiltAngle, maxTiltAngle);
-            else if (rightCount > 0)
-                targetTilt = Mathf.Clamp(8f, -maxTiltAngle, maxTiltAngle);
-        }
-
-        // Yaw (Y축 회전)
-        float targetYaw = 0f;
-        {
-            if (activeIK != null)
-            {
-                Vector3 toActive = activeIK.data.target.position - body.position;
-                float rawYaw = Vector3.Dot(toActive, surfRight) * 15f;
-
-                Vector3 grabCenter = Vector3.zero;
-                int grabCount = 0;
-                if (lArmGrabbed) { grabCenter += lArmPos; grabCount++; }
-                if (rArmGrabbed) { grabCenter += rArmPos; grabCount++; }
-                if (lLegGrabbed) { grabCenter += lLegPos; grabCount++; }
-                if (rLegGrabbed) { grabCenter += rLegPos; grabCount++; }
-
-                if (grabCount > 0)
-                {
-                    grabCenter /= grabCount;
-                    float centerOffset = Vector3.Dot(
-                        grabCenter - body.position, surfRight);
-                    rawYaw = Mathf.Lerp(rawYaw, centerOffset * 10f, 0.4f);
-                }
-
-                targetYaw = Mathf.Clamp(rawYaw, -maxYawAngle, maxYawAngle);
-            }
-        }
-
-        // Roll (X축 앞뒤 기울기)
-        float targetRoll = 0f;
-        {
-            float armHeight = 0f; int armCount_ = 0;
-            float legHeight = 0f; int legCount_ = 0;
-
-            if (lArmGrabbed) { armHeight += Vector3.Dot(lArmPos, surfUp); armCount_++; }
-            if (rArmGrabbed) { armHeight += Vector3.Dot(rArmPos, surfUp); armCount_++; }
-            if (lLegGrabbed) { legHeight += Vector3.Dot(lLegPos, surfUp); legCount_++; }
-            if (rLegGrabbed) { legHeight += Vector3.Dot(rLegPos, surfUp); legCount_++; }
-
-            if (armCount_ > 0 && legCount_ > 0)
-            {
-                armHeight /= armCount_;
-                legHeight /= legCount_;
-                float spread = armHeight - legHeight;
-                targetRoll = Mathf.Clamp(-spread * 3f, -15f, 10f);
-            }
-        }
-
-        // 개별 스무딩
-        currentTilt = Mathf.Lerp(currentTilt, targetTilt,
-                                 Time.deltaTime * tiltSmoothSpeed);
-        currentYaw = Mathf.Lerp(currentYaw, targetYaw,
-                                 Time.deltaTime * yawSmoothSpeed);
-        currentRoll = Mathf.Lerp(currentRoll, targetRoll,
-                                 Time.deltaTime * rollSmoothSpeed);
-
-        float appliedTilt = currentTilt * balanceWeight;
-        float appliedRoll = currentRoll * balanceWeight;
-
-        Quaternion finalRot = baseRot
-                            * Quaternion.Euler(appliedRoll, currentYaw, appliedTilt);
-
+        var finalRot = baseRot * Quaternion.Euler(0f, 0f, tilt * balanceWeight);
         body.rotation = Quaternion.Slerp(body.rotation, finalRot,
                                          Time.deltaTime * rotationSpeed);
     }
 
-    // ── 그랩된 발/손 회전 ─────────────────────────
-    void UpdateGrabbedLimbRotations()
+    // ── 유틸 ──────────────────────────────────────
+    Vector3 ClampReach(Vector3 pos, Limb limb)
     {
-        if (lLegGrabbed) ApplyFootRotation(leftLegIK, lLegNormal);
-        if (rLegGrabbed) ApplyFootRotation(rightLegIK, rLegNormal);
-    }
-
-    void ApplyFootRotation(TwoBoneIKConstraint ik, Vector3 holdNormal)
-    {
-        Transform target = ik.data.target;
-
-        // 발바닥 윗면 = 표면 법선 (벽을 누르는 방향)
-        Vector3 footUp = holdNormal;
-
-        // 발끝 방향: 벽 표면을 따라 위를 향하도록
-        GetSurfaceTangents(out Vector3 surfRight, out Vector3 surfUp);
-        Vector3 footForward = Vector3.ProjectOnPlane(surfUp, footUp).normalized;
-
-        if (footForward.sqrMagnitude < 0.001f)
-            footForward = Vector3.ProjectOnPlane(Vector3.up, footUp).normalized;
-
-        Quaternion baseRot = Quaternion.LookRotation(footForward, footUp);
-
-        // 토우 앵글: 발끝으로 디디는 각도 (클라이머 자세)
-        Quaternion toeRotation = Quaternion.Euler(-toeAngle, 0f, 0f);
-        Quaternion finalRot = baseRot * toeRotation;
-
-        target.rotation = Quaternion.Slerp(
-            target.rotation, finalRot,
-            Time.deltaTime * footRotLerpSpeed);
-    }
-
-    // ── 자유 사지 회전 (안 잡은 발은 자연스럽게 늘어짐) ──
-    void UpdateFreeLimbRotations()
-    {
-        if (!lLegGrabbed && leftLegIK != activeIK)
-            ApplyFreeFootRotation(leftLegIK);
-        if (!rLegGrabbed && rightLegIK != activeIK)
-            ApplyFreeFootRotation(rightLegIK);
-    }
-
-    void ApplyFreeFootRotation(TwoBoneIKConstraint ik)
-    {
-        Transform target = ik.data.target;
-
-        // 자유 상태 발: 몸통 회전에 맞춰 자연스럽게 아래를 향함
-        // forward = 몸통의 forward, up = 몸통의 up
-        Vector3 footForward = body.forward;
-        Vector3 footUp = body.up;
-
-        // 약간 아래로 처지는 각도
-        Quaternion baseRot = Quaternion.LookRotation(footForward, footUp);
-        Quaternion droop = Quaternion.Euler(15f, 0f, 0f);
-        Quaternion finalRot = baseRot * droop;
-
-        target.rotation = Quaternion.Slerp(
-            target.rotation, finalRot,
-            Time.deltaTime * freeFootRotSpeed);
-    }
-
-    // ── 그랩 ──────────────────────────────────────
-    void TryGrab()
-    {
-        if (activeIK == null) return;
-
-        Vector3 pos = activeIK.data.target.position;
-        Vector3 grabNormal = surfaceNormal;
-
-        // ── 그랩 시: holdLayer만 체크 ─────────────────────
-        // holdLayer에 없으면 그랩 자체가 성립하지 않음
-        // wallLayer 위에서 마우스를 눌러도 그랩 안 됨
-        Collider[] hits = Physics.OverlapSphere(pos, grabRange, holdLayer);
-
-        if (hits.Length == 0)
-        {
-            // holdLayer에 히트 없음 → 그랩 실패, 조용히 무시
-            return;
-        }
-
-        Collider col = hits[0];
-
-        // 홀드 표면 법선 획득
-        Ray normalRay = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
-        if (Physics.Raycast(normalRay, out RaycastHit normalHit,
-                            2f, holdLayer | wallLayer))
-            grabNormal = normalHit.normal;
-
-        // ClosestPoint 가능 여부 체크
-        bool canUseClosestPoint = col is BoxCollider
-                               || col is SphereCollider
-                               || col is CapsuleCollider
-                               || (col is MeshCollider mc && mc.convex);
-
-        if (canUseClosestPoint)
-        {
-            Vector3 contact = Physics.ClosestPoint(pos, col,
-                                  col.transform.position,
-                                  col.transform.rotation);
-            pos = contact + (pos - contact).normalized * handRadius;
-        }
-
-        StoreGrabNormal(activeIK, grabNormal);
-        GrabAt(activeIK, pos);
-        activeIK.data.target.position = pos;
-        activeIK = null;
-        SetCursor(false);
-    }
-
-    void StoreGrabNormal(TwoBoneIKConstraint ik, Vector3 normal)
-    {
-        if (ik == leftArmIK) lArmNormal = normal;
-        else if (ik == rightArmIK) rArmNormal = normal;
-        else if (ik == leftLegIK) lLegNormal = normal;
-        else if (ik == rightLegIK) rLegNormal = normal;
-    }
-
-    void GrabAt(TwoBoneIKConstraint ik, Vector3 pos)
-    {
-        if (ik == leftArmIK) { lArmPos = pos; lArmGrabbed = true; }
-        else if (ik == rightArmIK) { rArmPos = pos; rArmGrabbed = true; }
-        else if (ik == leftLegIK) { lLegPos = pos; lLegGrabbed = true; }
-        else if (ik == rightLegIK) { rLegPos = pos; rLegGrabbed = true; }
-    }
-
-    void GrabLimb(TwoBoneIKConstraint ik, ref Vector3 lockPos, ref bool grabbed)
-    {
-        if (ik == null) return;
-        Vector3 pos = ik.data.tip.position;
-        ik.data.target.position = pos;
-        lockPos = pos;
-        grabbed = true;
-
-        // 초기 그랩 시에도 표면 법선 저장
-        Ray ray = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
-        if (Physics.Raycast(ray, out RaycastHit hit, 2f, wallLayer))
-            StoreGrabNormal(ik, hit.normal);
-        else
-            StoreGrabNormal(ik, surfaceNormal);
-    }
-
-    // ── 자유 사지 추종 ─────────────────────────────
-    void UpdateFreeLimbs()
-    {
-        // body가 이동한 delta
-        Vector3 bodyDelta = body.position - _prevBodyPos;
-        _prevBodyPos = body.position;
-
-        UpdateFreeLimb(leftArmIK, false, bodyDelta);
-        UpdateFreeLimb(rightArmIK, false, bodyDelta);
-        UpdateFreeLimb(leftLegIK, true, bodyDelta);
-        UpdateFreeLimb(rightLegIK, true, bodyDelta);
-    }
-
-    void UpdateFreeLimb(TwoBoneIKConstraint ik, bool isLeg, Vector3 bodyDelta)
-    {
-        if (ik == null) return;
-        if (IsLimbGrabbed(ik)) return;
-        if (ik == activeIK) return;
-
-        // ── 핵심 ──────────────────────────────────────────────
-        // 자연 위치를 계산해서 lerp하지 않음
-        // body가 움직인 만큼만 같이 이동 → 월드 위치 유지
-        // 끌려오는 경향 완전 제거
-        // ─────────────────────────────────────────────────────
-        ik.data.target.position += bodyDelta;
-
-        // 리치 초과 시에만 클램프 (너무 멀어지면 당겨옴)
-        float reach = isLeg ? maxReachLeg : maxReachArm;
-        Vector3 toRoot = ik.data.target.position - ik.data.root.position;
+        float reach = limb.MaxReach(maxReachArm, maxReachLeg);
+        var toRoot = pos - limb.ik.data.root.position;
         if (toRoot.magnitude > reach)
-            ik.data.target.position = ik.data.root.position
-                                     + toRoot.normalized * reach;
+            pos = limb.ik.data.root.position + toRoot.normalized * reach;
+        return pos;
     }
-    // ── 유틸리티 ──────────────────────────────────
-    Vector3 ClampToLimb3D(Vector3 desiredBody, TwoBoneIKConstraint ik, float reach)
+
+    Vector3 ClampBodyToLimb(Vector3 desiredBody, Limb limb)
     {
-        Vector3 offset = ik.data.root.position - body.position;
-        Vector3 futureJoint = desiredBody + offset;
-        Vector3 toTip = futureJoint - ik.data.target.position;
+        float reach = limb.MaxReach(maxReachArm, maxReachLeg);
+        var offset = limb.ik.data.root.position - body.position;
+        var futureJoint = desiredBody + offset;
+        var toTip = futureJoint - limb.ik.data.target.position;
 
         if (toTip.magnitude > reach)
-            desiredBody = ik.data.target.position
-                        + toTip.normalized * reach
-                        - offset;
+            desiredBody = limb.ik.data.target.position
+                        + toTip.normalized * reach - offset;
         return desiredBody;
     }
-
-    TwoBoneIKConstraint GetDiagonalOpposite(TwoBoneIKConstraint ik)
-    {
-        if (ik == leftArmIK) return rightLegIK;
-        if (ik == rightArmIK) return leftLegIK;
-        if (ik == leftLegIK) return rightArmIK;
-        if (ik == rightLegIK) return leftArmIK;
-        return null;
-    }
-
-    bool IsLimbGrabbed(TwoBoneIKConstraint ik)
-    {
-        if (ik == leftArmIK) return lArmGrabbed;
-        if (ik == rightArmIK) return rArmGrabbed;
-        if (ik == leftLegIK) return lLegGrabbed;
-        if (ik == rightLegIK) return rLegGrabbed;
-        return false;
-    }
-
-    bool IsLeg(TwoBoneIKConstraint ik) => ik == leftLegIK || ik == rightLegIK;
 
     void SetCursor(bool locked)
     {
@@ -687,24 +463,25 @@ public class ClimbingRigController : MonoBehaviour
         Cursor.visible = !locked;
     }
 
-    void OnDrawGizmos()
+    // ── 아웃라인 ────────────────────────────────────
+    void AddOutline(Limb limb)
     {
-        if (!Application.isPlaying) return;
-        Gizmos.color = Color.cyan; Gizmos.DrawWireSphere(dbgBody, 0.2f);
-        Gizmos.color = Color.yellow; Gizmos.DrawWireSphere(dbgCenter, 0.15f);
-        Gizmos.color = Color.green;
-        Gizmos.DrawRay(body.position, surfaceNormal * 0.6f);
+        if (outlineMaterial == null || limb.renderer == null) return;
 
-        if (activeIK != null)
+        var mats = new List<Material>(limb.renderer.sharedMaterials);
+        if (!mats.Contains(outlineMaterial))
         {
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(body.position, activeIK.data.target.position);
-            TwoBoneIKConstraint opp = GetDiagonalOpposite(activeIK);
-            if (opp != null)
-            {
-                Gizmos.color = new Color(1f, 0.5f, 0f);
-                Gizmos.DrawLine(body.position, opp.data.target.position);
-            }
+            mats.Add(outlineMaterial);
+            limb.renderer.sharedMaterials = mats.ToArray();
         }
+    }
+
+    void RemoveOutline(Limb limb)
+    {
+        if (outlineMaterial == null || limb.renderer == null) return;
+
+        var mats = new List<Material>(limb.renderer.sharedMaterials);
+        if (mats.Remove(outlineMaterial))
+            limb.renderer.sharedMaterials = mats.ToArray();
     }
 }
