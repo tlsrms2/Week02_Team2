@@ -14,6 +14,7 @@ public class ClimbingRigController : MonoBehaviour
     [Header("조작")]
     public float mouseSensitivity = 5f;
     public LayerMask wallLayer;
+    public LayerMask holdLayer;   // 그랩 가능한 홀드 전용 레이어
 
     [Header("리치")]
     public float maxReachArm = 2.4f;
@@ -94,7 +95,7 @@ public class ClimbingRigController : MonoBehaviour
     private Vector3 rLegNormal = Vector3.back;
 
     private Vector3 dbgBody, dbgCenter;
-
+    private Vector3 _prevBodyPos;
     // ─────────────────────────────────────────────
     void Start()
     {
@@ -106,6 +107,7 @@ public class ClimbingRigController : MonoBehaviour
         GrabLimb(leftLegIK, ref lLegPos, ref lLegGrabbed);
         GrabLimb(rightLegIK, ref rLegPos, ref rLegGrabbed);
 
+        _prevBodyPos = body.position; // ← 추가
         SetCursor(false);
     }
 
@@ -175,16 +177,37 @@ public class ClimbingRigController : MonoBehaviour
         float mx = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float my = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        GetSurfaceTangents(out Vector3 surfRight, out Vector3 surfUp);
-
         Transform target = activeIK.data.target;
-        Vector3 pos = target.position
-                    + surfRight * mx
-                    + surfUp * my;
+        Vector3 pos = target.position;
 
-        Ray ray = new Ray(pos + surfaceNormal * 2f, -surfaceNormal);
-        if (Physics.Raycast(ray, out RaycastHit hit, 5f, wallLayer))
-            pos = hit.point + hit.normal * handRadius;
+        Vector3 localNormal = GetNormalAtPoint(pos);
+
+        Vector3 worldRef = Mathf.Abs(Vector3.Dot(localNormal, Vector3.up)) > 0.9f
+            ? Vector3.forward : Vector3.up;
+        Vector3 localRight = Vector3.Cross(localNormal, worldRef).normalized;
+        Vector3 localUp = Vector3.Cross(localRight, localNormal).normalized;
+
+        pos += localRight * mx + localUp * my;
+
+        Vector3 snapNormal = GetNormalAtPoint(pos);
+
+        // ── 이동 시: wallLayer + holdLayer 둘 다 감지 ──────
+        // 홀드 위에 올라가도 표면 스냅이 자연스럽게 동작
+        LayerMask moveLayer = wallLayer | holdLayer;
+
+        Ray ray1 = new Ray(pos + snapNormal * 2f, -snapNormal);
+        if (Physics.Raycast(ray1, out RaycastHit hit1, 5f, moveLayer))
+        {
+            pos = hit1.point + hit1.normal * handRadius;
+        }
+        else
+        {
+            Ray ray2 = new Ray(pos - snapNormal * 0.1f, snapNormal);
+            if (Physics.Raycast(ray2, out RaycastHit hit2, 3f, moveLayer))
+                pos = hit2.point + hit2.normal * handRadius;
+            else
+                pos = target.position;
+        }
 
         float reach = IsLeg(activeIK) ? maxReachLeg : maxReachArm;
         Vector3 toRoot = pos - activeIK.data.root.position;
@@ -192,6 +215,28 @@ public class ClimbingRigController : MonoBehaviour
             pos = activeIK.data.root.position + toRoot.normalized * reach;
 
         target.position = pos;
+    }
+
+    // 특정 월드 위치에서 가장 가까운 벽 법선을 구함
+    // body surfaceNormal을 힌트로 사용해 레이 방향 결정
+    Vector3 GetNormalAtPoint(Vector3 worldPos)
+    {
+        LayerMask combined = wallLayer | holdLayer;
+
+        Ray r1 = new Ray(worldPos + surfaceNormal * 1.5f, -surfaceNormal);
+        if (Physics.Raycast(r1, out RaycastHit h1, 4f, combined))
+            return h1.normal;
+
+        Ray r2 = new Ray(worldPos - surfaceNormal * 0.1f, surfaceNormal);
+        if (Physics.Raycast(r2, out RaycastHit h2, 3f, combined))
+            return h2.normal;
+
+        RaycastHit[] hits = Physics.SphereCastAll(
+            worldPos, 0.5f, Vector3.up, 0.01f, combined);
+        if (hits.Length > 0)
+            return hits[0].normal;
+
+        return surfaceNormal;
     }
 
     // ── 플래깅 ────────────────────────────────────
@@ -557,31 +602,39 @@ public class ClimbingRigController : MonoBehaviour
         Vector3 pos = activeIK.data.target.position;
         Vector3 grabNormal = surfaceNormal;
 
-        Collider[] hits = Physics.OverlapSphere(pos, grabRange, wallLayer);
-        if (hits.Length > 0)
+        // ── 그랩 시: holdLayer만 체크 ─────────────────────
+        // holdLayer에 없으면 그랩 자체가 성립하지 않음
+        // wallLayer 위에서 마우스를 눌러도 그랩 안 됨
+        Collider[] hits = Physics.OverlapSphere(pos, grabRange, holdLayer);
+
+        if (hits.Length == 0)
         {
-            Collider col = hits[0];
-
-            // 그랩 지점의 정확한 표면 법선 획득
-            Ray normalRay = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
-            if (Physics.Raycast(normalRay, out RaycastHit normalHit, 2f, wallLayer))
-                grabNormal = normalHit.normal;
-
-            bool canUseClosestPoint = col is BoxCollider
-                                   || col is SphereCollider
-                                   || col is CapsuleCollider
-                                   || (col is MeshCollider mc && mc.convex);
-
-            if (canUseClosestPoint)
-            {
-                Vector3 contact = Physics.ClosestPoint(pos, col,
-                                      col.transform.position,
-                                      col.transform.rotation);
-                pos = contact + (pos - contact).normalized * handRadius;
-            }
+            // holdLayer에 히트 없음 → 그랩 실패, 조용히 무시
+            return;
         }
 
-        // 법선 저장 후 그랩 확정
+        Collider col = hits[0];
+
+        // 홀드 표면 법선 획득
+        Ray normalRay = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
+        if (Physics.Raycast(normalRay, out RaycastHit normalHit,
+                            2f, holdLayer | wallLayer))
+            grabNormal = normalHit.normal;
+
+        // ClosestPoint 가능 여부 체크
+        bool canUseClosestPoint = col is BoxCollider
+                               || col is SphereCollider
+                               || col is CapsuleCollider
+                               || (col is MeshCollider mc && mc.convex);
+
+        if (canUseClosestPoint)
+        {
+            Vector3 contact = Physics.ClosestPoint(pos, col,
+                                  col.transform.position,
+                                  col.transform.rotation);
+            pos = contact + (pos - contact).normalized * handRadius;
+        }
+
         StoreGrabNormal(activeIK, grabNormal);
         GrabAt(activeIK, pos);
         activeIK.data.target.position = pos;
@@ -624,38 +677,36 @@ public class ClimbingRigController : MonoBehaviour
     // ── 자유 사지 추종 ─────────────────────────────
     void UpdateFreeLimbs()
     {
-        UpdateFreeLimb(leftArmIK, false, -1f);
-        UpdateFreeLimb(rightArmIK, false, 1f);
-        UpdateFreeLimb(leftLegIK, true, -1f);
-        UpdateFreeLimb(rightLegIK, true, 1f);
+        // body가 이동한 delta
+        Vector3 bodyDelta = body.position - _prevBodyPos;
+        _prevBodyPos = body.position;
+
+        UpdateFreeLimb(leftArmIK, false, bodyDelta);
+        UpdateFreeLimb(rightArmIK, false, bodyDelta);
+        UpdateFreeLimb(leftLegIK, true, bodyDelta);
+        UpdateFreeLimb(rightLegIK, true, bodyDelta);
     }
 
-    void UpdateFreeLimb(TwoBoneIKConstraint ik, bool isLeg, float side)
+    void UpdateFreeLimb(TwoBoneIKConstraint ik, bool isLeg, Vector3 bodyDelta)
     {
         if (ik == null) return;
         if (IsLimbGrabbed(ik)) return;
         if (ik == activeIK) return;
 
-        GetSurfaceTangents(out Vector3 surfRight, out Vector3 surfUp);
+        // ── 핵심 ──────────────────────────────────────────────
+        // 자연 위치를 계산해서 lerp하지 않음
+        // body가 움직인 만큼만 같이 이동 → 월드 위치 유지
+        // 끌려오는 경향 완전 제거
+        // ─────────────────────────────────────────────────────
+        ik.data.target.position += bodyDelta;
 
-        Vector3 offset = isLeg ? freeLegOffset : freeArmOffset;
-        offset.x *= side;
-
-        Vector3 naturalPos = body.position
-                           + surfRight * offset.x
-                           + surfUp * offset.z
-                           + surfaceNormal * offset.y;
-
+        // 리치 초과 시에만 클램프 (너무 멀어지면 당겨옴)
         float reach = isLeg ? maxReachLeg : maxReachArm;
-        Vector3 toRoot = naturalPos - ik.data.root.position;
+        Vector3 toRoot = ik.data.target.position - ik.data.root.position;
         if (toRoot.magnitude > reach)
-            naturalPos = ik.data.root.position + toRoot.normalized * reach;
-
-        ik.data.target.position = Vector3.Lerp(
-            ik.data.target.position, naturalPos,
-            Time.deltaTime * freeLimbFollowSpeed);
+            ik.data.target.position = ik.data.root.position
+                                     + toRoot.normalized * reach;
     }
-
     // ── 유틸리티 ──────────────────────────────────
     Vector3 ClampToLimb3D(Vector3 desiredBody, TwoBoneIKConstraint ik, float reach)
     {

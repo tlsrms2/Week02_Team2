@@ -239,9 +239,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 855694131699418866, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
+      propertyPath: m_Name
+      value: RLegMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 946666141431491449, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
+      propertyPath: m_Name
+      value: RFootMesh
+      objectReference: {fileID: 0}
     - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1497743120593233227, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
+      propertyPath: m_Name
+      value: RightHipMesh
       objectReference: {fileID: 0}
     - target: {fileID: 1562164796365931561, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
       propertyPath: m_LocalPosition.x
@@ -286,6 +298,14 @@ PrefabInstance:
     - target: {fileID: 2295118884241401116, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5396182424959264140, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
+      propertyPath: m_Name
+      value: RLegJoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 8118486064831643156, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
+      propertyPath: m_Name
+      value: RFootJoint
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
