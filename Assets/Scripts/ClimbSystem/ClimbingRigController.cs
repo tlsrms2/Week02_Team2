@@ -85,6 +85,7 @@ public class ClimbingRigController : MonoBehaviour
     private Vector3 lArmPos, rArmPos, lLegPos, rLegPos;
     private bool lArmGrabbed, rArmGrabbed, lLegGrabbed, rLegGrabbed;
     private TwoBoneIKConstraint activeIK;
+    private CinematicHold _currentCinematicHold;
 
     private Vector3 surfaceNormal = Vector3.back;
 
@@ -602,18 +603,29 @@ public class ClimbingRigController : MonoBehaviour
         Vector3 pos = activeIK.data.target.position;
         Vector3 grabNormal = surfaceNormal;
 
-        // ── 그랩 시: holdLayer만 체크 ─────────────────────
-        // holdLayer에 없으면 그랩 자체가 성립하지 않음
-        // wallLayer 위에서 마우스를 눌러도 그랩 안 됨
         Collider[] hits = Physics.OverlapSphere(pos, grabRange, holdLayer);
 
-        if (hits.Length == 0)
-        {
-            // holdLayer에 히트 없음 → 그랩 실패, 조용히 무시
-            return;
-        }
+        if (hits.Length == 0) return;
 
         Collider col = hits[0];
+
+        // --- [추가된 부분] 연출 홀드 확인 및 실행 ---
+        CinematicHold newlyGrabbedHold = col.GetComponent<CinematicHold>();
+
+        // 이전에 특수 홀드를 잡고 있었고, 이번에 다른 홀드로 갈아탔다면 이전 홀드 연출 종료
+        if (_currentCinematicHold != null && _currentCinematicHold != newlyGrabbedHold)
+        {
+            _currentCinematicHold.OnReleased();
+        }
+
+        // 새롭게 잡은 홀드가 특수 연출 홀드라면 연출 시작
+        if (newlyGrabbedHold != null)
+        {
+            newlyGrabbedHold.OnGrabbed();
+        }
+
+        // 현재 잡은 홀드 상태 업데이트
+        _currentCinematicHold = newlyGrabbedHold;
 
         // 홀드 표면 법선 획득
         Ray normalRay = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
