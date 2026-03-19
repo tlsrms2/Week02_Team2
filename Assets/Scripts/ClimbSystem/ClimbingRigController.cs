@@ -70,15 +70,6 @@ public class ClimbingRigController : MonoBehaviour
     public float toeAngle = 30f;
     public float freeFootRotSpeed = 6f;
 
-    [Header("외력 물리")]
-    public float externalDamping = 8f;       // 감쇠 속도 (클수록 빨리 멈춤)
-    public float maxExternalSpeed = 10f;      // 최대 외력 속도
-    public float anchorPullStrength = 5f;     // 그랩 앵커가 잡아당기는 힘
-    [Header("글로벌 중력")]
-    public bool useGlobalGravity = true;
-    public float gravityScale = 2f;          // 개인 중력 배율 (0이면 무중력)
-    public float maxGravitySpeed = 20f;
-
     private Vector3 _externalVelocity = Vector3.zero;
 
     // ── 내부 상태 ─────────────────────────────────
@@ -301,8 +292,6 @@ public class ClimbingRigController : MonoBehaviour
     // ── 몸통 위치 ─────────────────────────────────
     void UpdateBody()
     {
-        // 외력 먼저 적용
-        ApplyExternalForce();
         var anchors = new List<Vector3>();
         if (lArmGrabbed) anchors.Add(lArmPos);
         if (rArmGrabbed) anchors.Add(rArmPos);
@@ -335,88 +324,6 @@ public class ClimbingRigController : MonoBehaviour
         body.position = Vector3.Lerp(body.position, desired,
                                      Time.deltaTime * bodyLerpSpeed);
     }
-    //─────────────────────────────────────────────────────
-    //외력 처리 코드
-    void ApplyExternalForce()
-    {
-        // ── 글로벌 중력 누적 ──────────────────────────────
-        if (useGlobalGravity && GravitySystem.Instance != null)
-        {
-            Vector3 gravity = GravitySystem.Instance.CurrentGravity * gravityScale;
-            _externalVelocity += gravity * Time.deltaTime;
-            _externalVelocity = Vector3.ClampMagnitude(_externalVelocity, maxGravitySpeed);
-        }
-        // ─────────────────────────────────────────
-
-        if (_externalVelocity.sqrMagnitude < 0.0001f) return;
-
-        // body 이동
-        body.position += _externalVelocity * Time.deltaTime;
-
-        // 그랩된 앵커가 있으면 rubber band처럼 당겨서 속도 감쇠 추가
-        int anchorCount = 0;
-        Vector3 anchorCenter = Vector3.zero;
-        if (lArmGrabbed) { anchorCenter += lArmPos; anchorCount++; }
-        if (rArmGrabbed) { anchorCenter += rArmPos; anchorCount++; }
-        if (lLegGrabbed) { anchorCenter += lLegPos; anchorCount++; }
-        if (rLegGrabbed) { anchorCenter += rLegPos; anchorCount++; }
-
-        if (anchorCount > 0)
-        {
-            anchorCenter /= anchorCount;
-            Vector3 toAnchor = anchorCenter - body.position;
-            // 앵커 방향으로 속도를 감쇠
-            _externalVelocity += toAnchor.normalized
-                               * anchorPullStrength
-                               * Time.deltaTime;
-        }
-
-        // 기본 감쇠
-        _externalVelocity = Vector3.Lerp(
-            _externalVelocity, Vector3.zero,
-            Time.deltaTime * externalDamping);
-    }
-    /// <summary>
-    /// 외부에서 body에 즉각적인 충격을 가합니다.
-    /// direction은 월드 방향, magnitude는 세기입니다.
-    /// </summary>
-    public void AddImpact(Vector3 direction, float magnitude)
-    {
-        Vector3 force = direction.normalized * magnitude;
-        _externalVelocity += force;
-        _externalVelocity = Vector3.ClampMagnitude(_externalVelocity, maxExternalSpeed);
-    }
-    // <summary>
-    /// GravityZone에서 FixedUpdate마다 호출 — 누적 중력 적용
-    /// </summary>
-    public void AddContinuousForce(Vector3 force, float speedCap)
-    {
-        _externalVelocity += force * Time.fixedDeltaTime;
-        _externalVelocity = Vector3.ClampMagnitude(_externalVelocity, speedCap);
-    }
-
-    /// <summary>
-    /// 구역 퇴장 시 속도 초기화
-    /// </summary>
-    public void ResetExternalVelocity()
-    {
-        _externalVelocity = Vector3.zero;
-    }
-    //─────────────────────────────────────────────────────
-
-    /// <summary>
-    /// 특정 월드 위치에서 폭발 범위 안에 있으면 자동으로 세기 계산 후 밀기
-    /// </summary>
-    public void AddExplosion(Vector3 origin, float radius, float maxMagnitude)
-    {
-        float dist = Vector3.Distance(body.position, origin);
-        if (dist > radius) return;
-
-        float ratio = 1f - (dist / radius);           // 가까울수록 강함
-        Vector3 dir = (body.position - origin).normalized;
-        AddImpact(dir, maxMagnitude * ratio);
-    }
-
     Vector3 ApplyWallStandoff(Vector3 pos)
     {
         float totalDist = wallStandoffDist + bodyWallOffset;
