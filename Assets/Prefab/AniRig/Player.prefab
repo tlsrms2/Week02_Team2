@@ -553,7 +553,7 @@ MonoBehaviour:
   mouseSensitivity: 10
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   maxReachArm: 2.4
   maxReachLeg: 3.5
   handRadius: 0.15
@@ -1593,8 +1593,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7813209202324482763}
   - {fileID: 1766332098964691012}
+  - {fileID: 7813209202324482763}
   - {fileID: 4530313709035254308}
   - {fileID: 1410179348565288775}
   m_Father: {fileID: 7859679257828421292}
