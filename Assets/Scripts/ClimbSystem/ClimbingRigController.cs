@@ -97,6 +97,11 @@ public class ClimbingRigController : MonoBehaviour
     private Vector3 dbgBody, dbgCenter;
     private Vector3 _prevBodyPos;
     // ─────────────────────────────────────────────
+    // 기존 변수들 아래에 추가
+    private int _limbCycleIndex = -1; // -1 = 아직 한 번도 안 눌림
+
+    // 순환 순서: 왼손 → 왼발 → 오른손 → 오른발
+    private TwoBoneIKConstraint[] _limbCycleOrder;
     void Start()
     {
         var rb = GetComponentInParent<RigBuilder>();
@@ -109,6 +114,14 @@ public class ClimbingRigController : MonoBehaviour
 
         _prevBodyPos = body.position; // ← 추가
         SetCursor(false);
+        // 기존 Start() 내용 아래에 추가
+        _limbCycleOrder = new TwoBoneIKConstraint[]
+        {
+        leftArmIK,   // 0: 왼손
+        leftLegIK,   // 1: 왼발
+        rightArmIK,  // 2: 오른손
+        rightLegIK   // 3: 오른발
+        };
     }
 
     void Update()
@@ -162,6 +175,10 @@ public class ClimbingRigController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E)) Activate(rightArmIK, ref rArmGrabbed);
         if (Input.GetKeyDown(KeyCode.A)) Activate(leftLegIK, ref lLegGrabbed);
         if (Input.GetKeyDown(KeyCode.D)) Activate(rightLegIK, ref rLegGrabbed);
+
+        // ── Tab: 손발 교차 순환 활성화 ──────────────────────
+        if (Input.GetKeyDown(KeyCode.H))
+            ActivateNextLimb();
     }
 
     void Activate(TwoBoneIKConstraint ik, ref bool grabbed)
@@ -169,6 +186,22 @@ public class ClimbingRigController : MonoBehaviour
         activeIK = ik;
         grabbed = false;
         SetCursor(true);
+    }
+    void ActivateNextLimb()
+    {
+        // 다음 인덱스로 전진
+        _limbCycleIndex = (_limbCycleIndex + 1) % _limbCycleOrder.Length;
+
+        TwoBoneIKConstraint target = _limbCycleOrder[_limbCycleIndex];
+
+        // 해당 사지의 grabbed 플래그를 ref로 넘겨야 하므로 switch로 분기
+        switch (_limbCycleIndex)
+        {
+            case 0: Activate(leftArmIK, ref lArmGrabbed); break;
+            case 1: Activate(leftLegIK, ref lLegGrabbed); break;
+            case 2: Activate(rightArmIK, ref rArmGrabbed); break;
+            case 3: Activate(rightLegIK, ref rLegGrabbed); break;
+        }
     }
 
     // ── 활성 사지 이동 ─────────────────────────────
