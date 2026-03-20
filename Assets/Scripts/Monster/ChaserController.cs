@@ -3,25 +3,23 @@ using UnityEngine;
 
 public class ChaserController : MonoBehaviour
 {
-    [Header("Target")]
+    [Header("목표")]
     [SerializeField] private Transform player;
 
-    [Header("Movement")]
+    [Header("움직임 힘")]
     [SerializeField] private float minSpeed = 1f;
     [SerializeField] private float maxSpeed = 8f;
     [SerializeField] private float minDistance = 2f;
     [SerializeField] private float maxDistance = 15f;
 
-    [Header("Trigger")]
+    [Header("보스 체인저")]
     [SerializeField] private float triggerY = 10f;
-    [SerializeField] private string animTriggerName = "Attack";
+    string animTriggerName = "DK";
 
-    [Header("Material")]
+    [Header("연출 재질")]
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private Material glitchMaterial;
-
-    [Header("Glitch Duration")]
-    [SerializeField] private float glitchDuration = 1.5f;
+    [SerializeField] private float glitchIntersity = 0.8f;
 
     [Header("GameOver")]
     [SerializeField] private GameObject gameOverPanel;
@@ -95,19 +93,30 @@ public class ChaserController : MonoBehaviour
 
     private IEnumerator GlitchAndTrigger()
     {
-        // 글리치 머티리얼로 교체
         _spriteRenderer.material = glitchMaterial;
+        _spriteRenderer.material.SetFloat("_GlitchIntensity", 0f);
 
-        // 글리치 지속
-        yield return new WaitForSeconds(glitchDuration);
+        float intensity = 0f;
 
-        // 애니메이션 트리거
-        if (_animator != null)
-            _animator.SetTrigger(animTriggerName);
+        while (intensity < 0.5f)
+        {
+            intensity = Mathf.MoveTowards(intensity, 0.5f, 0.3f * Time.deltaTime);
+            _spriteRenderer.material.SetFloat("_GlitchIntensity", intensity);
+            yield return null;
+        }
+        _spriteRenderer.material.SetFloat("_GlitchIntensity", 0.5f);
+        if (_animator != null) _animator.SetTrigger(animTriggerName);
 
-        yield return new WaitForSeconds(0.1f);
+        //yield return new WaitForSeconds(0.1f);
+        
+        while (intensity > 0f)
+        {
+            intensity = Mathf.MoveTowards(intensity, 0f, 0.3f * Time.deltaTime);
+            _spriteRenderer.material.SetFloat("_GlitchIntensity", intensity);
+            yield return null;
+        }
+        _spriteRenderer.material.SetFloat("_GlitchIntensity", 0f);
 
-        // 기본 머티리얼 복귀
         _spriteRenderer.material = defaultMaterial;
     }
 
