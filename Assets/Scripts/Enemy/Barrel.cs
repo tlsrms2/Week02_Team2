@@ -11,6 +11,8 @@ public class Barrel : MonoBehaviour
     public LayerMask groundLayer;            // 철골 바닥 레이어
     public LayerMask wallLayer;              // 벽(막힌 곳) 레이어
     public LayerMask ladderLayer;            // 사다리 레이어
+    public LayerMask destroyZoneLayer;
+    public LayerMask holderLayer;
 
     [Header("스프라이트")]
     public Transform visualTransform;        // 회전시킬 술통 스프라이트/모델 
@@ -62,6 +64,20 @@ public class Barrel : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        // 1. DestroyZone 레이어인지 확인 (비트 연산 사용)
+        if (((1 << collision.gameObject.layer) & destroyZoneLayer) != 0)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        // 2. Holder 레이어인지 확인
+        if (((1 << collision.gameObject.layer) & holderLayer) != 0)
+        {
+            Physics.IgnoreCollision(collision.collider, GetComponent<Collider>());
+            return;
+        }
+
         // 1. 벽에 닿았을 때 방향 반전
         if (((1 << collision.gameObject.layer) & wallLayer) != 0)
         {
@@ -113,6 +129,13 @@ public class Barrel : MonoBehaviour
     // 사다리는 통과해야 하므로 트리거(Is Trigger)로 설정되어 있다고 가정합니다.
     private void OnTriggerEnter(Collider other)
     {
+        // destroyzone이 트리거(Is Trigger)로 설정된 경우를 대비한 파괴 처리
+        if (other.CompareTag("destroyzone"))
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         // 4. 사다리를 만났을 때 (확률적 추락)
         if (((1 << other.gameObject.layer) & ladderLayer) != 0 && !checkedCurrentLadder)
         {
