@@ -503,8 +503,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            mx = moveInput.x * mouseSensitivity;
-            my = moveInput.y * mouseSensitivity;
+            mx = moveInput.x * mouseSensitivity * Time.deltaTime;
+            my = moveInput.y * mouseSensitivity * Time.deltaTime;
         }
 
         var target = activeLimb.ik.data.target;
