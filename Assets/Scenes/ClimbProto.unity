@@ -781,6 +781,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainMonster
       objectReference: {fileID: 0}
+    - target: {fileID: 5530706259199731509, guid: baedd6faab8e408479579746ad01899c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
