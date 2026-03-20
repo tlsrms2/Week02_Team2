@@ -96,7 +96,6 @@ public class Barrel : MonoBehaviour
             if (isFalling)
             {
                 isFalling = false;
-                moveDirection = Random.value > 0.5f ? Vector3.right : Vector3.left; // 착지 시 랜덤 방향
             }
         }
     }
