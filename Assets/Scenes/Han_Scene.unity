@@ -784,7 +784,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 6.4, y: 6.4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1533,10 +1533,9 @@ MonoBehaviour:
   minDistance: 15
   maxDistance: 30
   triggerY: 10
-  animTriggerName: Attack
   defaultMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   glitchMaterial: {fileID: 2100000, guid: dfaa3809420271548856eca6c58e7e9d, type: 2}
-  glitchDuration: 1.5
+  glitchIntersity: 1
   gameOverPanel: {fileID: 1040234067}
 --- !u!95 &627074752956324442
 Animator:
