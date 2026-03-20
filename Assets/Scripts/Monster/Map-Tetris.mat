@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PackManMapGlitch
-  m_Shader: {fileID: -6465566751694194690, guid: 05e936d9d9e6ca74d9858143d4d8df14, type: 3}
+  m_Name: Map-Tetris
+  m_Shader: {fileID: -6465566751694194690, guid: 3b362894dca07654a9ed6b8d1e777e6d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -47,14 +47,16 @@ Material:
     m_Ints: []
     m_Floats:
     - _GlitchIntensity: 0
-    - _GridSize: 32
+    - _GridSize: 128
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Speed: 10
-    m_Colors: []
+    m_Colors:
+    - _Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Tiling: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &5358153536596437562
+--- !u!114 &7598601950532311758
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
