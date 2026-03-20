@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-public class ClimbingRigController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     // ── 사지 데이터 ───────────────────────────────
     [System.Serializable]
@@ -11,7 +11,7 @@ public class ClimbingRigController : MonoBehaviour
         public TwoBoneIKConstraint ik;
         public KeyCode key;
         public bool isLeg;
-        public Renderer renderer;   // 아웃라인 대상 메쉬 렌더러
+        public Renderer renderer;
 
         [HideInInspector] public Vector3 grabPos;
         [HideInInspector] public Vector3 grabNormal;
@@ -57,17 +57,15 @@ public class ClimbingRigController : MonoBehaviour
     public Material outlineMaterial;
     public Material outlineInvalidMaterial;
 
+    [Header("피격 깜빡임")]
+    public GameObject blinkTarget;
+    public float blinkInterval = 0.1f;
+
     [Header("슬라이드")]
     public float slideSpeed = 3f;
     public float slideDamping = 5f;
-    [Range(0f, 1f)] public float armSlideResistance = 0.7f;
-
-    [Header("V드롭")]
-    public float vDropArmSpread = 20f;    // 팔 좌우 벌어짐 각도
-    public float vDropLegSpread = 40f;    // 다리 좌우 벌어짐 각도
-    [Range(0f, 1f)] public float vDropArmReach = 0.8f;  // 팔 리치 사용 비율
-    [Range(0f, 1f)] public float vDropLegReach = 0.7f;  // 다리 리치 사용 비율
-    public float vDropLimbLerp = 6f;      // 사지가 V자세로 붙는 속도
+    public float slideDriftSpeed = 1.5f;
+    public float slideHoldDetectRadius = 0.4f;
 
     // ── 내부 상태 ─────────────────────────────────
     private Limb[] limbs;
@@ -77,11 +75,11 @@ public class ClimbingRigController : MonoBehaviour
 
     private LayerMask combinedLayer;
     private float slideVelocity;
-    private float stretchVelocity;
-    private float vDropVelocity;
-    private Vector3 bodyDropOffset;
-    private bool vDropActive;
+    private bool slideDrifting;
+    private float slideForceTimer;
     private bool prevCanGrab = true;
+    private float stunTimer;
+    private float blinkTimer;
 
     // ───────────────────────────────────────────────
     void Start()
@@ -94,21 +92,42 @@ public class ClimbingRigController : MonoBehaviour
         foreach (var limb in limbs) InitGrab(limb);
 
         prevBodyPos = body.position;
-        SetCursor(false);
+        SetCursor(true);
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Slide(5f);
+            Slide(7, 1);
         }
+
+        // 스턴 중 입력 차단 + 깜빡임
+        if (stunTimer > 0f)
+        {
+            stunTimer -= Time.deltaTime;
+
+            if (blinkTarget != null)
+            {
+                blinkTimer -= Time.deltaTime;
+                if (blinkTimer <= 0f)
+                {
+                    blinkTarget.SetActive(!blinkTarget.activeSelf);
+                    blinkTimer = blinkInterval;
+                }
+
+                if (stunTimer <= 0f)
+                    blinkTarget.SetActive(true);
+            }
+
+            return;
+        }
+
         // 사지 선택
         foreach (var limb in limbs)
         {
             if (Input.GetKeyDown(limb.key))
             {
-                // 이전 사지는 원래 그랩 위치로 복귀
                 if (activeLimb != null)
                 {
                     RemoveOutline(activeLimb);
@@ -137,8 +156,6 @@ public class ClimbingRigController : MonoBehaviour
     void LateUpdate()
     {
         ProcessSlide();
-        ProcessStretchSlide();
-        ProcessVDrop();
 
         // 그랩된 타겟 고정
         foreach (var limb in limbs)
@@ -151,131 +168,75 @@ public class ClimbingRigController : MonoBehaviour
         UpdateRotation();
     }
 
+    // ── 스턴 ──────────────────────────────────────
+    public void Stun(float time)
+    {
+        stunTimer = Mathf.Max(stunTimer, time);
+        blinkTimer = 0f;
+
+        if (activeLimb != null)
+        {
+            RemoveOutline(activeLimb);
+            activeLimb.grabbed = true;
+            activeLimb.ik.data.target.position = activeLimb.grabPos;
+            activeLimb = null;
+            SetCursor(true);
+        }
+    }
+
     // ── 슬라이드 ────────────────────────────────────
     /// <summary>
-    /// 외부에서 호출. distance만큼 벽 표면을 따라 아래로 미끄러집니다.
+    /// 외부에서 호출. time초 동안 무조건 미끄러진 뒤,
+    /// 홀드를 만날 때까지 계속 미끄러집니다.
     /// </summary>
-    public void Slide(float distance)
+    public void Slide(float distance, float time)
     {
         slideVelocity += distance * slideSpeed;
+        slideForceTimer = time;
+        slideDrifting = true;
     }
 
     void ProcessSlide()
     {
-        if (Mathf.Abs(slideVelocity) < 0.001f) return;
+        if (!slideDrifting && Mathf.Abs(slideVelocity) < 0.001f) return;
+
+        if (slideForceTimer > 0f)
+            slideForceTimer -= Time.deltaTime;
 
         GetSurfaceBasis(out _, out var surfUp);
         float step = slideVelocity * Time.deltaTime;
         Vector3 slideDelta = -surfUp * step;
 
+        bool foundHold = false;
         foreach (var limb in limbs)
         {
             if (!limb.grabbed) continue;
 
             Vector3 newPos = limb.grabPos + slideDelta;
 
-            // 벽 표면에 다시 붙이기
             var ray = new Ray(newPos + surfaceNormal * 1f, -surfaceNormal);
             if (Physics.Raycast(ray, out var hit, 3f, combinedLayer))
                 newPos = hit.point + hit.normal * handRadius;
 
+            if (slideForceTimer <= 0f
+                && Physics.OverlapSphere(newPos, slideHoldDetectRadius, holdLayer).Length > 0)
+                foundHold = true;
+
             limb.grabPos = newPos;
+        }
+
+        if (foundHold)
+        {
+            slideVelocity = 0f;
+            slideDrifting = false;
+            return;
         }
 
         slideVelocity = Mathf.Lerp(slideVelocity, 0f,
                                     Time.deltaTime * slideDamping);
-    }
 
-    /// <summary>
-    /// 외부에서 호출. 팔다리가 위로 당겨지며 미끄러집니다.
-    /// </summary>
-    public void SlideStretch(float distance)
-    {
-        stretchVelocity += distance * slideSpeed;
-    }
-
-    void ProcessStretchSlide()
-    {
-        if (Mathf.Abs(stretchVelocity) < 0.001f) return;
-
-        GetSurfaceBasis(out _, out var surfUp);
-        float step = stretchVelocity * Time.deltaTime;
-        Vector3 delta = -surfUp * step;
-
-        // 다리: 전속으로 끌려감 / 팔: 저항하며 천천히 끌려감
-        foreach (var limb in limbs)
-        {
-            if (!limb.grabbed) continue;
-
-            float rate = limb.isLeg ? 1f : (1f - armSlideResistance);
-            Vector3 newPos = limb.grabPos + delta * rate;
-
-            var ray = new Ray(newPos + surfaceNormal * 1f, -surfaceNormal);
-            if (Physics.Raycast(ray, out var hit, 3f, combinedLayer))
-                newPos = hit.point + hit.normal * handRadius;
-
-            limb.grabPos = newPos;
-        }
-
-        stretchVelocity = Mathf.Lerp(stretchVelocity, 0f,
-                                      Time.deltaTime * slideDamping);
-    }
-
-    /// <summary>
-    /// 외부에서 호출. 몸통이 내려가며 팔다리가 위로 벌어집니다.
-    /// </summary>
-    public void SlideVDrop(float distance)
-    {
-        vDropVelocity += distance * slideSpeed;
-        vDropActive = true;
-    }
-
-    void ProcessVDrop()
-    {
-        if (!vDropActive) return;
-
-        GetSurfaceBasis(out var surfRight, out var surfUp);
-
-        // ── 몸통 하강 ──
-        bodyDropOffset -= surfUp * (vDropVelocity * Time.deltaTime);
-
-        vDropVelocity = Mathf.Lerp(vDropVelocity, 0f,
-                                    Time.deltaTime * slideDamping);
-
-        // ── 사지를 몸통 기준 V자 위치로 끌어감 ──
-        Vector3 droppedBody = body.position + bodyDropOffset;
-
-        foreach (var limb in limbs)
-        {
-            if (!limb.grabbed) continue;
-
-            bool isLeft = (limb == leftArm || limb == leftLeg);
-            float sign = isLeft ? 1f : -1f;
-
-            float spread = limb.isLeg ? vDropLegSpread : vDropArmSpread;
-            float reachRatio = limb.isLeg ? vDropLegReach : vDropArmReach;
-            float reach = limb.MaxReach(maxReachArm, maxReachLeg) * reachRatio;
-
-            // surfUp을 spread 각도만큼 좌우로 회전 → 대각선 위 방향
-            Vector3 dir = Quaternion.AngleAxis(sign * spread, -surfaceNormal) * surfUp;
-            Vector3 targetPos = droppedBody + dir * reach;
-
-            // 벽 표면 스냅
-            var ray = new Ray(targetPos + surfaceNormal * 1f, -surfaceNormal);
-            if (Physics.Raycast(ray, out var hit, 3f, combinedLayer))
-                targetPos = hit.point + hit.normal * handRadius;
-
-            limb.grabPos = Vector3.Lerp(limb.grabPos, targetPos,
-                                        Time.deltaTime * vDropLimbLerp);
-        }
-
-        // ── 속도 소진 + 오프셋 복귀 → 비활성화 ──
-        bodyDropOffset = Vector3.Lerp(bodyDropOffset, Vector3.zero,
-                                      Time.deltaTime * slideDamping * 0.4f);
-
-        if (Mathf.Abs(vDropVelocity) < 0.001f
-            && bodyDropOffset.sqrMagnitude < 0.0001f)
-            vDropActive = false;
+        if (slideDrifting && Mathf.Abs(slideVelocity) < slideDriftSpeed)
+            slideVelocity = slideDriftSpeed;
     }
 
     // ── 표면 법선 ─────────────────────────────────
@@ -304,7 +265,6 @@ public class ClimbingRigController : MonoBehaviour
         var target = activeLimb.ik.data.target;
         var pos = target.position;
 
-        // 표면 접선 기반 이동
         var normal = GetNormalAt(pos);
         var worldRef = Mathf.Abs(Vector3.Dot(normal, Vector3.up)) > 0.9f
             ? Vector3.forward : Vector3.up;
@@ -312,11 +272,7 @@ public class ClimbingRigController : MonoBehaviour
         var up = Vector3.Cross(right, normal).normalized;
 
         pos += right * mx + up * my;
-
-        // 벽에 스냅
         pos = SnapToSurface(pos, GetNormalAt(pos), target.position);
-
-        // 리치 제한
         pos = ClampReach(pos, activeLimb);
 
         target.position = pos;
@@ -359,7 +315,6 @@ public class ClimbingRigController : MonoBehaviour
 
         var col = hits[0];
 
-        // 접촉점 보정
         bool canSnap = col is BoxCollider or SphereCollider or CapsuleCollider
                     || (col is MeshCollider mc && mc.convex);
         if (canSnap)
@@ -369,7 +324,6 @@ public class ClimbingRigController : MonoBehaviour
             pos = contact + (pos - contact).normalized * handRadius;
         }
 
-        // 법선 저장
         var ray = new Ray(pos + surfaceNormal * 0.5f, -surfaceNormal);
         activeLimb.grabNormal = Physics.Raycast(ray, out var hit, 2f, combinedLayer)
             ? hit.normal : surfaceNormal;
@@ -379,7 +333,7 @@ public class ClimbingRigController : MonoBehaviour
         activeLimb.ik.data.target.position = pos;
         RemoveOutline(activeLimb);
         activeLimb = null;
-        SetCursor(false);
+        SetCursor(true);
     }
 
     void InitGrab(Limb limb)
@@ -419,26 +373,21 @@ public class ClimbingRigController : MonoBehaviour
             if (limb.grabbed) anchors.Add(limb.grabPos);
         if (anchors.Count == 0) return;
 
-        // 앵커 중심
         var center = Vector3.zero;
         foreach (var p in anchors) center += p;
         center /= anchors.Count;
 
-        // X: 활성 사지 방향으로 약간 치우침
         float targetX = center.x;
         if (activeLimb != null)
             targetX = Mathf.Lerp(center.x,
                       activeLimb.ik.data.target.position.x,
                       bodyFollowWeight);
 
-        // Y: 팔 앵커 기준 매달림
         float targetY = ComputeBodyY();
 
         var desired = new Vector3(targetX, targetY, center.z);
-        desired += bodyDropOffset;
         desired = ApplyWallStandoff(desired);
 
-        // 리치 제한
         foreach (var limb in limbs)
             if (limb.grabbed)
                 desired = ClampBodyToLimb(desired, limb);
@@ -461,14 +410,12 @@ public class ClimbingRigController : MonoBehaviour
             ? armY / armCount - naturalHangLength
             : body.position.y;
 
-        // 활성 팔이 위로 가면 몸도 따라 올라감
         if (activeLimb != null && !activeLimb.isLeg)
         {
             float activeY = activeLimb.ik.data.target.position.y;
             baseY = Mathf.Lerp(baseY, activeY - naturalHangLength, 0.85f);
         }
 
-        // 다리 앵커보다 아래로 내려가지 않음
         foreach (var limb in limbs)
             if (limb.grabbed && limb.isLeg)
                 baseY = Mathf.Max(baseY, limb.grabPos.y);
@@ -493,7 +440,6 @@ public class ClimbingRigController : MonoBehaviour
         GetSurfaceBasis(out var surfRight, out var surfUp);
         var baseRot = Quaternion.LookRotation(-surfaceNormal, surfUp);
 
-        // 좌우 높이차로 기울기
         float tilt = 0f;
         float leftH = 0f, rightH = 0f;
         int lc = 0, rc = 0;
