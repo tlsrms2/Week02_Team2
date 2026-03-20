@@ -663,6 +663,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2568857350028564731, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: dfaa3809420271548856eca6c58e7e9d, type: 2}
     - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: player
       value: 
@@ -7986,7 +7990,7 @@ GameObject:
   - component: {fileID: 1944938917}
   - component: {fileID: 1944938916}
   m_Layer: 7
-  m_Name: Cube
+  m_Name: Map
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8038,7 +8042,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 837a56281e1c7b8428b7abb00367ae17, type: 2}
+  - {fileID: 2100000, guid: a3eed8e3dcbedde44ba16d05866577b8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
