@@ -15,7 +15,6 @@ public class TitleMenuController : MonoBehaviour
 
     public int _selectedIndex = 0;
     private bool _stickMoved = false;
-    private bool _keyMoved = false;
 
     void Start()
     {
