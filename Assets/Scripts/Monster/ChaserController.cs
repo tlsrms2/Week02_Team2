@@ -12,8 +12,9 @@ public class ChaserController : MonoBehaviour
     [SerializeField] private float minDistance = 2f;
     [SerializeField] private float maxDistance = 15f;
 
-    [Header("스테이지 클리어 Y")]
+    [Header("보스 체인저")]
     [SerializeField] private float triggerY = 10f;
+    string animTriggerName = "DK";
 
     [Header("연출 재질")]
     [SerializeField] private Material defaultMaterial;
