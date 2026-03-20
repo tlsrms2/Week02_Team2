@@ -55,6 +55,7 @@ public class ClimbingRigController : MonoBehaviour
 
     [Header("아웃라인")]
     public Material outlineMaterial;
+    public Material outlineInvalidMaterial;
 
     [Header("슬라이드")]
     public float slideSpeed = 3f;
@@ -80,6 +81,7 @@ public class ClimbingRigController : MonoBehaviour
     private float vDropVelocity;
     private Vector3 bodyDropOffset;
     private bool vDropActive;
+    private bool prevCanGrab = true;
 
     // ───────────────────────────────────────────────
     void Start()
@@ -99,22 +101,21 @@ public class ClimbingRigController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Slide(6);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SlideStretch(6);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SlideVDrop(6);
+            Slide(5f);
         }
         // 사지 선택
         foreach (var limb in limbs)
         {
             if (Input.GetKeyDown(limb.key))
             {
-                if (activeLimb != null) RemoveOutline(activeLimb);
+                // 이전 사지는 원래 그랩 위치로 복귀
+                if (activeLimb != null)
+                {
+                    RemoveOutline(activeLimb);
+                    activeLimb.grabbed = true;
+                    activeLimb.ik.data.target.position = activeLimb.grabPos;
+                }
+
                 activeLimb = limb;
                 limb.grabbed = false;
                 AddOutline(limb);
@@ -123,7 +124,11 @@ public class ClimbingRigController : MonoBehaviour
         }
 
         // 활성 사지 마우스 이동
-        if (activeLimb != null) MoveActiveLimb();
+        if (activeLimb != null)
+        {
+            MoveActiveLimb();
+            UpdateOutlineColor();
+        }
 
         // 클릭으로 그랩
         if (Input.GetMouseButtonDown(0)) TryGrab();
@@ -537,24 +542,53 @@ public class ClimbingRigController : MonoBehaviour
     }
 
     // ── 아웃라인 ────────────────────────────────────
+    Material CurrentOutline => prevCanGrab ? outlineMaterial : outlineInvalidMaterial;
+
     void AddOutline(Limb limb)
     {
-        if (outlineMaterial == null || limb.renderer == null) return;
+        if (limb.renderer == null) return;
+        var mat = CurrentOutline;
+        if (mat == null) return;
 
         var mats = new List<Material>(limb.renderer.sharedMaterials);
-        if (!mats.Contains(outlineMaterial))
+        if (!mats.Contains(mat))
         {
-            mats.Add(outlineMaterial);
+            mats.Add(mat);
             limb.renderer.sharedMaterials = mats.ToArray();
         }
     }
 
     void RemoveOutline(Limb limb)
     {
-        if (outlineMaterial == null || limb.renderer == null) return;
+        if (limb.renderer == null) return;
 
         var mats = new List<Material>(limb.renderer.sharedMaterials);
-        if (mats.Remove(outlineMaterial))
-            limb.renderer.sharedMaterials = mats.ToArray();
+        bool changed = false;
+        if (outlineMaterial != null) changed |= mats.Remove(outlineMaterial);
+        if (outlineInvalidMaterial != null) changed |= mats.Remove(outlineInvalidMaterial);
+        if (changed) limb.renderer.sharedMaterials = mats.ToArray();
+    }
+
+    void UpdateOutlineColor()
+    {
+        if (activeLimb?.renderer == null) return;
+
+        var pos = activeLimb.ik.data.target.position;
+        bool canGrab = Physics.OverlapSphere(pos, grabRange, holdLayer).Length > 0;
+
+        if (canGrab == prevCanGrab) return;
+        prevCanGrab = canGrab;
+
+        var oldMat = canGrab ? outlineInvalidMaterial : outlineMaterial;
+        var newMat = canGrab ? outlineMaterial : outlineInvalidMaterial;
+        if (oldMat == null || newMat == null) return;
+
+        var mats = new List<Material>(activeLimb.renderer.sharedMaterials);
+        int idx = mats.IndexOf(oldMat);
+        if (idx >= 0)
+            mats[idx] = newMat;
+        else
+            mats.Add(newMat);
+        activeLimb.renderer.sharedMaterials = mats.ToArray();
     }
 }
