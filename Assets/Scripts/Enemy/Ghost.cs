@@ -47,6 +47,8 @@ public class Ghost : MonoBehaviour
             bool canGoRight = !CheckWall(rightDir);
             bool canGoLeft = !CheckWall(leftDir);
 
+            // Debug.Log($"canGoRight: {canGoRight}, canGoLeft: {canGoLeft}");
+            
             if (canGoRight && canGoLeft)
             {
                 // 양쪽 다 뚫려있다면 랜덤하게 좌/우 중 하나 선택
@@ -89,5 +91,29 @@ public class Ghost : MonoBehaviour
             spriteRenderer.sprite = rightSprite;
         else if (moveDirection.x < -0.5f)
             spriteRenderer.sprite = leftSprite;
+    }
+
+    // 씬 뷰에서 레이캐스트 범위와 방향을 시각적으로 보여주는 기즈모 함수
+    private void OnDrawGizmos()
+    {
+        Vector3 worldDirection = transform.TransformDirection(moveDirection);
+        Vector3 startPos = transform.position;
+        Vector3 endPos = startPos + worldDirection * rayDistance;
+
+        // 레이캐스트가 벽(wallLayer)에 닿으면 빨간색, 닿지 않으면 초록색으로 표시
+        if (Physics.Raycast(startPos, worldDirection, rayDistance, wallLayer))
+        {
+            Gizmos.color = Color.red;
+        }
+        else
+        {
+            Gizmos.color = Color.green;
+        }
+
+        // 레이저 선 그리기
+        Gizmos.DrawLine(startPos, endPos);
+        
+        // 끝부분에 작은 구체를 그려서 방향을 더 명확하게 표시
+        Gizmos.DrawWireSphere(endPos, 0.1f);
     }
 }

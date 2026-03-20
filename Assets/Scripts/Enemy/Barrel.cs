@@ -17,7 +17,7 @@ public class Barrel : MonoBehaviour
     [Header("스프라이트")]
     public Transform visualTransform;        // 회전시킬 술통 스프라이트/모델 
 
-    private Vector3 moveDirection = Vector3.right; // 로컬 기준 이동 방향
+    public Vector3 moveDirection = Vector3.right;  // 로컬 기준 이동 방향 (스포너에서 제어할 수 있도록 public 변경)
     private bool isFalling = false;
     private bool checkedCurrentLadder = false;     // 같은 사다리에서 중복 검사 방지
     private int groundContactCount = 0;            // 타일 경계선 버그 방지용
