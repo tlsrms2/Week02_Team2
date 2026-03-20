@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,7 +10,6 @@ public class PlayerController : MonoBehaviour
     public class Limb
     {
         public TwoBoneIKConstraint ik;
-        public KeyCode key;
         public bool isLeg;
         public Renderer renderer;
 
@@ -24,13 +24,31 @@ public class PlayerController : MonoBehaviour
     public Transform body;
 
     [Header("사지 설정")]
-    public Limb leftArm = new() { key = KeyCode.Q, isLeg = false };
-    public Limb rightArm = new() { key = KeyCode.E, isLeg = false };
-    public Limb leftLeg = new() { key = KeyCode.A, isLeg = true };
-    public Limb rightLeg = new() { key = KeyCode.D, isLeg = true };
+    public Limb leftArm = new() { isLeg = false };
+    public Limb rightArm = new() { isLeg = false };
+    public Limb leftLeg = new() { isLeg = true };
+    public Limb rightLeg = new() { isLeg = true };
+
+    [Header("Input Actions — 키보드 / 마우스")]
+    public InputActionReference selectBodyAction;   // Q, E, A, D
+    public InputActionReference grabAction;         // Mouse Left Button
+    public InputActionReference rotateAction;       // Mouse Delta + Gamepad LeftStick
+
+    [Header("Input Actions — 게임패드 범퍼 (이벤트 방식)")]
+    public InputActionReference padLeftArmAction;   // LB
+    public InputActionReference padRightArmAction;  // RB
+
+    [Header("게임패드 트리거 (폴링 방식)")]
+    [Range(0.1f, 0.9f)]
+    public float triggerPressThreshold = 0.3f;
+    [Range(0.05f, 0.5f)]
+    public float triggerReleaseThreshold = 0.15f;
+    [Header("진동")]
+    public GamepadHaptics haptics;
 
     [Header("조작")]
-    public float mouseSensitivity = 5f;
+    public float mouseSensitivity = 0.05f;
+    public float stickSensitivity = 5f;
     public LayerMask wallLayer;
     public LayerMask holdLayer;
 
@@ -63,9 +81,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("슬라이드")]
     public float slideSpeed = 3f;
-    public float slideDamping = 5f;
-    public float slideDriftSpeed = 1.5f;
     public float slideHoldDetectRadius = 0.4f;
+    public GameObject leftHandEffect;
+    public GameObject rightHandEffect;
 
     // ── 내부 상태 ─────────────────────────────────
     private Limb[] limbs;
@@ -74,19 +92,39 @@ public class PlayerController : MonoBehaviour
     private Vector3 prevBodyPos;
 
     private LayerMask combinedLayer;
-    private float slideVelocity;
-    private bool slideDrifting;
+    private bool slideActive;
     private float slideForceTimer;
+    private float slideBlinkTimer;
     private bool prevCanGrab = true;
     private float stunTimer;
     private float blinkTimer;
 
+    private Dictionary<string, Limb> limbByKey;
+    private Vector2 moveInput;
+    private bool inputBlocked;
+    private bool usingGamepad;
+
+    // 트리거 폴링 상태
+    private bool leftTriggerHeld;
+    private bool rightTriggerHeld;
+
     // ───────────────────────────────────────────────
-    void Start()
+    void Awake()
     {
         limbs = new[] { leftArm, rightArm, leftLeg, rightLeg };
         combinedLayer = wallLayer | holdLayer;
 
+        limbByKey = new Dictionary<string, Limb>
+        {
+            { "q", leftArm  },
+            { "e", rightArm },
+            { "a", leftLeg  },
+            { "d", rightLeg },
+        };
+    }
+
+    void Start()
+    {
         GetComponentInParent<RigBuilder>()?.Build();
 
         foreach (var limb in limbs) InitGrab(limb);
@@ -95,14 +133,195 @@ public class PlayerController : MonoBehaviour
         SetCursor(true);
     }
 
+    // ── 이벤트 등록 / 해제 ─────────────────────────
+    void OnEnable()
+    {
+        EnableAction(selectBodyAction, OnSelectBodyKeyboard);
+        EnableAction(grabAction, OnGrabMouse);
+
+        if (rotateAction?.action != null)
+            rotateAction.action.Enable();
+
+        if (padLeftArmAction?.action != null)
+        {
+            padLeftArmAction.action.Enable();
+            padLeftArmAction.action.started += ctx => OnPadLimbStarted(leftArm);
+            padLeftArmAction.action.canceled += ctx => OnPadLimbReleased(leftArm);
+        }
+        if (padRightArmAction?.action != null)
+        {
+            padRightArmAction.action.Enable();
+            padRightArmAction.action.started += ctx => OnPadLimbStarted(rightArm);
+            padRightArmAction.action.canceled += ctx => OnPadLimbReleased(rightArm);
+        }
+    }
+
+    void OnDisable()
+    {
+        DisableAction(selectBodyAction, OnSelectBodyKeyboard);
+        DisableAction(grabAction, OnGrabMouse);
+
+        if (rotateAction?.action != null)
+            rotateAction.action.Disable();
+
+        if (padLeftArmAction?.action != null)
+            padLeftArmAction.action.Disable();
+        if (padRightArmAction?.action != null)
+            padRightArmAction.action.Disable();
+    }
+
+    void EnableAction(InputActionReference r,
+                      System.Action<InputAction.CallbackContext> cb)
+    {
+        if (r?.action == null) return;
+        r.action.Enable();
+        r.action.performed += cb;
+    }
+
+    void DisableAction(InputActionReference r,
+                       System.Action<InputAction.CallbackContext> cb)
+    {
+        if (r?.action == null) return;
+        r.action.performed -= cb;
+        r.action.Disable();
+    }
+
+    // ── 키보드 콜백 ───────────────────────────────
+    void OnSelectBodyKeyboard(InputAction.CallbackContext ctx)
+    {
+        if (inputBlocked) return;
+
+        string keyName = ctx.control.name.ToLower();
+        if (!limbByKey.TryGetValue(keyName, out var limb)) return;
+
+        usingGamepad = false;
+        SelectLimb(limb);
+    }
+
+    void OnGrabMouse(InputAction.CallbackContext ctx)
+    {
+        if (inputBlocked) return;
+        TryGrab();
+    }
+
+    // ── 범퍼 콜백 (LB/RB) ────────────────────────
+    void OnPadLimbStarted(Limb limb)
+    {
+        if (inputBlocked) return;
+        usingGamepad = true;
+        SelectLimb(limb);
+    }
+
+    void OnPadLimbReleased(Limb limb)
+    {
+        if (inputBlocked) return;
+        if (activeLimb != limb) return;
+
+        // 그랩 시도 → 실패 시 원래 위치로 복귀
+        if (!TryGrab())
+            RestoreLimb(limb);
+    }
+
+    // ── 트리거 폴링 (LT/RT) ──────────────────────
+    void PollTriggers()
+    {
+        var gp = Gamepad.current;
+        if (gp == null) return;
+
+        // ── LT → 왼발 ──
+        float lt = gp.leftTrigger.ReadValue();
+
+        if (!leftTriggerHeld && lt >= triggerPressThreshold)
+        {
+            leftTriggerHeld = true;
+            usingGamepad = true;
+            if (!inputBlocked) SelectLimb(leftLeg);
+        }
+        else if (leftTriggerHeld && lt <= triggerReleaseThreshold)
+        {
+            leftTriggerHeld = false;
+            if (!inputBlocked)
+            {
+                if (activeLimb == leftLeg && !TryGrab())
+                    RestoreLimb(leftLeg);
+            }
+        }
+
+        // ── RT → 오른발 ──
+        float rt = gp.rightTrigger.ReadValue();
+
+        if (!rightTriggerHeld && rt >= triggerPressThreshold)
+        {
+            rightTriggerHeld = true;
+            usingGamepad = true;
+            if (!inputBlocked) SelectLimb(rightLeg);
+        }
+        else if (rightTriggerHeld && rt <= triggerReleaseThreshold)
+        {
+            rightTriggerHeld = false;
+            if (!inputBlocked)
+            {
+                if (activeLimb == rightLeg && !TryGrab())
+                    RestoreLimb(rightLeg);
+            }
+        }
+    }
+
+    // ── 공통 사지 선택 ────────────────────────────
+    void SelectLimb(Limb limb)
+    {
+        if (activeLimb != null && activeLimb != limb)
+        {
+            if (usingGamepad)
+            {
+                // 게임패드: 기존 사지 그랩 시도 → 실패 시 복귀
+                if (!TryGrab())
+                    RestoreLimb(activeLimb);
+            }
+            else
+            {
+                // 키보드: 기존 방식 유지 (클릭으로 그랩)
+                RemoveOutline(activeLimb);
+                activeLimb.grabbed = true;
+                activeLimb.ik.data.target.position = activeLimb.grabPos;
+            }
+        }
+
+        activeLimb = limb;
+        limb.grabbed = false;
+        AddOutline(limb);
+        SetCursor(true);
+    }
+
+    /// <summary>
+    /// 그랩 실패 시 사지를 이전 그랩 위치로 되돌리고 활성 상태 해제
+    /// </summary>
+    void RestoreLimb(Limb limb)
+    {
+        limb.grabbed = true;
+        limb.ik.data.target.position = limb.grabPos;
+        RemoveOutline(limb);
+
+        if (activeLimb == limb)
+            activeLimb = null;
+
+        SetCursor(true);
+    }
+
+    // ───────────────────────────────────────────────
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Slide(7, 1);
+            Slide(4);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Stun(2);
+        }
+        inputBlocked = stunTimer > 0f || (slideActive && slideForceTimer > 0f);
 
-        // 스턴 중 입력 차단 + 깜빡임
+        // 스턴 중 깜빡임
         if (stunTimer > 0f)
         {
             stunTimer -= Time.deltaTime;
@@ -123,41 +342,28 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // 사지 선택
-        foreach (var limb in limbs)
-        {
-            if (Input.GetKeyDown(limb.key))
-            {
-                if (activeLimb != null)
-                {
-                    RemoveOutline(activeLimb);
-                    activeLimb.grabbed = true;
-                    activeLimb.ik.data.target.position = activeLimb.grabPos;
-                }
+        if (slideActive && slideForceTimer > 0f) return;
 
-                activeLimb = limb;
-                limb.grabbed = false;
-                AddOutline(limb);
-                SetCursor(true);
-            }
-        }
+        // 트리거 폴링 (매 프레임)
+        PollTriggers();
 
-        // 활성 사지 마우스 이동
+        // 활성 사지 이동
         if (activeLimb != null)
         {
+            if (rotateAction?.action != null)
+                moveInput = rotateAction.action.ReadValue<Vector2>();
+            else
+                moveInput = Vector2.zero;
+
             MoveActiveLimb();
             UpdateOutlineColor();
         }
-
-        // 클릭으로 그랩
-        if (Input.GetMouseButtonDown(0)) TryGrab();
     }
 
     void LateUpdate()
     {
         ProcessSlide();
 
-        // 그랩된 타겟 고정
         foreach (var limb in limbs)
             if (limb.grabbed)
                 limb.ik.data.target.position = limb.grabPos;
@@ -173,7 +379,7 @@ public class PlayerController : MonoBehaviour
     {
         stunTimer = Mathf.Max(stunTimer, time);
         blinkTimer = 0f;
-
+        haptics?.PlayStun(time);
         if (activeLimb != null)
         {
             RemoveOutline(activeLimb);
@@ -185,29 +391,75 @@ public class PlayerController : MonoBehaviour
     }
 
     // ── 슬라이드 ────────────────────────────────────
-    /// <summary>
-    /// 외부에서 호출. time초 동안 무조건 미끄러진 뒤,
-    /// 홀드를 만날 때까지 계속 미끄러집니다.
-    /// </summary>
-    public void Slide(float distance, float time)
+    public void Slide(float time)
     {
-        slideVelocity += distance * slideSpeed;
+        if (activeLimb != null)
+        {
+            RemoveOutline(activeLimb);
+            activeLimb.grabbed = true;
+            activeLimb.ik.data.target.position = activeLimb.grabPos;
+            activeLimb = null;
+            SetCursor(true);
+        }
+
         slideForceTimer = time;
-        slideDrifting = true;
+        slideBlinkTimer = 0f;
+        slideActive = true;
+        haptics?.PlaySlideStart();
+
+        if (leftHandEffect != null) leftHandEffect.SetActive(true);
+        if (rightHandEffect != null) rightHandEffect.SetActive(true);
     }
 
     void ProcessSlide()
     {
-        if (!slideDrifting && Mathf.Abs(slideVelocity) < 0.001f) return;
+        if (!slideActive) return;
 
         if (slideForceTimer > 0f)
+        {
             slideForceTimer -= Time.deltaTime;
 
+            if (blinkTarget != null)
+            {
+                slideBlinkTimer -= Time.deltaTime;
+                if (slideBlinkTimer <= 0f)
+                {
+                    blinkTarget.SetActive(!blinkTarget.activeSelf);
+                    slideBlinkTimer = blinkInterval;
+                }
+
+                if (slideForceTimer <= 0f)
+                    blinkTarget.SetActive(true);
+            }
+
+            if (slideForceTimer <= 0f)
+            {
+                if (leftHandEffect != null) leftHandEffect.SetActive(false);
+                if (rightHandEffect != null) rightHandEffect.SetActive(false);
+            }
+        }
+
         GetSurfaceBasis(out _, out var surfUp);
-        float step = slideVelocity * Time.deltaTime;
-        Vector3 slideDelta = -surfUp * step;
+        Vector3 slideDelta = -surfUp * (slideSpeed * Time.deltaTime);
 
         bool foundHold = false;
+        if (slideForceTimer <= 0f)
+        {
+            if (leftArm.grabbed
+                && Physics.OverlapSphere(leftArm.grabPos, slideHoldDetectRadius, holdLayer).Length > 0)
+                foundHold = true;
+            if (!foundHold && rightArm.grabbed
+                && Physics.OverlapSphere(rightArm.grabPos, slideHoldDetectRadius, holdLayer).Length > 0)
+                foundHold = true;
+        }
+
+        if (foundHold)
+        {
+            slideActive = false;
+            haptics?.StopSlide();
+            return;
+        }
+
         foreach (var limb in limbs)
         {
             if (!limb.grabbed) continue;
@@ -218,25 +470,8 @@ public class PlayerController : MonoBehaviour
             if (Physics.Raycast(ray, out var hit, 3f, combinedLayer))
                 newPos = hit.point + hit.normal * handRadius;
 
-            if (slideForceTimer <= 0f
-                && Physics.OverlapSphere(newPos, slideHoldDetectRadius, holdLayer).Length > 0)
-                foundHold = true;
-
             limb.grabPos = newPos;
         }
-
-        if (foundHold)
-        {
-            slideVelocity = 0f;
-            slideDrifting = false;
-            return;
-        }
-
-        slideVelocity = Mathf.Lerp(slideVelocity, 0f,
-                                    Time.deltaTime * slideDamping);
-
-        if (slideDrifting && Mathf.Abs(slideVelocity) < slideDriftSpeed)
-            slideVelocity = slideDriftSpeed;
     }
 
     // ── 표면 법선 ─────────────────────────────────
@@ -259,8 +494,18 @@ public class PlayerController : MonoBehaviour
     // ── 활성 사지 이동 ────────────────────────────
     void MoveActiveLimb()
     {
-        float mx = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float my = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mx, my;
+
+        if (usingGamepad)
+        {
+            mx = moveInput.x * stickSensitivity * Time.deltaTime;
+            my = moveInput.y * stickSensitivity * Time.deltaTime;
+        }
+        else
+        {
+            mx = moveInput.x * mouseSensitivity;
+            my = moveInput.y * mouseSensitivity;
+        }
 
         var target = activeLimb.ik.data.target;
         var pos = target.position;
@@ -305,13 +550,14 @@ public class PlayerController : MonoBehaviour
     }
 
     // ── 그랩 ──────────────────────────────────────
-    void TryGrab()
+    /// <returns>그랩 성공 여부</returns>
+    bool TryGrab()
     {
-        if (activeLimb == null) return;
+        if (activeLimb == null) return false;
 
         var pos = activeLimb.ik.data.target.position;
         var hits = Physics.OverlapSphere(pos, grabRange, holdLayer);
-        if (hits.Length == 0) return;
+        if (hits.Length == 0) return false;
 
         var col = hits[0];
 
@@ -334,6 +580,9 @@ public class PlayerController : MonoBehaviour
         RemoveOutline(activeLimb);
         activeLimb = null;
         SetCursor(true);
+
+        haptics?.PlayGrab();
+        return true;
     }
 
     void InitGrab(Limb limb)
