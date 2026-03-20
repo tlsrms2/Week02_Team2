@@ -188,27 +188,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: -8435245712485981826, guid: 6a1ddb5e76ab7804f9a57b1d66fba010, type: 3}
---- !u!23 &82394781 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2836329830466692260, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-  m_PrefabInstance: {fileID: 1121915622196623822}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &106802408 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7208560649131216072, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
   m_PrefabInstance: {fileID: 1121915622196623822}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &115568993 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2596243097636554721, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-  m_PrefabInstance: {fileID: 1121915622196623822}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.TwoBoneIKConstraint
 --- !u!4 &241790665 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7878350319992209165, guid: 6a1ddb5e76ab7804f9a57b1d66fba010, type: 3}
@@ -458,11 +442,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
---- !u!23 &671885820 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5988641299799718891, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-  m_PrefabInstance: {fileID: 1121915622196623822}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &745545091 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7878350319992209165, guid: 6a1ddb5e76ab7804f9a57b1d66fba010, type: 3}
@@ -568,38 +547,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: -8435245712485981826, guid: 6a1ddb5e76ab7804f9a57b1d66fba010, type: 3}
---- !u!23 &839382110 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8411885394796799749, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-  m_PrefabInstance: {fileID: 1121915622196623822}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &854317437 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1792984664535300003, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
   m_PrefabInstance: {fileID: 1121915622196623822}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &992743106 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5041104631377736120, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-  m_PrefabInstance: {fileID: 1121915622196623822}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.TwoBoneIKConstraint
---- !u!114 &1143909014 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2419262494587206273, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-  m_PrefabInstance: {fileID: 1121915622196623822}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.TwoBoneIKConstraint
 --- !u!1 &1177148258
 GameObject:
   m_ObjectHideFlags: 0
@@ -949,17 +901,6 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   FollowOffset: {x: 0, y: 0, z: -10}
---- !u!114 &1333104257 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5055795148127665156, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-  m_PrefabInstance: {fileID: 1121915622196623822}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.TwoBoneIKConstraint
 --- !u!1 &1334223181
 GameObject:
   m_ObjectHideFlags: 0
@@ -5875,11 +5816,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1482738298 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8632030877748115563, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-  m_PrefabInstance: {fileID: 1121915622196623822}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1517407481
 GameObject:
   m_ObjectHideFlags: 0
@@ -6761,74 +6697,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 374982601551287596, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.414
-      objectReference: {fileID: 0}
-    - target: {fileID: 374982601551287596, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.061
-      objectReference: {fileID: 0}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: leftArm.ik
-      value: 
-      objectReference: {fileID: 1143909014}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: leftLeg.ik
-      value: 
-      objectReference: {fileID: 1333104257}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: maxReachArm
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: rightArm.ik
-      value: 
-      objectReference: {fileID: 115568993}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: rightLeg.ik
-      value: 
-      objectReference: {fileID: 992743106}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: outlineMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: a94c8b186e13a3541b876b8692bc8d30, type: 2}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: holdLayer.m_Bits
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: leftArm.renderer
-      value: 
-      objectReference: {fileID: 671885820}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: leftLeg.renderer
-      value: 
-      objectReference: {fileID: 82394781}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: wallLayer.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: naturalHangLength
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: rightArm.renderer
-      value: 
-      objectReference: {fileID: 839382110}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: rightLeg.renderer
-      value: 
-      objectReference: {fileID: 1482738298}
-    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: outlineInvalidMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: 74ae746991ec81c4eb763775d400488f, type: 2}
     - target: {fileID: 1562164796365931561, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.97
@@ -6873,29 +6741,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 2295118884241401116, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506274590933929797, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -2.342
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506274590933929797, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.069
-      objectReference: {fileID: 0}
-    - target: {fileID: 3828114159490143221, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6393335762590754830, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6621124805455076989, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
-    - {fileID: 8287442481446653868, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

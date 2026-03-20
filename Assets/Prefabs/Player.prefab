@@ -653,7 +653,7 @@ Transform:
   m_GameObject: {fileID: 1888562915646580210}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.694, y: -0.601, z: 0.273}
+  m_LocalPosition: {x: 2.414, y: -0.601, z: 0.061}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -871,7 +871,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2295118884241401116}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 941bf37854ef1dc448b1e3e94929ce3c, type: 2}
   m_CullingMode: 0
@@ -1285,7 +1285,7 @@ Transform:
   m_GameObject: {fileID: 4428860279684481318}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.739, y: -0.677, z: 1.361}
+  m_LocalPosition: {x: -2.342, y: -0.677, z: 0.069}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2457,9 +2457,7 @@ GameObject:
   - component: {fileID: 1050085320320618360}
   - component: {fileID: 4818875683319217523}
   - component: {fileID: 1347484165613625172}
-  - component: {fileID: 6621124805455076989}
   - component: {fileID: 7941789380589594252}
-  - component: {fileID: 8287442481446653868}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -2528,80 +2526,74 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8955673805688198578}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c052f63b9224e7746ba52304f04b62f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClimbingRigController
   body: {fileID: 7208560649131216072}
-  leftArmIK: {fileID: 2419262494587206273}
-  rightArmIK: {fileID: 2596243097636554721}
-  leftLegIK: {fileID: 5055795148127665156}
-  rightLegIK: {fileID: 5041104631377736120}
+  leftArm:
+    ik: {fileID: 2419262494587206273}
+    key: 113
+    isLeg: 0
+    renderer: {fileID: 5988641299799718891}
+    grabPos: {x: 0, y: 0, z: 0}
+    grabNormal: {x: 0, y: 0, z: 0}
+    grabbed: 0
+  rightArm:
+    ik: {fileID: 2596243097636554721}
+    key: 101
+    isLeg: 0
+    renderer: {fileID: 8411885394796799749}
+    grabPos: {x: 0, y: 0, z: 0}
+    grabNormal: {x: 0, y: 0, z: 0}
+    grabbed: 0
+  leftLeg:
+    ik: {fileID: 5055795148127665156}
+    key: 97
+    isLeg: 1
+    renderer: {fileID: 2836329830466692260}
+    grabPos: {x: 0, y: 0, z: 0}
+    grabNormal: {x: 0, y: 0, z: 0}
+    grabbed: 0
+  rightLeg:
+    ik: {fileID: 5041104631377736120}
+    key: 100
+    isLeg: 1
+    renderer: {fileID: 8632030877748115563}
+    grabPos: {x: 0, y: 0, z: 0}
+    grabNormal: {x: 0, y: 0, z: 0}
+    grabbed: 0
   mouseSensitivity: 10
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
   holdLayer:
     serializedVersion: 2
-    m_Bits: 0
-  maxReachArm: 2.4
+    m_Bits: 128
+  maxReachArm: 2.5
   maxReachLeg: 3.5
   handRadius: 0.15
   grabRange: 0.6
-  bodyFollowWeightXZ: 0.55
-  bodyFollowWeightY: 0.533
+  bodyFollowWeight: 0.55
   bodyLerpSpeed: 7
   rotationSpeed: 5
   wallStandoffDist: 0.7
   bodyWallOffset: 1
   normalTrackSpeed: 2
+  naturalHangLength: 0.7
   balanceWeight: 0.6
   maxTiltAngle: 20
-  maxYawAngle: 30
-  tiltSmoothSpeed: 3
-  yawSmoothSpeed: 5
-  rollSmoothSpeed: 2
-  freeLimbFollowSpeed: 0
-  freeArmOffset: {x: 0.3, y: 0.2, z: 0.3}
-  freeLegOffset: {x: 0.25, y: -0.9, z: 0.2}
-  upwardBoost: 1.2
-  boostDeadzone: 0.3
-  naturalHangLength: 1
-  minLegBodyGap: 0.4
-  legPushThreshold: 0.5
-  flaggingStrength: 0.799
-  flaggingSpeed: 4
-  footRotLerpSpeed: 8
-  toeAngle: 0
-  freeFootRotSpeed: 6
-  externalDamping: 8
-  maxExternalSpeed: 10
-  anchorPullStrength: 5
-  useGlobalGravity: 1
-  gravityScale: 2
-  maxGravitySpeed: 20
---- !u!114 &6621124805455076989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8955673805688198578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec86226a1ec17fa44959d33d6e7866dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GravitySystem
-  gravityDirection: {x: 0, y: -1, z: 0}
-  gravityStrength: 9.8
-  transitionSpeed: 3
-  preset4: {x: 0, y: -1, z: 0}
-  preset5: {x: 0, y: 1, z: 0}
-  preset6: {x: -1, y: 0, z: 0}
-  preset7: {x: 1, y: 0, z: 0}
-  preset8: {x: 0, y: 0, z: 1}
-  preset9: {x: 0, y: 0, z: -1}
+  outlineMaterial: {fileID: 2100000, guid: a94c8b186e13a3541b876b8692bc8d30, type: 2}
+  outlineInvalidMaterial: {fileID: 2100000, guid: 74ae746991ec81c4eb763775d400488f, type: 2}
+  slideSpeed: 3
+  slideDamping: 5
+  armSlideResistance: 0.7
+  vDropArmSpread: 20
+  vDropLegSpread: 40
+  vDropArmReach: 0.8
+  vDropLegReach: 0.7
+  vDropLimbLerp: 6
 --- !u!65 &7941789380589594252
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2623,33 +2615,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.1, y: 1.4, z: 0.85}
   m_Center: {x: 0, y: -1.4, z: 0}
---- !u!54 &8287442481446653868
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8955673805688198578}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 20
-  m_AngularDamping: 3
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &9116374384512761392
 GameObject:
   m_ObjectHideFlags: 0
