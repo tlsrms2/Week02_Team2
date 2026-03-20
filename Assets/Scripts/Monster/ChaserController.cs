@@ -14,12 +14,10 @@ public class ChaserController : MonoBehaviour
 
     [Header("보스 체인저")]
     [SerializeField] private float triggerY = 10f;
-    string animTriggerName = "DK";
 
     [Header("연출 재질")]
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private Material glitchMaterial;
-    [SerializeField] private float glitchIntersity = 0.8f;
 
     [Header("GameOver")]
     [SerializeField] private GameObject gameOverPanel;
