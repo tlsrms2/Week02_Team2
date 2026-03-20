@@ -105,19 +105,6 @@ public class ChaserController : MonoBehaviour
             yield return null;
         }
         _spriteRenderer.material.SetFloat("_GlitchIntensity", 0.5f);
-        if (_animator != null) _animator.SetTrigger(animTriggerName);
-
-        //yield return new WaitForSeconds(0.1f);
-        
-        while (intensity > 0f)
-        {
-            intensity = Mathf.MoveTowards(intensity, 0f, 0.3f * Time.deltaTime);
-            _spriteRenderer.material.SetFloat("_GlitchIntensity", intensity);
-            yield return null;
-        }
-        _spriteRenderer.material.SetFloat("_GlitchIntensity", 0f);
-
-        _spriteRenderer.material = defaultMaterial;
     }
 
     private void GameOver()
