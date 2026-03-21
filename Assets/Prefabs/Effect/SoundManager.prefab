@@ -177,19 +177,45 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   bgmSource: {fileID: 7369422595703338024}
   sfxSource: {fileID: 8974132729882759804}
-  tutorialBgm: {fileID: 8300000, guid: 46b284cca5e958f47b4f324fde66a16e, type: 3}
-  titleBgm: {fileID: 8300000, guid: b6fdc4b5117452449881edff02a8d2e3, type: 3}
-  stage1Bgm: {fileID: 8300000, guid: 3bd581b572f9a02478f17bbc40645859, type: 3}
-  stage2Bgm: {fileID: 8300000, guid: a056bf6625f79f34eb532e323a0453dd, type: 3}
-  stage3Bgm: {fileID: 8300000, guid: 7b45f1b0a7e9df64bb20b2766228f124, type: 3}
-  stage3BossIntroBgm: {fileID: 8300000, guid: 39f67088808ca5e449ee1ba4dbeab719, type: 3}
-  endingBgm: {fileID: 8300000, guid: 94368cbc3ade7d7418c255dd329e1adf, type: 3}
-  gameOverBgm: {fileID: 8300000, guid: 04cadf9361e07d848aabcd31e947f5f9, type: 3}
-  buttonClickSfx: {fileID: 8300000, guid: 3f237b4113f4b7d4286792ff81baeee2, type: 3}
-  stunSfx: {fileID: 8300000, guid: b3767d9f4790ad7428b5db4bdbd5564c, type: 3}
-  slideSfx: {fileID: 8300000, guid: 007dc76f930706549b727419328c0ab3, type: 3}
-  climbingSfx: {fileID: 8300000, guid: 690e345441535ce45b0cf9307ec24204, type: 3}
-  coinEatingSfx: {fileID: 8300000, guid: 51183c5adc2d1014089ba1464cbe8034, type: 3}
+  tutorialBgm:
+    clip: {fileID: 8300000, guid: 46b284cca5e958f47b4f324fde66a16e, type: 3}
+    volume: 0.5
+  titleBgm:
+    clip: {fileID: 8300000, guid: b6fdc4b5117452449881edff02a8d2e3, type: 3}
+    volume: 0.5
+  stage1Bgm:
+    clip: {fileID: 8300000, guid: 3bd581b572f9a02478f17bbc40645859, type: 3}
+    volume: 0.5
+  stage2Bgm:
+    clip: {fileID: 8300000, guid: a056bf6625f79f34eb532e323a0453dd, type: 3}
+    volume: 0.5
+  stage3Bgm:
+    clip: {fileID: 8300000, guid: 7b45f1b0a7e9df64bb20b2766228f124, type: 3}
+    volume: 0.5
+  stage3BossIntroBgm:
+    clip: {fileID: 8300000, guid: 39f67088808ca5e449ee1ba4dbeab719, type: 3}
+    volume: 0.5
+  endingBgm:
+    clip: {fileID: 8300000, guid: 94368cbc3ade7d7418c255dd329e1adf, type: 3}
+    volume: 0.5
+  gameOverBgm:
+    clip: {fileID: 8300000, guid: 04cadf9361e07d848aabcd31e947f5f9, type: 3}
+    volume: 0.5
+  buttonClickSfx:
+    clip: {fileID: 8300000, guid: e942deda48cdff340985aca37c4d0952, type: 3}
+    volume: 0.5
+  stunSfx:
+    clip: {fileID: 8300000, guid: b3767d9f4790ad7428b5db4bdbd5564c, type: 3}
+    volume: 0.5
+  slideSfx:
+    clip: {fileID: 8300000, guid: 007dc76f930706549b727419328c0ab3, type: 3}
+    volume: 0.5
+  climbingSfx:
+    clip: {fileID: 8300000, guid: 690e345441535ce45b0cf9307ec24204, type: 3}
+    volume: 0.5
+  coinEatingSfx:
+    clip: {fileID: 8300000, guid: 51183c5adc2d1014089ba1464cbe8034, type: 3}
+    volume: 0.5
 --- !u!1 &8821082962437285918
 GameObject:
   m_ObjectHideFlags: 0

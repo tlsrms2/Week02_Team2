@@ -1,6 +1,14 @@
 using UnityEngine;
 using System.Collections;
 
+// 오디오 클립과 개별 볼륨을 함께 묶어서 인스펙터에 표시하기 위한 클래스입니다.
+[System.Serializable]
+public class SoundData
+{
+    public AudioClip clip;
+    [Range(0f, 1f)] public float volume = 1f; // 각 사운드의 고유 볼륨 (기본값 100%)
+}
+
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
@@ -10,21 +18,24 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource sfxSource;
 
     [Header("BGM Clips")]
-    [SerializeField] private AudioClip tutorialBgm;
-    [SerializeField] private AudioClip titleBgm;
-    [SerializeField] private AudioClip stage1Bgm;
-    [SerializeField] private AudioClip stage2Bgm;
-    [SerializeField] private AudioClip stage3Bgm;
-    [SerializeField] private AudioClip stage3BossIntroBgm;
-    [SerializeField] private AudioClip endingBgm;
-    [SerializeField] private AudioClip gameOverBgm;
+    [SerializeField] private SoundData tutorialBgm;
+    [SerializeField] private SoundData titleBgm;
+    [SerializeField] private SoundData stage1Bgm;
+    [SerializeField] private SoundData stage2Bgm;
+    [SerializeField] private SoundData stage3Bgm;
+    [SerializeField] private SoundData stage3BossIntroBgm;
+    [SerializeField] private SoundData endingBgm;
+    [SerializeField] private SoundData gameOverBgm;
 
     [Header("SFX Clips")]
-    [SerializeField] private AudioClip buttonClickSfx;
-    [SerializeField] private AudioClip stunSfx;
-    [SerializeField] private AudioClip slideSfx;
-    [SerializeField] private AudioClip climbingSfx;
-    [SerializeField] private AudioClip coinEatingSfx;
+    [SerializeField] private SoundData buttonClickSfx;
+    [SerializeField] private SoundData stunSfx;
+    [SerializeField] private SoundData slideSfx;
+    [SerializeField] private SoundData climbingSfx;
+    [SerializeField] private SoundData coinEatingSfx;
+
+    private float masterBgmVolume = 1f;       // 전체 BGM 마스터 볼륨 설정값
+    private float currentBgmVolumeScale = 1f; // 현재 재생중인 BGM의 개별 볼륨값
 
     private void Awake()
     {
@@ -36,17 +47,23 @@ public class SoundManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        // 시작할 때 오디오 소스의 초기 볼륨을 마스터 볼륨으로 저장해둡니다.
+        if (bgmSource != null) masterBgmVolume = bgmSource.volume;
     }
 
     #region BGM
 
-    public void PlayBgm(AudioClip clip)
+    public void PlayBgm(SoundData data)
     {
-        if (bgmSource.clip == clip) return;
+        if (data == null || data.clip == null) return;
+        if (bgmSource.clip == data.clip) return;
 
-        bgmSource.clip = clip;
+        currentBgmVolumeScale = data.volume;
+        bgmSource.clip = data.clip;
         bgmSource.loop = true;
         bgmSource.pitch = 1f; // 기본 pitch
+        bgmSource.volume = masterBgmVolume * currentBgmVolumeScale; // 마스터 볼륨 * 개별 볼륨
         bgmSource.Play();
     }
 
@@ -63,9 +80,12 @@ public class SoundManager : MonoBehaviour
 
     #region SFX
 
-    public void PlaySfx(AudioClip clip)
+    public void PlaySfx(SoundData data)
     {
-        sfxSource.PlayOneShot(clip);
+        if (data == null || data.clip == null) return;
+
+        // PlayOneShot은 (클립, 개별 볼륨 스케일)을 인자로 받습니다. 자동으로 sfxSource.volume과 곱해집니다.
+        sfxSource.PlayOneShot(data.clip, data.volume);
     }
 
     public void PlayButtonClick() => PlaySfx(buttonClickSfx);
@@ -73,6 +93,24 @@ public class SoundManager : MonoBehaviour
     public void PlaySlide() => PlaySfx(slideSfx);
     public void PlayClimbing() => PlaySfx(climbingSfx);
     public void PlayCoinEating() => PlaySfx(coinEatingSfx);
+
+    #endregion
+
+    #region Volume Control
+
+    public void SetBgmVolume(float volume)
+    {
+        masterBgmVolume = Mathf.Clamp01(volume);
+        if (bgmSource != null) 
+        {
+            bgmSource.volume = masterBgmVolume * currentBgmVolumeScale;
+        }
+    }
+
+    public void SetSfxVolume(float volume)
+    {
+        if (sfxSource != null) sfxSource.volume = Mathf.Clamp01(volume);
+    }
 
     #endregion
 }
