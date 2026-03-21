@@ -75,10 +75,10 @@ public class TitleButton : MonoBehaviour
     public bool IsMouseOver()
     {
         return RectTransformUtility.RectangleContainsScreenPoint(
-            _rect,
-            Input.mousePosition,
-            Camera.main
-        );
+        _rect,
+        Input.mousePosition,
+        null // Screen Space Overlay ¡æ null
+    );
     }
 
     public void OnClick()
