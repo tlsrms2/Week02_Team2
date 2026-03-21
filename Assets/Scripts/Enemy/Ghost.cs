@@ -1,10 +1,12 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Ghost : MonoBehaviour
 {
     public float speed = 2.0f;       // 유령 이동 속도
-    public float rayDistance = 1.0f; // 레이저 길이 (타일 크기에 맞게 조절)
-    public LayerMask wallLayer;      // 인스펙터에서 MazeWall 레이어 선택
+
+    [Header("Pathfinding")]
+    public MazeNode startNode;       // 유령이 처음 시작할 위치(노드)
 
     [Header("Sprites")]
     public Sprite upSprite;          // 위쪽을 볼 때의 스프라이트
@@ -14,70 +16,94 @@ public class Ghost : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Vector3 moveDirection = Vector3.up; // 현재 이동 방향 (로컬 기준)
+    
+    private MazeNode currentNode;
+    private MazeNode targetNode;
+    private MazeNode previousNode;
+
     [Header("Stun")]
     [SerializeField] LayerMask targerLayer;
     [SerializeField] float stunTime;
+
     void Start()
     {
         // 유령 오브젝트가 가지고 있는 SpriteRenderer 컴포넌트를 가져옵니다.
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-    }
-
-    // 특정 방향에 벽이 있는지 확인하는 함수
-    bool CheckWall(Vector3 direction)
-    {
-        // 유령의 현재 위치에서 direction 방향으로 레이저를 쏩니다.
-        // 방향 전환 시 transform을 회전하지 않으므로, 로컬 방향(direction)을 월드 방향으로 변환하여 사용합니다.
-        Vector3 worldDirection = transform.TransformDirection(direction);
-        if (Physics.Raycast(transform.position, worldDirection, out RaycastHit hit, rayDistance, wallLayer))
+        
+        if (startNode != null)
         {
-            return true; // 벽에 막힘
+            // 시작 노드로 유령 위치를 맞추고 다음 이동할 목표를 계산합니다.
+            transform.position = startNode.transform.position;
+            currentNode = startNode;
+            ChooseNextNode();
         }
-        return false; // 길이 뚫려 있음
     }
 
     void Update()
     {
-        // 앞이 막혀있는지 확인
-        if (CheckWall(moveDirection))
+        if (targetNode != null)
         {
-            // 현재 방향을 기준으로 오른쪽, 왼쪽 방향 벡터 계산
-            Vector3 rightDir = new Vector3(moveDirection.y, -moveDirection.x, 0);
-            Vector3 leftDir = new Vector3(-moveDirection.y, moveDirection.x, 0);
+            // 목표 노드를 향해 부드럽게 이동합니다.
+            transform.position = Vector3.MoveTowards(transform.position, targetNode.transform.position, speed * Time.deltaTime);
 
-            // 오른쪽, 왼쪽 방향에 벽이 있는지 확인
-            bool canGoRight = !CheckWall(rightDir);
-            bool canGoLeft = !CheckWall(leftDir);
-
-            // Debug.Log($"canGoRight: {canGoRight}, canGoLeft: {canGoLeft}");
-            
-            if (canGoRight && canGoLeft)
+            // 목표 노드에 거의 도착했는지 확인합니다.
+            if (Vector3.Distance(transform.position, targetNode.transform.position) < 0.01f)
             {
-                // 양쪽 다 뚫려있다면 랜덤하게 좌/우 중 하나 선택
-                moveDirection = Random.Range(0, 2) == 0 ? leftDir : rightDir;
-            }
-            else if (canGoRight)
-            {
-                // 오른쪽만 뚫려있다면 오른쪽으로 방향 전환
-                moveDirection = rightDir;
-            }
-            else if (canGoLeft)
-            {
-                // 왼쪽만 뚫려있다면 왼쪽으로 방향 전환
-                moveDirection = leftDir;
-            }
-            else
-            {
-                // 앞, 좌, 우 모두 막힌 막다른 길이면 180도 뒤로 돌기
-                moveDirection = -moveDirection;
+                transform.position = targetNode.transform.position; // 위치를 정확하게 보정
+                currentNode = targetNode;
+                ChooseNextNode();
             }
         }
-        
-        UpdateSprite(); // 이동 방향에 맞게 스프라이트 갱신
-
-        // 선택된 방향으로 계속 직진
-        transform.Translate(moveDirection * speed * Time.deltaTime, Space.Self); 
     }
+
+    // 갈림길(노드)에 도착했을 때 다음에 갈 방향을 선택하는 함수
+    void ChooseNextNode()
+    {
+        if (currentNode == null) return;
+
+        List<MazeNode> availableNodes = new List<MazeNode>();
+        List<Vector3> availableDirections = new List<Vector3>();
+
+        // 방금 왔던 길(previousNode)을 제외하고 갈 수 있는 모든 방향을 리스트에 추가합니다.
+        if (currentNode.upNode != null && currentNode.upNode != previousNode)
+        {
+            availableNodes.Add(currentNode.upNode);
+            availableDirections.Add(Vector3.up);
+        }
+        if (currentNode.downNode != null && currentNode.downNode != previousNode)
+        {
+            availableNodes.Add(currentNode.downNode);
+            availableDirections.Add(Vector3.down);
+        }
+        if (currentNode.leftNode != null && currentNode.leftNode != previousNode)
+        {
+            availableNodes.Add(currentNode.leftNode);
+            availableDirections.Add(Vector3.left);
+        }
+        if (currentNode.rightNode != null && currentNode.rightNode != previousNode)
+        {
+            availableNodes.Add(currentNode.rightNode);
+            availableDirections.Add(Vector3.right);
+        }
+
+        // 갈 수 있는 길이 있다면 그 중 하나를 랜덤하게 선택합니다.
+        if (availableNodes.Count > 0)
+        {
+            int index = Random.Range(0, availableNodes.Count);
+            targetNode = availableNodes[index];
+            moveDirection = availableDirections[index];
+        }
+        else
+        {
+            // 다른 길이 없고 막다른 길이면, 왔던 길로 180도 돌아갑니다.
+            targetNode = previousNode;
+            moveDirection = -moveDirection;
+        }
+
+        previousNode = currentNode;
+        UpdateSprite(); // 방향이 바뀌었으므로 스프라이트 갱신
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         
@@ -92,38 +118,13 @@ public class Ghost : MonoBehaviour
     {
         if (spriteRenderer == null) return;
 
-        // 정밀도 문제 방지를 위해 0.5를 기준으로 방향을 확인합니다.
-        if (moveDirection.y > 0.5f)
+        if (moveDirection == Vector3.up)
             spriteRenderer.sprite = upSprite;
-        else if (moveDirection.y < -0.5f)
+        else if (moveDirection == Vector3.down)
             spriteRenderer.sprite = downSprite;
-        else if (moveDirection.x > 0.5f)
+        else if (moveDirection == Vector3.right)
             spriteRenderer.sprite = rightSprite;
-        else if (moveDirection.x < -0.5f)
+        else if (moveDirection == Vector3.left)
             spriteRenderer.sprite = leftSprite;
-    }
-
-    // 씬 뷰에서 레이캐스트 범위와 방향을 시각적으로 보여주는 기즈모 함수
-    private void OnDrawGizmos()
-    {
-        Vector3 worldDirection = transform.TransformDirection(moveDirection);
-        Vector3 startPos = transform.position;
-        Vector3 endPos = startPos + worldDirection * rayDistance;
-
-        // 레이캐스트가 벽(wallLayer)에 닿으면 빨간색, 닿지 않으면 초록색으로 표시
-        if (Physics.Raycast(startPos, worldDirection, rayDistance, wallLayer))
-        {
-            Gizmos.color = Color.red;
-        }
-        else
-        {
-            Gizmos.color = Color.green;
-        }
-
-        // 레이저 선 그리기
-        Gizmos.DrawLine(startPos, endPos);
-        
-        // 끝부분에 작은 구체를 그려서 방향을 더 명확하게 표시
-        Gizmos.DrawWireSphere(endPos, 0.1f);
     }
 }
