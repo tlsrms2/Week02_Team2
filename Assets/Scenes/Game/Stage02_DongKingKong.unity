@@ -6490,7 +6490,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarrelSpawner
   barrelPrefab: {fileID: 6057917780987896680, guid: 96b57e0531d26d445ba732c34d8579d4, type: 3}
-  spawnInterval: 3
+  spawnIntervalMin: 1
+  spawnIntervalMax: 1
   spawnDirection: {x: 1, y: 0, z: 0}
 --- !u!4 &1312432751
 Transform:

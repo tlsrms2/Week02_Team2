@@ -1,10 +1,14 @@
+using System;
 using UnityEngine;
 
 public class BarrelSpawner : MonoBehaviour
 {
     [Header("스폰 설정")]
     public GameObject barrelPrefab;      // 소환할 술통 프리팹
-    public float spawnInterval = 3.0f;   // 소환 간격 (초)
+    public int spawnIntervalMin;
+    public int spawnIntervalMax;
+    private int spawnInterval;
+    bool isSpawned = true;
 
     [Header("이동 방향 설정")]
     [Tooltip("소환된 술통이 굴러갈 초기 방향 (오른쪽: 1,0,0 / 왼쪽: -1,0,0)")]
@@ -14,11 +18,18 @@ public class BarrelSpawner : MonoBehaviour
 
     void Update()
     {
+        if (isSpawned)
+        {
+            spawnInterval = UnityEngine.Random.Range(spawnIntervalMin, spawnIntervalMax);
+            isSpawned = false;
+        }
+
         timer += Time.deltaTime;
         if (timer >= spawnInterval)
         {
             SpawnBarrel();
             timer = 0f;
+            isSpawned = true;
         }
     }
 
