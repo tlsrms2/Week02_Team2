@@ -105,6 +105,8 @@ public class PlayerController : MonoBehaviour
     private bool usingGamepad;
 
     // 트리거 폴링 상태
+    private bool leftArmHeld;
+    private bool rightArmHeld;
     private bool leftTriggerHeld;
     private bool rightTriggerHeld;
 
@@ -222,22 +224,26 @@ public class PlayerController : MonoBehaviour
             RestoreLimb(limb);
     }
 
-    // ── 트리거 폴링 (LT/RT) ──────────────────────
-    void PollTriggers()
+    // ── 트리거 폴링 (LT/RT) ────────────────────── 이전꺼 일단 주석처리 해놓음.
+    /* void PollTriggers()
     {
         var gp = Gamepad.current;
         if (gp == null) return;
 
-        // ── LT → 왼발 ──
+        // ── 왼발 (LT 아날로그 또는 A버튼(South)) ──
         float lt = gp.leftTrigger.ReadValue();
+        // 트리거를 설정값 이상 당겼거나(OR), A버튼을 눌렀을 때 true
+        bool isLeftLegPressed = lt >= triggerPressThreshold || gp.buttonSouth.isPressed;
+        // 트리거를 완전히 뗐고(AND), A버튼도 뗐을 때 true
+        bool isLeftLegReleased = lt <= triggerReleaseThreshold && !gp.buttonSouth.isPressed;
 
-        if (!leftTriggerHeld && lt >= triggerPressThreshold)
+        if (!leftTriggerHeld && isLeftLegPressed)
         {
             leftTriggerHeld = true;
             usingGamepad = true;
             if (!inputBlocked) SelectLimb(leftLeg);
         }
-        else if (leftTriggerHeld && lt <= triggerReleaseThreshold)
+        else if (leftTriggerHeld && isLeftLegReleased)
         {
             leftTriggerHeld = false;
             if (!inputBlocked)
@@ -247,16 +253,98 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // ── RT → 오른발 ──
+        // ── 오른발 (RT 아날로그 또는 B버튼(East)) ──
         float rt = gp.rightTrigger.ReadValue();
+        bool isRightLegPressed = rt >= triggerPressThreshold || gp.buttonEast.isPressed;
+        bool isRightLegReleased = rt <= triggerReleaseThreshold && !gp.buttonEast.isPressed;
 
-        if (!rightTriggerHeld && rt >= triggerPressThreshold)
+        if (!rightTriggerHeld && isRightLegPressed)
         {
             rightTriggerHeld = true;
             usingGamepad = true;
             if (!inputBlocked) SelectLimb(rightLeg);
         }
-        else if (rightTriggerHeld && rt <= triggerReleaseThreshold)
+        else if (rightTriggerHeld && isRightLegReleased)
+        {
+            rightTriggerHeld = false;
+            if (!inputBlocked)
+            {
+                if (activeLimb == rightLeg && !TryGrab())
+                    RestoreLimb(rightLeg);
+            }
+        }
+    } */
+    
+    void PollTriggers()
+    {
+        var gp = Gamepad.current;
+        if (gp == null) return;
+
+        // ── 왼손 (LB 또는 X버튼(West)) ──
+        bool isLeftArmPressed = gp.leftShoulder.isPressed || gp.buttonWest.isPressed;
+        if (!leftArmHeld && isLeftArmPressed)
+        {
+            leftArmHeld = true;
+            usingGamepad = true;
+            if (!inputBlocked) SelectLimb(leftArm);
+        }
+        else if (leftArmHeld && !isLeftArmPressed)
+        {
+            leftArmHeld = false;
+            if (!inputBlocked)
+            {
+                if (activeLimb == leftArm && !TryGrab())
+                    RestoreLimb(leftArm);
+            }
+        }
+
+        // ── 오른손 (RB 또는 Y버튼(North)) ──
+        bool isRightArmPressed = gp.rightShoulder.isPressed || gp.buttonNorth.isPressed;
+        if (!rightArmHeld && isRightArmPressed)
+        {
+            rightArmHeld = true;
+            usingGamepad = true;
+            if (!inputBlocked) SelectLimb(rightArm);
+        }
+        else if (rightArmHeld && !isRightArmPressed)
+        {
+            rightArmHeld = false;
+            if (!inputBlocked)
+            {
+                if (activeLimb == rightArm && !TryGrab())
+                    RestoreLimb(rightArm);
+            }
+        }
+
+        // ── 왼발 (LT 아날로그 또는 A버튼(South)) ──
+        float lt = gp.leftTrigger.ReadValue();
+        bool isLeftLegPressed = lt >= triggerPressThreshold || gp.buttonSouth.isPressed;
+        if (!leftTriggerHeld && isLeftLegPressed)
+        {
+            leftTriggerHeld = true;
+            usingGamepad = true;
+            if (!inputBlocked) SelectLimb(leftLeg);
+        }
+        else if (leftTriggerHeld && !isLeftLegPressed)
+        {
+            leftTriggerHeld = false;
+            if (!inputBlocked)
+            {
+                if (activeLimb == leftLeg && !TryGrab())
+                    RestoreLimb(leftLeg);
+            }
+        }
+
+        // ── 오른발 (RT 아날로그 또는 B버튼(East)) ──
+        float rt = gp.rightTrigger.ReadValue();
+        bool isRightLegPressed = rt >= triggerPressThreshold || gp.buttonEast.isPressed;
+        if (!rightTriggerHeld && isRightLegPressed)
+        {
+            rightTriggerHeld = true;
+            usingGamepad = true;
+            if (!inputBlocked) SelectLimb(rightLeg);
+        }
+        else if (rightTriggerHeld && !isRightLegPressed)
         {
             rightTriggerHeld = false;
             if (!inputBlocked)

@@ -1,0 +1,978 @@
+fileFormatVersion: 2
+guid: 7a9b621e24b215f44b304b6f39fe2fd2
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  importerVersion: 2
+  textureImporterSettings:
+    alphaSource: 1
+    mipMapMode: 0
+    enableMipMap: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+    convertToNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+    swizzle: 50462976
+    isReadable: 0
+    streamingMipmaps: 0
+    streamingMipmapsPriority: 0
+    vTOnly: 0
+    ignoreMipmapLimit: 0
+    nPOTScale: 1
+    sRGBTexture: 1
+    spriteMode: 2
+    spriteExtrude: 1
+    spriteMeshType: 1
+    alignment: 0
+    spritePivot: {x: 0.5, y: 0.5}
+    spritePixelsToUnits: 100
+    spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+    spriteGenerateFallbackPhysicsShape: 0
+    generateCubemap: 6
+    cubemapConvolution: 0
+    seamlessCubemap: 0
+    alphaIsTransparency: 1
+    spriteTessellationDetail: -1
+    textureType: 8
+    textureShape: 1
+    singleChannelComponent: 0
+    flipbookRows: 0
+    flipbookColumns: 0
+    ignorePngGamma: 0
+    cookieMode: 0
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+    normalMap: 0
+    textureFormat: 0
+    maxTextureSize: 0
+    lightmap: 0
+    compressionQuality: 0
+    linearTexture: 0
+    grayScaleToAlpha: 0
+    rGBM: 0
+    cubemapConvolutionSteps: 0
+    cubemapConvolutionExponent: 0
+    maxTextureSizeSet: 0
+    compressionQualitySet: 0
+    textureFormatSet: 0
+    applyGammaDecoding: 0
+  previousAsepriteImporterSettings:
+    fileImportMode: 2
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+    generateIndividualEvents: 1
+    generateSpriteAtlas: 1
+  asepriteImporterSettings:
+    fileImportMode: 2
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+    generateIndividualEvents: 1
+    generateSpriteAtlas: 1
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 639096372996561799
+  textureAssetName: 
+  singleSpriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+  animatedSpriteImportData:
+  - name: Joystick
+    originalName: 
+    pivot: {x: 0.5, y: -0.040302265}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 1571
+      height: 794
+    spriteID: 6096181f0b760864d8bb264831481652
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+  spriteSheetImportData: []
+  tileSetImportData:
+  - name: Joystick
+    originalName: 
+    pivot: {x: 5.167763, y: 2.6118422}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1452
+      y: 1153
+      width: 152
+      height: 152
+    spriteID: 6096181f0b760864d8bb264831481652
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1452, y: 1153}
+  - name: Body
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 1571
+      height: 794
+    spriteID: cfc16ec27b9f3204b964033e719c7aa8
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+  - name: JoyStick_Move
+    originalName: 
+    pivot: {x: 9.351191, y: 4.7831326}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1452
+      y: 1313
+      width: 84
+      height: 83
+    spriteID: 59210af8c57e1bf47a026ff96b7e77ad
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1452, y: 1313}
+  - name: ButtonBackground
+    originalName: 
+    pivot: {x: 4.8190184, y: 2.4355829}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1452
+      y: 806
+      width: 163
+      height: 163
+    spriteID: ac7051a6ec70b7945bb50ff54a17ce94
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1452, y: 806}
+  - name: Post
+    originalName: 
+    pivot: {x: 0.5454861, y: 0.641357}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 806
+      width: 1440
+      height: 619
+    spriteID: c12c41653824584409398a86229cb9e2
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 806}
+  - name: ScanLine
+    originalName: 
+    pivot: {x: 1.0321945, y: 0.7039007}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 1433
+      width: 761
+      height: 564
+    spriteID: d9871688ad1f1c54a83eae31b2e70e1d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 1433}
+  - name: TextContainer
+    originalName: 
+    pivot: {x: 5.201987, y: 2.3630953}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1452
+      y: 977
+      width: 151
+      height: 168
+    spriteID: 40510cbbf1b44bb44b3d776a29b24f48
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1452, y: 977}
+  - name: Button_A
+    originalName: 
+    pivot: {x: 14.026786, y: 7.2181816}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1544
+      y: 1313
+      width: 56
+      height: 55
+    spriteID: e30ea498e6fb941498c8d8b933bb4fd0
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1544, y: 1313}
+  - name: Button_B
+    originalName: 
+    pivot: {x: 14.026786, y: 7.2181816}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1623
+      y: 806
+      width: 56
+      height: 55
+    spriteID: 453a64cc8ef099f4ea132303cce2024f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1623, y: 806}
+  - name: Button_Y
+    originalName: 
+    pivot: {x: 14.026786, y: 7.2181816}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1623
+      y: 869
+      width: 56
+      height: 55
+    spriteID: b5b7760501e070842bbcf3eda75be18e
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1623, y: 869}
+  - name: Button_X
+    originalName: 
+    pivot: {x: 14.820755, y: 7.4905663}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1623
+      y: 932
+      width: 53
+      height: 53
+    spriteID: 72682ea3aa287ad46b1a29b5b56dfd61
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1623, y: 932}
+  - name: RHand
+    originalName: 
+    pivot: {x: 34.152172, y: 14.178572}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1623
+      y: 1028
+      width: 23
+      height: 28
+    spriteID: d47c5bc925dac264f93868592df44699
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1623, y: 1028}
+  - name: LHand
+    originalName: 
+    pivot: {x: 31.42, y: 14.703704}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1623
+      y: 993
+      width: 25
+      height: 27
+    spriteID: 654163d058f605f4eb7712515290a044
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1623, y: 993}
+  - name: LFoot
+    originalName: 
+    pivot: {x: 39.275, y: 14.178572}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1623
+      y: 1064
+      width: 20
+      height: 28
+    spriteID: bc471e504f83ab54589c831afbd69638
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1623, y: 1064}
+  - name: RFoot
+    originalName: 
+    pivot: {x: 35.704544, y: 15.88}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1623
+      y: 1100
+      width: 22
+      height: 25
+    spriteID: 24d0e853410d2754e931856d582fdf0a
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1623, y: 1100}
+  - name: Button_Side1
+    originalName: 
+    pivot: {x: 27.086206, y: 13.689655}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1544
+      y: 1376
+      width: 29
+      height: 29
+    spriteID: 79eddfd116de1f94685fd8a700d81265
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1544, y: 1376}
+  - name: Button_Side2
+    originalName: 
+    pivot: {x: 27.086206, y: 13.689655}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1581
+      y: 1376
+      width: 29
+      height: 29
+    spriteID: eef79a0f062e45c4bbee5913795c61b2
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1581, y: 1376}
+  asepriteLayers:
+  - layerIndex: 0
+    uuid:
+      value0: 3383614466
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Body
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Body
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: 0
+        width: 1571
+        height: 794
+      spriteId: cfc16ec27b9f3204b964033e719c7aa8
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 1
+    uuid:
+      value0: 1277967432
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Joystick
+    layerFlags: 0
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Joystick
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 195
+        y: 459
+        width: 152
+        height: 152
+      spriteId: 6096181f0b760864d8bb264831481652
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 2
+    uuid:
+      value0: 962094696
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: TextContainer
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: TextContainer
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 196
+        y: 138
+        width: 151
+        height: 168
+      spriteId: 40510cbbf1b44bb44b3d776a29b24f48
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 3
+    uuid:
+      value0: 292498004
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: JoyStick_Move
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: JoyStick_Move
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 234
+        y: 489
+        width: 84
+        height: 83
+      spriteId: 59210af8c57e1bf47a026ff96b7e77ad
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 4
+    uuid:
+      value0: 1627819466
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: ButtonBackground
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: ButtonBackground
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1193
+        y: 448
+        width: 163
+        height: 163
+      spriteId: ac7051a6ec70b7945bb50ff54a17ce94
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 5
+    uuid:
+      value0: 86180538
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Button_A
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Button_A
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1248
+        y: 453
+        width: 56
+        height: 55
+      spriteId: e30ea498e6fb941498c8d8b933bb4fd0
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 6
+    uuid:
+      value0: 3977863307
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Button_B
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Button_B
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1296
+        y: 501
+        width: 56
+        height: 55
+      spriteId: 453a64cc8ef099f4ea132303cce2024f
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 7
+    uuid:
+      value0: 4024917474
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Button_Y
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Button_Y
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1248
+        y: 549
+        width: 56
+        height: 55
+      spriteId: b5b7760501e070842bbcf3eda75be18e
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 8
+    uuid:
+      value0: 2458833533
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Button_X
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Button_X
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1200
+        y: 503
+        width: 53
+        height: 53
+      spriteId: 72682ea3aa287ad46b1a29b5b56dfd61
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 9
+    uuid:
+      value0: 623144843
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Button_Side1
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Button_Side1
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1200
+        y: 277
+        width: 29
+        height: 29
+      spriteId: 79eddfd116de1f94685fd8a700d81265
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 10
+    uuid:
+      value0: 1026429370
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Button_Side2
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Button_Side2
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1200
+        y: 218
+        width: 29
+        height: 29
+      spriteId: eef79a0f062e45c4bbee5913795c61b2
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 11
+    uuid:
+      value0: 3430669212
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: Post
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: Post
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 58
+        y: 110
+        width: 1440
+        height: 619
+      spriteId: c12c41653824584409398a86229cb9e2
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 12
+    uuid:
+      value0: 2320994185
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: ScanLine
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: ScanLine
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 394
+        y: 143
+        width: 761
+        height: 564
+      spriteId: d9871688ad1f1c54a83eae31b2e70e1d
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 13
+    uuid:
+      value0: 231146657
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: RHand
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: RHand
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1261
+        y: 563
+        width: 23
+        height: 28
+      spriteId: d47c5bc925dac264f93868592df44699
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 14
+    uuid:
+      value0: 231135643
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: LHand
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: LHand
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1211
+        y: 516
+        width: 25
+        height: 27
+      spriteId: 654163d058f605f4eb7712515290a044
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 15
+    uuid:
+      value0: 4210020270
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: LFoot
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: LFoot
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1265
+        y: 467
+        width: 20
+        height: 28
+      spriteId: bc471e504f83ab54589c831afbd69638
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  - layerIndex: 16
+    uuid:
+      value0: 4210031400
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 0
+    name: RFoot
+    layerFlags: 3
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: RFoot
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 1312
+        y: 515
+        width: 22
+        height: 25
+      spriteId: 24d0e853410d2754e931856d582fdf0a
+    linkedCells: []
+    tileCells: []
+    tileSetIndex: 0
+    parentIndex: -1
+  tileSets: []
+  platformSettings:
+  - name: DefaultTexturePlatform
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
+  - name: Standalone
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
+  - name: WebGL
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
+  generatePhysicsShape: 0
+  secondarySpriteTextures: []
+  spritePackingTag: 
+  canvasSize: {x: 1571, y: 794}
+  previousTextureSize: {x: 2048, y: 2048}
