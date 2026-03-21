@@ -2,6 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TitleButton : MonoBehaviour
@@ -94,5 +95,17 @@ public class TitleButton : MonoBehaviour
         label.enabled = true;
 
         onClickEvent?.Invoke();
+    }
+
+    // 인게임 씬 리스타트 버튼
+    public void ReStart_Button(string name)
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(name);
+    }
+    public void mainMenu_Button()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("TitleScene");
     }
 }

@@ -8,13 +8,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    // 씬 이름을 상수로 관리하여 오타를 방지합니다.
-    public const string SceneTitle = "TitleScene";
-    public const string SceneIntro = "IntroScene";
-    public const string SceneStage1 = "Stage01_PackMan";
-    public const string SceneStage2 = "Stage02_DongKingKong";
-    public const string SceneStage3 = "Stage03_Tetris";
-
     [Header("카메라 페이드")]
     [SerializeField] private Image blackOutImage;
     [SerializeField] private float fadeDuration = 1.5f;
@@ -74,7 +67,7 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("마지막 씬입니다. 타이틀로 돌아갑니다.");
-            LoadSceneByName(SceneTitle);
+            LoadSceneByName("TitleScene");
         }
     }
     public void GuideButton()
@@ -130,9 +123,6 @@ public class GameManager : MonoBehaviour
         titlePanel.material = null;
 
         yield return StartCoroutine(PlayCutScenes());
-
-        // 씬 전환
-        //SceneManager.LoadScene(name);
     }
     // 컷씬 슬라이스
     private IEnumerator PlayCutScenes()
@@ -281,8 +271,8 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f);
 
-        // 씬 전환
-        // SceneManager.LoadScene(name);
+        StopAllCoroutines();
+        SceneManager.LoadScene("Stage01_PackMan");
     }
 
     private IEnumerator BlackOutFade()

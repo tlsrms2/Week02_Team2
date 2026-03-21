@@ -110,6 +110,9 @@ public class PlayerController : MonoBehaviour
     private bool leftTriggerHeld;
     private bool rightTriggerHeld;
 
+    // 외부 차단 플래그 별도 분리
+    private bool _externalBlocked = false;
+
     // ───────────────────────────────────────────────
     void Awake()
     {
@@ -407,7 +410,11 @@ public class PlayerController : MonoBehaviour
         {
             Stun(2);
         }
-        inputBlocked = stunTimer > 0f || (slideActive && slideForceTimer > 0f);
+        //inputBlocked = stunTimer > 0f || (slideActive && slideForceTimer > 0f);
+
+        // 외부 차단 OR 스턴/슬라이드 차단
+        inputBlocked = _externalBlocked || stunTimer > 0f || (slideActive && slideForceTimer > 0f);
+
 
         // 스턴 중 깜빡임
         if (stunTimer > 0f)
@@ -431,6 +438,10 @@ public class PlayerController : MonoBehaviour
         }
 
         if (slideActive && slideForceTimer > 0f) return;
+
+        // 외부 차단 상태면 이하 입력 처리 스킵
+        if (_externalBlocked) return;
+
 
         // 트리거 폴링 (매 프레임)
         PollTriggers();
@@ -883,5 +894,21 @@ public class PlayerController : MonoBehaviour
         else
             mats.Add(newMat);
         activeLimb.renderer.sharedMaterials = mats.ToArray();
+    }
+
+    // 외부에서 입력 차단 제어
+    public void SetInputBlocked(bool blocked)
+    {
+        inputBlocked = blocked;
+
+        // 차단 시 활성 사지 초기화
+        if (blocked && activeLimb != null)
+        {
+            RemoveOutline(activeLimb);
+            activeLimb.grabbed = true;
+            activeLimb.ik.data.target.position = activeLimb.grabPos;
+            activeLimb = null;
+            SetCursor(false); // 커서 해제
+        }
     }
 }

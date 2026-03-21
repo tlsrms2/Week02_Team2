@@ -25,7 +25,6 @@ public class TitleMenuController : MonoBehaviour
     public int _selectedIndex = 0;
     private bool _stickMoved = false;
     private bool _isClickPlaying = false;
-    bool anyHovered = false;
 
     private enum InputMode { Keyboard, Mouse }
     private InputMode _inputMode = InputMode.Keyboard;

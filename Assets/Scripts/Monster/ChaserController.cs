@@ -109,5 +109,12 @@ public class ChaserController : MonoBehaviour
     {
         Time.timeScale = 0f;
         gameOverPanel.SetActive(true);
+
+        // InGameManager에 게임오버 알림
+        InGameManager inGameManager = FindAnyObjectByType<InGameManager>();
+        if (inGameManager != null)
+            inGameManager.SetGameOver();
     }
+
+
 }
