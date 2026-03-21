@@ -285,7 +285,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -120}
-  m_SizeDelta: {x: 500, y: 90}
+  m_SizeDelta: {x: 500, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &613533158
 MonoBehaviour:
@@ -317,6 +317,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  blinkCount: 3
+  blinkInterval: 0.08
 --- !u!114 &613533159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -675,9 +677,10 @@ MonoBehaviour:
   titlePanel: {fileID: 1590961948}
   titleText: {fileID: 1624532147}
   titleMenu: {fileID: 1514482252}
-  typingSpeed: 0.02
-  lineDelay: 0.3
+  typingSpeed: 0.01
+  lineDelay: 0.1
   glitchMaterial: {fileID: 2100000, guid: 1d4d027e6a973a447a0219479a716c9b, type: 2}
+  potMaterial: {fileID: 2100000, guid: 3385ed6a6b8d6ac4fa792706841937c3, type: 2}
   StartFont: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   LodingFont: {fileID: 11400000, guid: f1359438c38a9e548839a31b820f9609, type: 2}
 --- !u!4 &892360303
@@ -734,7 +737,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 500, y: 90}
+  m_SizeDelta: {x: 500, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1038713795
 MonoBehaviour:
@@ -848,6 +851,8 @@ MonoBehaviour:
           m_StringArgument: IntroScene
           m_BoolArgument: 0
         m_CallState: 2
+  blinkCount: 3
+  blinkInterval: 0.08
 --- !u!114 &1038713799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1467,6 +1472,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1514482251}
   - component: {fileID: 1514482252}
+  - component: {fileID: 1514482253}
   m_Layer: 5
   m_Name: TitleController
   m_TagString: Untagged
@@ -1517,6 +1523,107 @@ MonoBehaviour:
   - {fileID: 2118445929}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0, g: 1, b: 0, a: 1}
+  audioSource: {fileID: 1514482253}
+  moveSound: {fileID: 8300000, guid: 5780363e7971f4f439d0737de6b21cda, type: 3}
+  startSound: {fileID: 8300000, guid: 35115d883d5b90d44aa013370693a719, type: 3}
+  _selectedIndex: 0
+--- !u!82 &1514482253
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514482250}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 0.1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1577922037
 GameObject:
   m_ObjectHideFlags: 0
@@ -2118,7 +2225,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -240}
-  m_SizeDelta: {x: 500, y: 90}
+  m_SizeDelta: {x: 500, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2118445929
 MonoBehaviour:
@@ -2150,6 +2257,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  blinkCount: 3
+  blinkInterval: 0.08
 --- !u!114 &2118445930
 MonoBehaviour:
   m_ObjectHideFlags: 0

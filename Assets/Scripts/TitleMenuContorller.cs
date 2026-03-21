@@ -13,8 +13,14 @@ public class TitleMenuController : MonoBehaviour
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color selectedColor = Color.green;
 
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip moveSound;
+    [SerializeField] private AudioClip startSound;
+    
     public int _selectedIndex = 0;
     private bool _stickMoved = false;
+    private bool _isClickPlaying = false;
+
 
     void Start()
     {
@@ -30,6 +36,8 @@ public class TitleMenuController : MonoBehaviour
 
     private void HandleNavigation()
     {
+        if (_isClickPlaying) return; // 입력 차단
+
         float vertical = Input.GetAxisRaw("Vertical");
 
         if (!_stickMoved && Mathf.Abs(vertical) > 0.5f)
@@ -40,6 +48,9 @@ public class TitleMenuController : MonoBehaviour
 
             if (vertical > 0) SetSelected((_selectedIndex - 1 + menuButtons.Length) % menuButtons.Length);
             else SetSelected((_selectedIndex + 1) % menuButtons.Length);
+            
+            // 소리 실행
+            PlayMoveSound();
         }
 
         if (Mathf.Abs(vertical) < 0.2f)
@@ -51,13 +62,15 @@ public class TitleMenuController : MonoBehaviour
             Input.GetKeyDown(KeyCode.JoystickButton7))
         {
             if (_selectedIndex >= 0 && _selectedIndex < menuButtons.Length)
-                menuButtons[_selectedIndex].OnClick();
+                StartCoroutine(PlaySoundThenClick(menuButtons[_selectedIndex]));
         }
     }
 
 
     private void HandleMouse()
     {
+        if (_isClickPlaying) return; // 입력 차단
+
         for (int i = 0; i < menuButtons.Length; i++)
         {
             if (menuButtons[i].IsMouseOver())
@@ -68,6 +81,34 @@ public class TitleMenuController : MonoBehaviour
                     menuButtons[i].OnClick();
             }
         }
+    }
+    // 게임 시작 소리
+    private IEnumerator PlaySoundThenClick(TitleButton button)
+    {
+        _isClickPlaying = true;
+
+        
+
+        // 사운드 재생
+        if (audioSource != null && startSound != null)
+        {
+            // 버튼 하이라이트
+            button.PlaySelectEffect();
+
+            audioSource.PlayOneShot(startSound);
+            // 사운드 길이만큼 대기
+            yield return new WaitForSeconds(startSound.length);
+        }
+
+        // 사운드 끝난 후 OnClick 실행
+        button.OnClick();
+        _isClickPlaying = false;
+    }
+    // 움직임 소리
+    private void PlayMoveSound()
+    {
+        if (audioSource != null && moveSound != null)
+            audioSource.PlayOneShot(moveSound);
     }
 
     private void SetSelected(int index)
@@ -86,11 +127,11 @@ public class TitleMenuController : MonoBehaviour
 
     public void InitMenu()
     {
+        gameObject.SetActive(true);
         for (int i = 0; i < menuButtons.Length; i++)
             menuButtons[i].SetHighlight(false, normalColor);
 
         SetSelected(0);
-        gameObject.SetActive(true);
     }
     public void OutMenu()
     {

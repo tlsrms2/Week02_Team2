@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,7 +14,14 @@ public class TitleButton : MonoBehaviour
     [Header("클릭 이벤트")]
     [SerializeField] public UnityEvent onClickEvent;
 
+    [Header("선택 효과")]
+    [SerializeField] private int blinkCount = 3;         // 점멸 횟수
+    [SerializeField] private float blinkInterval = 0.08f;// 점멸 간격
+
+
     private RectTransform _rect;
+    private Vector3 _originalScale;
+    private Coroutine _effectCoroutine;
 
     void Awake()
     {
@@ -32,6 +40,36 @@ public class TitleButton : MonoBehaviour
         // 화살표
         if (arrow != null)
             arrow.gameObject.SetActive(on);
+
+        // 효과 중단 후 원래 크기 복구
+        if (_effectCoroutine != null)
+        {
+            StopCoroutine(_effectCoroutine);
+            _effectCoroutine = null;
+            _rect.localScale = _originalScale;
+        }
+    }
+    // 선택 확정 시 외부에서 호출
+    public void PlaySelectEffect()
+    {
+        if (_effectCoroutine != null)
+        {
+            StopCoroutine(_effectCoroutine);
+            _rect.localScale = _originalScale;
+        }
+        _effectCoroutine = StartCoroutine(SelectEffect());
+    }
+    private IEnumerator SelectEffect()
+    {
+        for (int i = 0; i < blinkCount; i++)
+        {
+            label.enabled = false;
+            yield return new WaitForSeconds(blinkInterval);
+
+            label.enabled = true;
+            yield return new WaitForSeconds(blinkInterval);
+        }
+        label.enabled = true;
     }
 
     public bool IsMouseOver()
@@ -45,6 +83,16 @@ public class TitleButton : MonoBehaviour
 
     public void OnClick()
     {
+        // 효과 코루틴 강제 종료
+        if (_effectCoroutine != null)
+        {
+            StopCoroutine(_effectCoroutine);
+            _effectCoroutine = null;
+        }
+
+        // label 강제 활성화
+        label.enabled = true;
+
         onClickEvent?.Invoke();
     }
 }
