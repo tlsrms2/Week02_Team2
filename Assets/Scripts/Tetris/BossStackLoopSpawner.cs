@@ -11,12 +11,28 @@ public sealed class BossStackLoopSpawner : MonoBehaviour
         [SerializeField] private bool playOnStart = true;
         [SerializeField] private Vector3 startPosition = new Vector3(0f, -0.4f, -5f);
         [SerializeField] private float yStep = 1.4f;
-        [SerializeField] private float spawnInterval = 0.5f;
+        [Header("Spawn Interval Per Loop")]
+        [SerializeField] private float firstLoopSpawnInterval = 0.5f;
+        [SerializeField] private float secondLoopSpawnInterval = 0.5f;
+        [SerializeField] private float thirdLoopSpawnInterval = 0.5f;
+        [SerializeField] private float fourthLoopSpawnInterval = 0.5f;
 
         public bool PlayOnStart => playOnStart;
         public Vector3 StartPosition => startPosition;
         public float YStep => Mathf.Max(0.01f, yStep);
-        public float SpawnInterval => Mathf.Max(0f, spawnInterval);
+
+        public float GetSpawnInterval(int completedLoopCount)
+        {
+            int currentLoop = Mathf.Max(1, completedLoopCount + 1);
+
+            return currentLoop switch
+            {
+                1 => Mathf.Max(0f, firstLoopSpawnInterval),
+                2 => Mathf.Max(0f, secondLoopSpawnInterval),
+                3 => Mathf.Max(0f, thirdLoopSpawnInterval),
+                _ => Mathf.Max(0f, fourthLoopSpawnInterval)
+            };
+        }
     }
 
     private sealed class BossSequence
@@ -47,6 +63,8 @@ public sealed class BossStackLoopSpawner : MonoBehaviour
 
     [Header("Spawn Settings")]
     [SerializeField] private SpawnSettings spawnSettings = new SpawnSettings();
+
+    private const int BossCountPerLoop = 10;
 
     private readonly List<GameObject> spawnedBosses = new List<GameObject>();
     private Coroutine spawnRoutine;
@@ -96,10 +114,11 @@ public sealed class BossStackLoopSpawner : MonoBehaviour
         while (true)
         {
             SpawnNextBoss();
+            float spawnInterval = spawnSettings.GetSpawnInterval(GetCompletedLoopCount());
 
-            if (spawnSettings.SpawnInterval > 0f)
+            if (spawnInterval > 0f)
             {
-                yield return new WaitForSeconds(spawnSettings.SpawnInterval);
+                yield return new WaitForSeconds(spawnInterval);
             }
             else
             {
@@ -122,6 +141,11 @@ public sealed class BossStackLoopSpawner : MonoBehaviour
         spawnedBoss.name = $"{template.name}_Stack_{spawnedBosses.Count + 1}";
         spawnedBoss.SetActive(true);
         spawnedBosses.Add(spawnedBoss);
+    }
+
+    private int GetCompletedLoopCount()
+    {
+        return spawnedBosses.Count / BossCountPerLoop;
     }
 
     private List<GameObject> FindBossTemplates()
