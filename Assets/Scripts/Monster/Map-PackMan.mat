@@ -53,7 +53,7 @@ Material:
     - _Speed: 10
     m_Colors:
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
-    - _Tiling: {r: 1, g: -4, b: 0, a: 0}
+    - _Tiling: {r: 1, g: -2.5, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &5358153536596437562
