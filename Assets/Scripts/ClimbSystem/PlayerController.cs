@@ -676,8 +676,7 @@ public class PlayerController : MonoBehaviour
     void InitGrab(Limb limb)
     {
         if (limb.ik == null) return;
-        var pos = limb.ik.data.tip.position;
-        limb.ik.data.target.position = pos;
+        var pos = limb.ik.data.target.position;
         limb.grabPos = pos;
         limb.grabbed = true;
 
