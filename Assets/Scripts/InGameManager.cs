@@ -26,7 +26,7 @@ public class InGameManager : MonoBehaviour
     [SerializeField] private PlayerController playerController;
 
     private int _pauseSelectedIndex = 0;
-    private int _gameOverSelectedIndex = 0;
+    public int _gameOverSelectedIndex = 0;
     private bool _stickMoved = false;
     private bool _isClickPlaying = false;
     private bool _isPaused = false;
@@ -50,7 +50,7 @@ public class InGameManager : MonoBehaviour
         {
             // 게임오버 상태 → 게임오버 버튼 조작
             HandleNavigation(gameOverButtons, ref _gameOverSelectedIndex);
-            HandleMouse(gameOverButtons, ref _gameOverSelectedIndex);
+            //HandleMouse(gameOverButtons, ref _gameOverSelectedIndex);
             return;
         }
 
@@ -60,7 +60,7 @@ public class InGameManager : MonoBehaviour
         {
             // 퍼즈 상태 → 퍼즈 버튼 조작
             HandleNavigation(pauseButtons, ref _pauseSelectedIndex);
-            HandleMouse(pauseButtons, ref _pauseSelectedIndex);
+            //HandleMouse(pauseButtons, ref _pauseSelectedIndex);
         }
     }
 
@@ -147,6 +147,9 @@ public class InGameManager : MonoBehaviour
                 SetSelected(buttons, ref selectedIndex,
                     (selectedIndex + 1) % buttons.Length);
 
+            if (selectedIndex < 0) selectedIndex = 0;
+            if (selectedIndex > 2) selectedIndex = 1;
+
             PlayMoveSound();
         }
 
@@ -181,6 +184,8 @@ public class InGameManager : MonoBehaviour
                     SetSelected(buttons, ref selectedIndex, i);
                     PlayMoveSound();
                 }
+                if (selectedIndex < 0) selectedIndex = 0;
+                if (selectedIndex > 2) selectedIndex = 1;
 
                 if (Input.GetMouseButtonDown(0))
                     StartCoroutine(PlaySoundThenClick(buttons[i]));

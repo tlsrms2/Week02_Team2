@@ -3531,13 +3531,13 @@ PrefabInstance:
       value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
-      propertyPath: startPoint
-      value: 
-      objectReference: {fileID: 800604809}
-    - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: triggerY
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
+      propertyPath: startPoint
+      value: 
+      objectReference: {fileID: 800604809}
     - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: gameOverPanel
       value: 
@@ -17774,7 +17774,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1501447319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23073,6 +23073,7 @@ MonoBehaviour:
   gameOverButtons:
   - {fileID: 2099452610}
   - {fileID: 2020548846}
+  - {fileID: 2020548846}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0, g: 1, b: 0, a: 1}
   audioSource: {fileID: 2143777908}
@@ -23080,6 +23081,7 @@ MonoBehaviour:
   startSound: {fileID: 8300000, guid: 35115d883d5b90d44aa013370693a719, type: 3}
   pausePanel: {fileID: 1301809696}
   playerController: {fileID: 1323331611}
+  _gameOverSelectedIndex: 0
 --- !u!4 &2143777907
 Transform:
   m_ObjectHideFlags: 0

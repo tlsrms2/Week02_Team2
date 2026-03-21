@@ -7258,6 +7258,7 @@ MonoBehaviour:
   gameOverButtons:
   - {fileID: 1947936510}
   - {fileID: 1299815651}
+  - {fileID: 1299815651}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0, g: 1, b: 0, a: 1}
   audioSource: {fileID: 1115030485}
@@ -7265,6 +7266,7 @@ MonoBehaviour:
   startSound: {fileID: 8300000, guid: 35115d883d5b90d44aa013370693a719, type: 3}
   pausePanel: {fileID: 1321115056}
   playerController: {fileID: 0}
+  _gameOverSelectedIndex: 0
 --- !u!82 &1115030485
 AudioSource:
   m_ObjectHideFlags: 0
