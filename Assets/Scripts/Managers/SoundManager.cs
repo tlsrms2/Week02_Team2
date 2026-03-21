@@ -1,119 +1,78 @@
 using UnityEngine;
-using System.Collections.Generic;
-
-// 다른 스크립트에서 사운드를 토글(드롭다운) 형식으로 선택할 수 있도록 Enum으로 선언합니다.
-// 필요한 사운드 이름들을 여기에 자유롭게 추가하세요.
-public enum BGMType
-{
-    None,
-    MainTitle,
-    Stage1,
-    Stage2,
-    Stage3
-}
-
-public enum SFXType
-{
-    None,
-    Coin,
-    Jump,
-    GameOver,
-    Click
-}
-
-// 인스펙터에서 Enum과 AudioClip을 매핑하기 위한 구조체입니다.
-[System.Serializable]
-public struct BGMMapping
-{
-    public BGMType type;
-    public AudioClip clip;
-}
-
-[System.Serializable]
-public struct SFXMapping
-{
-    public SFXType type;
-    public AudioClip clip;
-}
+using System.Collections;
 
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    public AudioSource bgmSource;
-    public AudioSource sfxSource;
+    [SerializeField] private AudioSource bgmSource;
+    [SerializeField] private AudioSource sfxSource;
 
-    [Header("Sound Lists (Inspector에서 설정)")]
-    public List<BGMMapping> bgmList = new List<BGMMapping>();
-    public List<SFXMapping> sfxList = new List<SFXMapping>();
+    [Header("BGM Clips")]
+    [SerializeField] private AudioClip tutorialBgm;
+    [SerializeField] private AudioClip titleBgm;
+    [SerializeField] private AudioClip stage1Bgm;
+    [SerializeField] private AudioClip stage2Bgm;
+    [SerializeField] private AudioClip stage3Bgm;
+    [SerializeField] private AudioClip stage3BossIntroBgm;
+    [SerializeField] private AudioClip endingBgm;
+    [SerializeField] private AudioClip gameOverBgm;
 
-    // 빠른 검색을 위한 딕셔너리
-    private Dictionary<BGMType, AudioClip> bgmDictionary = new Dictionary<BGMType, AudioClip>();
-    private Dictionary<SFXType, AudioClip> sfxDictionary = new Dictionary<SFXType, AudioClip>();
+    [Header("SFX Clips")]
+    [SerializeField] private AudioClip buttonClickSfx;
+    [SerializeField] private AudioClip stunSfx;
+    [SerializeField] private AudioClip slideSfx;
+    [SerializeField] private AudioClip climbingSfx;
+    [SerializeField] private AudioClip coinEatingSfx;
 
     private void Awake()
     {
-        // 싱글톤 패턴 설정
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); // 씬이 변경되어도 파괴되지 않음
-            InitDictionaries();
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
-        }
-    }
-
-    private void InitDictionaries()
-    {
-        foreach (var bgm in bgmList)
-        {
-            if (!bgmDictionary.ContainsKey(bgm.type) && bgm.clip != null)
-                bgmDictionary.Add(bgm.type, bgm.clip);
-        }
-
-        foreach (var sfx in sfxList)
-        {
-            if (!sfxDictionary.ContainsKey(sfx.type) && sfx.clip != null)
-                sfxDictionary.Add(sfx.type, sfx.clip);
-        }
-    }
-
-    public void PlayBGM(BGMType type)
-    {
-        if (type == BGMType.None)
-        {
-            bgmSource.Stop();
             return;
         }
 
-        if (bgmDictionary.TryGetValue(type, out AudioClip clip))
-        {
-            bgmSource.clip = clip;
-            bgmSource.loop = true;
-            bgmSource.Play();
-        }
-        else
-        {
-            Debug.LogWarning($"[SoundManager] 지정한 BGM을 찾을 수 없습니다: {type}");
-        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    public void PlaySFX(SFXType type)
+    #region BGM
+
+    public void PlayBgm(AudioClip clip)
     {
-        if (type == SFXType.None) return;
+        if (bgmSource.clip == clip) return;
 
-        if (sfxDictionary.TryGetValue(type, out AudioClip clip))
-        {
-            // SFX는 여러 번 겹쳐서 재생될 수 있도록 PlayOneShot 사용
-            sfxSource.PlayOneShot(clip);
-        }
-        else
-        {
-            Debug.LogWarning($"[SoundManager] 지정한 SFX를 찾을 수 없습니다: {type}");
-        }
+        bgmSource.clip = clip;
+        bgmSource.loop = true;
+        bgmSource.pitch = 1f; // 기본 pitch
+        bgmSource.Play();
     }
+
+    public void PlayTutorialBgm() => PlayBgm(tutorialBgm);
+    public void PlayTitleBgm() => PlayBgm(titleBgm);
+    public void PlayStage1Bgm() => PlayBgm(stage1Bgm);
+    public void PlayStage2Bgm() => PlayBgm(stage2Bgm);
+    public void PlayStage3Bgm() => PlayBgm(stage3Bgm);
+    public void PlayStage3BossIntroBgm() => PlayBgm(stage3BossIntroBgm);
+    public void PlayEndingBgm() => PlayBgm(endingBgm);
+    public void PlayGameOverBgm() => PlayBgm(gameOverBgm);
+
+    #endregion
+
+    #region SFX
+
+    public void PlaySfx(AudioClip clip)
+    {
+        sfxSource.PlayOneShot(clip);
+    }
+
+    public void PlayButtonClick() => PlaySfx(buttonClickSfx);
+    public void PlayStun() => PlaySfx(stunSfx);
+    public void PlaySlide() => PlaySfx(slideSfx);
+    public void PlayClimbing() => PlaySfx(climbingSfx);
+    public void PlayCoinEating() => PlaySfx(coinEatingSfx);
+
+    #endregion
 }
