@@ -1,13 +1,18 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class TitleMenuController : MonoBehaviour
 {
     [Header("버튼 목록 (위에서 아래 순서)")]
     [SerializeField] private TitleButton[] menuButtons;
+
+    [Header("클릭 이벤트")]
+    [SerializeField] public UnityEvent onClickEvent;
+
 
     [Header("색상")]
     [SerializeField] private Color normalColor = Color.white;
@@ -20,7 +25,10 @@ public class TitleMenuController : MonoBehaviour
     public int _selectedIndex = 0;
     private bool _stickMoved = false;
     private bool _isClickPlaying = false;
+    bool anyHovered = false;
 
+    private enum InputMode { Keyboard, Mouse }
+    private InputMode _inputMode = InputMode.Keyboard;
 
     void Start()
     {
@@ -34,6 +42,7 @@ public class TitleMenuController : MonoBehaviour
         HandleMouse();
     }
 
+
     private void HandleNavigation()
     {
         if (_isClickPlaying) return; // 입력 차단
@@ -43,6 +52,7 @@ public class TitleMenuController : MonoBehaviour
         if (!_stickMoved && Mathf.Abs(vertical) > 0.5f)
         {
             _stickMoved = true;
+            _inputMode = InputMode.Keyboard; // 키보드 모드로 전환
 
             if (menuButtons == null || menuButtons.Length == 0) return;
 
@@ -69,16 +79,37 @@ public class TitleMenuController : MonoBehaviour
 
     private void HandleMouse()
     {
-        if (_isClickPlaying) return; // 입력 차단
+        if (_isClickPlaying) return;
+
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
+        // 마우스 움직임 확인
+        if (mouseX != 0 || mouseY != 0)
+        {
+            _inputMode = InputMode.Mouse;
+        }
 
         for (int i = 0; i < menuButtons.Length; i++)
         {
-            if (menuButtons[i].IsMouseOver())
+            bool hovered = menuButtons[i].IsMouseOver();
+
+            if (hovered)
             {
-                SetSelected(i);
+                if (_inputMode == InputMode.Mouse)
+                {
+                    if (i != _selectedIndex)
+                    {
+                        SetSelected(i);
+                        PlayMoveSound();
+                    }
+                }
 
                 if (Input.GetMouseButtonDown(0))
-                    menuButtons[i].OnClick();
+                {
+                    _inputMode = InputMode.Mouse;
+                    StartCoroutine(PlaySoundThenClick(menuButtons[i]));
+                }
             }
         }
     }

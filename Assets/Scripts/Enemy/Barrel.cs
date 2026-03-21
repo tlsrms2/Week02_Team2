@@ -232,7 +232,7 @@ public class Barrel : MonoBehaviour
 
         if((targerLayer.value &(1 << other.gameObject.layer)) != 0)
         {
-            other.gameObject.GetComponent<PlayerHealth>().TakeStun(slideTime);
+            other.gameObject.GetComponent<PlayerHealth>().TakeSlide(slideTime);
         }
     }
 

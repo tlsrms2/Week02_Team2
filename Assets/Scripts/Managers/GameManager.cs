@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
     public const string SceneStage2 = "Stage02_DongKingKong";
     public const string SceneStage3 = "Stage03_Tetris";
 
+    [Header("카메라 페이드")]
+    [SerializeField] private Image blackOutImage;
+    [SerializeField] private float fadeDuration = 1.5f;
+
     [Header("타이틀 참조")]
     [SerializeField] private Image titlePanel;
     [SerializeField] private TextMeshProUGUI titleText;
@@ -24,9 +28,15 @@ public class GameManager : MonoBehaviour
     [Header("타이틀 사용")]
     [SerializeField] private Material glitchMaterial;
     [SerializeField] private Material potMaterial;
+    [SerializeField] private Material twistMaterial;
     [SerializeField] private TMP_FontAsset StartFont;
     [SerializeField] private TMP_FontAsset LodingFont;
     private Coroutine blink;
+
+    [Header("컷씬")]
+    [SerializeField] private RectTransform[] cutScenes; // 4개 Image RectTransform
+    [SerializeField] private float cutSceneDuration = 1f;  // 각 컷씬 슬라이드 시간
+    [SerializeField] private float cutSceneHoldTime = 1.5f; // 컷씬 머무는 시간
 
     private void Start()
     {
@@ -83,6 +93,7 @@ public class GameManager : MonoBehaviour
         titleText.enabled = false;
         StartCoroutine(StartGame(sceneName, 1f));
     }
+    // 게임 시작 버튼
     private IEnumerator StartGame(string name, float duration)
     {
         titlePanel.enabled = true;
@@ -116,10 +127,186 @@ public class GameManager : MonoBehaviour
         titlePanel.material.SetFloat("_Reveal", 1f);
 
         yield return new WaitForSeconds(0.3f);
+        titlePanel.material = null;
+
+        yield return StartCoroutine(PlayCutScenes());
+
         // 씬 전환
         //SceneManager.LoadScene(name);
     }
+    // 컷씬 슬라이스
+    private IEnumerator PlayCutScenes()
+    {
+        Vector2[] targetPositions = new Vector2[]
+        {
+        new Vector2(-172f, 145f),
+        new Vector2(223f, 125f),
+        new Vector2(-173f, -319f),
+        new Vector2(179f, -213f)
+        };
 
+        float[] startOffsetX = new float[]
+        {
+        -Screen.width,
+         Screen.width,
+        -Screen.width,
+         Screen.width
+        };
+
+        bool skipped = false;
+
+        // 하나씩 순차적으로 슬라이드 인
+        for (int i = 0; i < cutScenes.Length; i++)
+        {
+            if (skipped) break;
+
+            cutScenes[i].gameObject.SetActive(true);
+
+            Vector2 startPos = new Vector2(
+                targetPositions[i].x + startOffsetX[i],
+                targetPositions[i].y
+            );
+            cutScenes[i].anchoredPosition = startPos;
+
+            // 슬라이드 인
+            float elapsed = 0f;
+            while (elapsed < cutSceneDuration)
+            {
+                // ESC 스킵 감지
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    skipped = true;
+                    break;
+                }
+
+                elapsed += Time.deltaTime;
+                float t = Mathf.SmoothStep(0f, 1f, elapsed / cutSceneDuration);
+                cutScenes[i].anchoredPosition = Vector2.Lerp(startPos, targetPositions[i], t);
+                yield return null;
+            }
+
+            if (skipped) break;
+
+            cutScenes[i].anchoredPosition = targetPositions[i];
+
+            // 대기 중에도 ESC 감지
+            float holdElapsed = 0f;
+            while (holdElapsed < cutSceneHoldTime)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    skipped = true;
+                    break;
+                }
+                holdElapsed += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        // 전체 머무는 시간 (스킵 안 했을 때만)
+        if (!skipped)
+        {
+            float holdElapsed = 0f;
+            while (holdElapsed < cutSceneHoldTime)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    skipped = true;
+                    break;
+                }
+                holdElapsed += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        // 스킵 시 모든 컷씬 즉시 비활성화
+        if (skipped)
+        {
+            for (int i = 0; i < cutScenes.Length; i++)
+                cutScenes[i].gameObject.SetActive(false);
+
+            yield return StartCoroutine(TwistEffect());
+        }
+
+        // 동시에 슬라이드 아웃
+        float outElapsed = 0f;
+        Vector2[] currentPositions = new Vector2[cutScenes.Length];
+        for (int i = 0; i < cutScenes.Length; i++)
+            currentPositions[i] = cutScenes[i].anchoredPosition;
+
+        while (outElapsed < cutSceneDuration)
+        {
+            outElapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, outElapsed / cutSceneDuration);
+
+            for (int i = 0; i < cutScenes.Length; i++)
+            {
+                Vector2 exitPos = new Vector2(
+                    targetPositions[i].x - startOffsetX[i],
+                    targetPositions[i].y
+                );
+                cutScenes[i].anchoredPosition = Vector2.Lerp(currentPositions[i], exitPos, t);
+            }
+            yield return null;
+        }
+
+        for (int i = 0; i < cutScenes.Length; i++)
+            cutScenes[i].gameObject.SetActive(false);
+
+        yield return StartCoroutine(TwistEffect());
+    }
+    // 인게임 전 마지막 플레이 영상
+    private IEnumerator TwistEffect()
+    {
+        float twistDuration = 1.5f;
+
+        titlePanel.enabled = true;
+        titlePanel.material = twistMaterial;
+        titlePanel.material.SetFloat("_SwitrlStrength", 0f);
+
+        // 0 → 50
+        float elapsed = 0f;
+        while (elapsed < twistDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / twistDuration;
+            titlePanel.material.SetFloat("_SwitrlStrength", Mathf.Lerp(0f, 50f, t));
+            yield return null;
+        }
+
+        titlePanel.material.SetFloat("_SwitrlStrength", 50f);
+
+        // 블랙아웃 페이드 아웃
+        yield return StartCoroutine(BlackOutFade());
+
+        yield return new WaitForSeconds(0.3f);
+
+        // 씬 전환
+        // SceneManager.LoadScene(name);
+    }
+
+    private IEnumerator BlackOutFade()
+    {
+        // 활성화 + 알파 0으로 시작
+        blackOutImage.gameObject.SetActive(true);
+
+        Color color = Color.black;
+        color.a = 0f;
+        blackOutImage.color = color;
+
+        // 알파 0 → 1
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            color.a = Mathf.Lerp(0f, 1f, elapsed / fadeDuration);
+            blackOutImage.color = color;
+            yield return null;
+        }
+
+        color.a = 1f;
+        blackOutImage.color = color;
+    }
 
     // 게임 시작 할때 실행됨.
     private IEnumerator Glitch_Title()
@@ -140,18 +327,36 @@ public class GameManager : MonoBehaviour
         // 4번째 줄 - 점 깜빡이며 카트리지 삽입
         yield return StartCoroutine(DotBlinkLine("INSERTING CARTRIDGE"));
 
-        // 5번째 줄 - 일반 타이핑
-        yield return StartCoroutine(TypeLine("CLEANING METAL CONTACTS..."));
+        // 5번째 줄 - 팀이름
+        yield return StartCoroutine(TypeLine("TEAM NAME INPUT... "));
+        yield return new WaitForSeconds(0.6f);
+        yield return StartCoroutine(TypeLine("OK"));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
 
-        // 6번째 줄 - 일반 타이핑
-        yield return StartCoroutine(TypeLine("LINK CABLE: DISCONNECTED"));
+        // 6번째 줄 - 팀 명
+        yield return StartCoroutine(TypeLine("TEAM A2: Jo Shin Geun..."));
+        titleText.text += "\n";
+        yield return new WaitForSeconds(lineDelay);
+        // 6번째 줄 - 팀 명
+        yield return StartCoroutine(TypeLine("TEAM A2: Song Ha Bin..."));
+        titleText.text += "\n";
+        yield return new WaitForSeconds(lineDelay);
+        // 6번째 줄 - 팀 명
+        yield return StartCoroutine(TypeLine("TEAM A2: Han Tae Hui..."));
+        titleText.text += "\n";
+        yield return new WaitForSeconds(lineDelay);
+        // 6번째 줄 - 팀 명
+        yield return StartCoroutine(TypeLine("TEAM A2: Kim Kang Hyeon..."));
+        titleText.text += "\n";
+        yield return new WaitForSeconds(lineDelay);
+        // 6번째 줄 - 팀 명
+        yield return StartCoroutine(TypeLine("TEAM A2: Jeong Seok Hee..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
 
         // 7번째 줄 - FAILED → SUCCESS 연출
-        yield return StartCoroutine(TypeLine("CALIBRATING D-PAD... "));
+        yield return StartCoroutine(TypeLine("TEAM NAME DATA... "));
         yield return new WaitForSeconds(0.3f);
         yield return StartCoroutine(TypeLine("FAILED"));
         yield return new WaitForSeconds(0.5f);
@@ -189,7 +394,7 @@ public class GameManager : MonoBehaviour
     {
         float elapsed = 0f;
         Color color = Color.white;
-        titleText.text = "소년은 끝나지 않는다\n\n\n\n";
+        titleText.text = "소년은 끝나지 않는다\n\n\n\n\n";
         titleText.alignment = TextAlignmentOptions.Center;
         titleText.fontSize = 68.3f;
         titleText.font = StartFont;
