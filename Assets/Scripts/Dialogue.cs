@@ -4,69 +4,114 @@ using TMPro;
 
 public class Dialogue : MonoBehaviour
 {
+    [System.Serializable]
+    public class DialogueEntry
+    {
+        [TextArea(3, 10)]
+        public string sentence;
+        public float duration;
+    }
+
     [Header("참조")]
-    [SerializeField] private TextMeshProUGUI dialogueText; // TMP 컴포넌트 연결
+    [SerializeField] private TextMeshProUGUI dialogueText;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip typeSound;
 
-    [Header("설정")]
-    [TextArea(3, 10)]
-    [SerializeField] private string[] sentences;       // 출력할 문장 배열
-    [SerializeField] private float typingSpeed = 0.05f; // 글자당 출력 속도
-    [SerializeField] private float displayDuration = 2.0f; // 문장 완료 후 대기 시간
+    [Header("대화 설정")]
+    [SerializeField] private float startDelay = 2.0f;
+    [SerializeField] private float typingSpeed = 0.05f;
+    [SerializeField] [Range(0f, 0.5f)] private float pitchRange = 0.1f;
+    [SerializeField] private DialogueEntry[] dialogueEntries;
+    [SerializeField] private string keyHighlightColor = "#50FF50";
 
-    private int currentIndex = 0; // 현재 문장 번호
+    private int currentIndex = 0;
+    // 1. 클래스 상단 변수 선언부에 아래 줄을 추가합니다.
+    [HideInInspector] public bool isGamepadMode = false;
 
     void Start()
     {
-        // 텍스트 초기화 후 시작
         dialogueText.text = "";
+        // 기존: StartCoroutine(PlayDialogueRoutine()); 
+        // 변경: 시작하자마자 대화를 틀지 않고, 컨트롤러 선택을 기다립니다.
+    }
+
+    // 외부(UI 버튼)에서 컨트롤러 선택이 끝나면 이 함수를 호출합니다.
+    public void StartDialogue()
+    {
         StartCoroutine(PlayDialogueRoutine());
     }
 
     private IEnumerator PlayDialogueRoutine()
     {
-        while (currentIndex < sentences.Length)
+        yield return new WaitForSeconds(startDelay);
+
+        while (currentIndex < dialogueEntries.Length)
         {
-            // 1. 한 문장 타이핑 시작
-            yield return StartCoroutine(TypeText(sentences[currentIndex]));
+            string processedSentence = ProcessTags(dialogueEntries[currentIndex].sentence);
+            
+            yield return StartCoroutine(TypeText(processedSentence));
+            yield return new WaitForSeconds(dialogueEntries[currentIndex].duration);
 
-            // 2. 문장 출력이 끝나면 잠시 대기 (플레이어는 못 넘김)
-            yield return new WaitForSeconds(displayDuration);
-
-            // 3. 다음 문장으로 인덱스 증가 및 텍스트 초기화
             currentIndex++;
             dialogueText.text = "";
         }
+    }
 
-        // 모든 대화가 끝나면 다음 연출(예: 씬 전환)을 실행합니다.
-        EndDialogue();
+    private string ProcessTags(string originalText)
+    {
+        // GameManager에서 가져오던 로직을 지우고, UI에서 받은 변수를 그대로 사용합니다.
+        bool isGamepad = isGamepadMode;
+
+        string lHand = isGamepad ? "[LB]" : "[Q]";
+        string rHand = isGamepad ? "[RB]" : "[E]";
+        string lFoot = isGamepad ? "[LT]" : "[A]";
+        string rFoot = isGamepad ? "[RT]" : "[D]";
+
+        string result = originalText;
+        result = result.Replace("{LH}", $"<color={keyHighlightColor}><b>{lHand}</b></color>");
+        result = result.Replace("{RH}", $"<color={keyHighlightColor}><b>{rHand}</b></color>");
+        result = result.Replace("{LF}", $"<color={keyHighlightColor}><b>{lFoot}</b></color>");
+        result = result.Replace("{RF}", $"<color={keyHighlightColor}><b>{rFoot}</b></color>");
+
+        return result;
     }
 
     private IEnumerator TypeText(string targetText)
     {
         int charIndex = 0;
-        
+        dialogueText.text = "";
+
         while (charIndex < targetText.Length)
         {
-            // 한 번에 1~3글자씩 랜덤하게 출력 (언더테일 느낌의 불규칙함 추가)
-            int randomStep = Random.Range(1, 4); 
-            
-            for (int i = 0; i < randomStep; i++)
+            int randomStep = Random.Range(1, 4);
+            int charsAddedThisStep = 0;
+
+            while (charsAddedThisStep < randomStep && charIndex < targetText.Length)
             {
-                if (charIndex < targetText.Length)
+                if (targetText[charIndex] == '<')
                 {
-                    dialogueText.text += targetText[charIndex];
-                    charIndex++;
+                    int tagEndIndex = targetText.IndexOf('>', charIndex);
+                    if (tagEndIndex != -1)
+                    {
+                        string fullTag = targetText.Substring(charIndex, tagEndIndex - charIndex + 1);
+                        dialogueText.text += fullTag;
+                        charIndex = tagEndIndex + 1;
+                        continue; 
+                    }
                 }
+
+                dialogueText.text += targetText[charIndex];
+                charIndex++;
+                charsAddedThisStep++;
             }
 
-            // 타자 소리 등을 여기서 재생하면 더욱 좋습니다.
+            if (charsAddedThisStep > 0 && audioSource != null && typeSound != null)
+            {
+                audioSource.pitch = Random.Range(1f - pitchRange, 1f + pitchRange);
+                audioSource.PlayOneShot(typeSound);
+            }
+
             yield return new WaitForSeconds(typingSpeed);
         }
-    }
-
-    private void EndDialogue()
-    {
-        Debug.Log("모든 튜토리얼 대화 종료. 게임 속으로 진입하는 연출을 시작합니다.");
-        // GameManager.Instance.LoadNextScene(); 등을 호출하여 전환할 수 있습니다.
     }
 }

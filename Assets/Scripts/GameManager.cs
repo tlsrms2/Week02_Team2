@@ -8,6 +8,12 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    
+    public enum InputDeviceType 
+    { 
+        KeyboardMouse, 
+        Gamepad 
+    }
 
     // 씬 이름을 상수로 관리하여 오타를 방지합니다.
     public const string SceneTitle = "TitleScene";
@@ -26,6 +32,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material glitchMaterial;
     [SerializeField] private TMP_FontAsset StartFont;
     [SerializeField] private TMP_FontAsset LodingFont;
+    [Header("조작 설정")]
+    // 게임 전체에서 공유될 현재 조작 기기 상태
+    public InputDeviceType currentInputDevice = InputDeviceType.KeyboardMouse;
     private Coroutine blink;
 
     private void Start()
