@@ -5716,7 +5716,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.14509805, g: 0.09411766, b: 0.10980393, a: 0}
+  m_BackGroundColor: {r: 0.13333334, g: 0.10196079, b: 0.10980393, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -12120,6 +12120,79 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GroundDirection
   forceDirection: {x: 1, y: 0, z: 0}
+--- !u!1001 &1476987710
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: stage3Bgm.clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 452d471e57ed4e741aa6d011a525f631, type: 3}
+    - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: stage3Bgm.volume
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: climbingSfx.volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: stage3BossIntroBgm.clip
+      value: 
+      objectReference: {fileID: 8300000, guid: a1a91198e4464da48a26565af6ac79ea, type: 3}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -15.18829
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 50.3663
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7124456174858231531, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: m_Name
+      value: SoundManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
 --- !u!23 &1482738298 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8632030877748115563, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
@@ -14199,6 +14272,51 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.15, y: 0.22, z: 0.6}
   m_Center: {x: -0.0050000027, y: 0.11, z: 0}
+--- !u!1 &1873612222
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1873612224}
+  - component: {fileID: 1873612223}
+  m_Layer: 0
+  m_Name: StageBgmTrigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1873612223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1873612222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0d7ede66a722574e891a0b7a1f26991, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageBgmTrigger
+  currentStage: 4
+--- !u!4 &1873612224
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1873612222}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14.50759, y: 55.61605, z: -1.01052}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1877935767
 GameObject:
   m_ObjectHideFlags: 0
@@ -15590,3 +15708,5 @@ SceneRoots:
   - {fileID: 1312432751}
   - {fileID: 1990837004}
   - {fileID: 1873441470}
+  - {fileID: 1476987710}
+  - {fileID: 1873612224}

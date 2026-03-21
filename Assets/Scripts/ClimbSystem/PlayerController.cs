@@ -468,6 +468,10 @@ public class PlayerController : MonoBehaviour
         stunTimer = Mathf.Max(stunTimer, time);
         blinkTimer = 0f;
         haptics?.PlayStun(time);
+        
+        // 기절 효과음 재생
+        SoundManager.Instance?.PlayStun();
+        
         if (activeLimb != null)
         {
             RemoveOutline(activeLimb);
@@ -494,6 +498,9 @@ public class PlayerController : MonoBehaviour
         slideBlinkTimer = 0f;
         slideActive = true;
         haptics?.PlaySlideStart();
+        
+        // 슬라이딩 효과음 재생
+        SoundManager.Instance?.PlaySlide();
 
         if (leftHandEffect != null) leftHandEffect.SetActive(true);
         if (rightHandEffect != null) rightHandEffect.SetActive(true);
@@ -670,6 +677,10 @@ public class PlayerController : MonoBehaviour
         SetCursor(true);
 
         haptics?.PlayGrab();
+        
+        // 벽 잡기 성공 효과음 재생 (Climbing 사운드 사용)
+        SoundManager.Instance?.PlayClimbing();
+        
         return true;
     }
 

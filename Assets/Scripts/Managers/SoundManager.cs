@@ -36,6 +36,7 @@ public class SoundManager : MonoBehaviour
 
     private float masterBgmVolume = 1f;       // 전체 BGM 마스터 볼륨 설정값
     private float currentBgmVolumeScale = 1f; // 현재 재생중인 BGM의 개별 볼륨값
+    private Coroutine bgmTransitionCoroutine; // BGM 자동 전환 코루틴 추적용
 
     private void Awake()
     {
@@ -57,6 +58,14 @@ public class SoundManager : MonoBehaviour
     public void PlayBgm(SoundData data)
     {
         if (data == null || data.clip == null) return;
+        
+        // 진행 중인 BGM 전환 코루틴(인트로 대기 등)이 있다면 중지
+        if (bgmTransitionCoroutine != null)
+        {
+            StopCoroutine(bgmTransitionCoroutine);
+            bgmTransitionCoroutine = null;
+        }
+
         if (bgmSource.clip == data.clip) return;
 
         currentBgmVolumeScale = data.volume;
@@ -73,6 +82,34 @@ public class SoundManager : MonoBehaviour
     public void PlayStage2Bgm() => PlayBgm(stage2Bgm);
     public void PlayStage3Bgm() => PlayBgm(stage3Bgm);
     public void PlayStage3BossIntroBgm() => PlayBgm(stage3BossIntroBgm);
+    
+    // Stage 3 전용: 인트로 재생 완료 후 메인 브금으로 자연스럽게 전환
+    public void PlayStage3WithIntro()
+    {
+        if (bgmTransitionCoroutine != null) StopCoroutine(bgmTransitionCoroutine);
+        bgmTransitionCoroutine = StartCoroutine(Stage3BgmRoutine());
+    }
+
+    private IEnumerator Stage3BgmRoutine()
+    {
+        // 1. 인트로 BGM 재생 (루프 안 함)
+        if (stage3BossIntroBgm != null && stage3BossIntroBgm.clip != null)
+        {
+            currentBgmVolumeScale = stage3BossIntroBgm.volume;
+            bgmSource.clip = stage3BossIntroBgm.clip;
+            bgmSource.loop = false; // 인트로는 한 번만
+            bgmSource.pitch = 1f;
+            bgmSource.volume = masterBgmVolume * currentBgmVolumeScale;
+            bgmSource.Play();
+
+            // 인트로 오디오 클립의 길이(초)만큼 대기
+            yield return new WaitForSeconds(stage3BossIntroBgm.clip.length);
+        }
+
+        // 2. 대기가 끝나면 메인 스테이지 3 BGM 재생 (루프 켜짐)
+        PlayBgm(stage3Bgm);
+    }
+
     public void PlayEndingBgm() => PlayBgm(endingBgm);
     public void PlayGameOverBgm() => PlayBgm(gameOverBgm);
 
