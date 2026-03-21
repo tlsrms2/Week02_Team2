@@ -31,6 +31,10 @@ public class Barrel : MonoBehaviour
     private List<Collider> currentGrounds = new List<Collider>(); // 현재 밟고 있는 바닥들
     private HashSet<GroundDirection> appliedGroundDirections = new HashSet<GroundDirection>(); // 이미 방향을 강제받은 바닥을 기억
 
+    [Header("Slide")]
+    [SerializeField] LayerMask targerLayer;
+    [SerializeField] float slideTime;
+
     void Start()
     {
         currentNormal = transform.up; // 초기화
@@ -211,31 +215,29 @@ public class Barrel : MonoBehaviour
     // 사다리는 통과해야 하므로 트리거(Is Trigger)로 설정되어 있다고 가정합니다.
     private void OnTriggerEnter(Collider other)
     {
-        // [디버그] 트리거 진입 자체가 호출되는지 확인
-        Debug.Log($"[Barrel] OnTriggerEnter 호출됨! 대상: {other.gameObject.name}, 레이어: {LayerMask.LayerToName(other.gameObject.layer)}");
-
         // 4. 사다리를 만났을 때 (확률적 추락)
         bool isLadder = ((1 << other.gameObject.layer) & ladderLayer) != 0;
-        Debug.Log($"[Barrel] 사다리 레이어 체크: isLadder={isLadder}, checkedCurrentLadder={checkedCurrentLadder}, ladderLayer={ladderLayer.value}");
         
         if (isLadder && !checkedCurrentLadder)
         {
             checkedCurrentLadder = true;
             float roll = Random.value;
-            Debug.Log($"[Barrel] 사다리 확률 체크: roll={roll}, ladderDropChance={ladderDropChance}, 결과={(roll <= ladderDropChance ? "낙하!" : "통과")}");
             // 확률이 1일 때 Random.value가 1.0이 나오는 예외 상황까지 포함하도록 <= 로 변경
             if (roll <= ladderDropChance)
             {
-                Debug.Log($"[Barrel] ★ 사다리 대기 시작!");
                 isWaitingAtLadder = true; // 대기 상태 돌입
                 ladderWaitTimer = ladderWaitTime; // 인스펙터에서 설정한 시간만큼 타이머 시작
             }
+        }
+
+        if((targerLayer.value &(1 << other.gameObject.layer)) != 0)
+        {
+            other.gameObject.GetComponent<PlayerHealth>().TakeStun(slideTime);
         }
     }
 
     private void StartLadderFall()
     {
-        Debug.Log($"[Barrel] ★ 사다리 수직 낙하 시작! 현재 밟고 있는 바닥 수: {currentGrounds.Count}");
         isWaitingAtLadder = false;
         isFalling = true; // 사다리 타고 내려가기
         isLadderFalling = true; // 수직 낙하 상태 돌입
