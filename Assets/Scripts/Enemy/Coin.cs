@@ -21,6 +21,6 @@ public class Coin : MonoBehaviour
             Instantiate(coinBurstEffect, transform.position, transform.rotation);
         }
 
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }
