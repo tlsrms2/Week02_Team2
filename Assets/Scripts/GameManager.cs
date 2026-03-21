@@ -86,21 +86,21 @@ public class GameManager : MonoBehaviour
     private IEnumerator StartGame(string name, float duration)
     {
         titlePanel.enabled = true;
-        titlePanel.material = glitchMaterial;
-        titlePanel.material.SetFloat("_GlitchIntensity", 0f);
-
         float elapsed = 0f;
 
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            titlePanel.material.SetFloat("_GlitchIntensity", Mathf.Lerp(0f, 1f, elapsed / duration));
-            yield return null;
-        }
+        //titlePanel.material = glitchMaterial;
+        //titlePanel.material.SetFloat("_GlitchIntensity", 0f);
 
-        titlePanel.material.SetFloat("_GlitchIntensity", 1f);
+        //while (elapsed < duration)
+        //{
+        //    elapsed += Time.deltaTime;
+        //    titlePanel.material.SetFloat("_GlitchIntensity", Mathf.Lerp(0f, 1f, elapsed / duration));
+        //    yield return null;
+        //}
 
-        yield return new WaitForSeconds(0.3f);
+        //titlePanel.material.SetFloat("_GlitchIntensity", 1f);
+
+        //yield return new WaitForSeconds(0.3f);
 
         titlePanel.material = potMaterial;
         titlePanel.material.SetFloat("_Reveal", 0f);
