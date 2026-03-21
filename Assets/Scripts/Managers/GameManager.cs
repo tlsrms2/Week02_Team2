@@ -7,6 +7,12 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    
+    public enum InputDeviceType 
+    { 
+        KeyboardMouse, 
+        Gamepad 
+    }
 
     [Header("카메라 페이드")]
     [SerializeField] private Image blackOutImage;
@@ -24,6 +30,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material twistMaterial;
     [SerializeField] private TMP_FontAsset StartFont;
     [SerializeField] private TMP_FontAsset LodingFont;
+    [Header("조작 설정")]
+    // 게임 전체에서 공유될 현재 조작 기기 상태
+    public InputDeviceType currentInputDevice = InputDeviceType.KeyboardMouse;
     private Coroutine blink;
 
     [Header("컷씬")]
