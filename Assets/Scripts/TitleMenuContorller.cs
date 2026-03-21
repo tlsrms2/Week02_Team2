@@ -79,33 +79,39 @@ public class TitleMenuController : MonoBehaviour
 
     private void HandleMouse()
     {
-        if (_isClickPlaying) return; // 입력 차단
+        if (_isClickPlaying) return;
 
-        // 마우스가 움직였을 때만 마우스 모드로 전환
-        if (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0)
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
+        // 마우스 움직임 확인
+        if (mouseX != 0 || mouseY != 0)
+        {
             _inputMode = InputMode.Mouse;
-
-        if (_inputMode != InputMode.Mouse) return; // 키보드 모드면 마우스 무시
-        anyHovered = false;
+        }
 
         for (int i = 0; i < menuButtons.Length; i++)
         {
-            if (menuButtons[i].IsMouseOver())
-            {
-                anyHovered = true;
+            bool hovered = menuButtons[i].IsMouseOver();
 
-                // 다른 버튼으로 이동할 때 색상 + 화살표 변경 + 사운드
-                if (i != _selectedIndex)
+            if (hovered)
+            {
+                if (_inputMode == InputMode.Mouse)
                 {
-                    SetSelected(i); // 색상 + 화살표 자동 처리
-                    PlayMoveSound();
+                    if (i != _selectedIndex)
+                    {
+                        SetSelected(i);
+                        PlayMoveSound();
+                    }
                 }
 
                 if (Input.GetMouseButtonDown(0))
+                {
+                    _inputMode = InputMode.Mouse;
                     StartCoroutine(PlaySoundThenClick(menuButtons[i]));
+                }
             }
         }
-
     }
     // 게임 시작 소리
     private IEnumerator PlaySoundThenClick(TitleButton button)

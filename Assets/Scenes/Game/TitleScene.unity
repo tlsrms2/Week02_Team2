@@ -1771,7 +1771,7 @@ GameObject:
   - component: {fileID: 878743633}
   - component: {fileID: 878743635}
   - component: {fileID: 878743634}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2571,7 +2571,7 @@ GameObject:
   - component: {fileID: 1189599565}
   - component: {fileID: 1189599567}
   - component: {fileID: 1189599566}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Guide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2708,7 +2708,7 @@ GameObject:
   - component: {fileID: 1292098951}
   - component: {fileID: 1292098953}
   - component: {fileID: 1292098952}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3070,7 +3070,7 @@ GameObject:
   - component: {fileID: 1424858838}
   - component: {fileID: 1424858840}
   - component: {fileID: 1424858839}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Arrow (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3282,7 +3282,7 @@ GameObject:
   - component: {fileID: 1514482251}
   - component: {fileID: 1514482252}
   - component: {fileID: 1514482253}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: TitleController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3597,7 +3597,7 @@ GameObject:
   - component: {fileID: 1577922038}
   - component: {fileID: 1577922040}
   - component: {fileID: 1577922039}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Exit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3734,7 +3734,7 @@ GameObject:
   - component: {fileID: 1590961947}
   - component: {fileID: 1590961949}
   - component: {fileID: 1590961948}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Game_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3749,7 +3749,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1590961946}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -400}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3810,7 +3810,7 @@ GameObject:
   - component: {fileID: 1595383925}
   - component: {fileID: 1595383927}
   - component: {fileID: 1595383926}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Arrow (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3947,7 +3947,7 @@ GameObject:
   - component: {fileID: 1624532146}
   - component: {fileID: 1624532148}
   - component: {fileID: 1624532147}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Title_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4632,7 +4632,7 @@ GameObject:
   - component: {fileID: 1971162770}
   - component: {fileID: 1971162772}
   - component: {fileID: 1971162771}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Scanline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4847,7 +4847,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2082796253}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Images
   m_TagString: Untagged
   m_Icon: {fileID: 0}
