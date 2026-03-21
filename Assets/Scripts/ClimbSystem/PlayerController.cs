@@ -138,6 +138,14 @@ public class PlayerController : MonoBehaviour
         SetCursor(true);
     }
 
+    public void Init()
+    {
+        foreach (var limb in limbs) InitGrab(limb);
+
+        prevBodyPos = body.position;
+        SetCursor(true);
+    }
+
     // ── 이벤트 등록 / 해제 ─────────────────────────
     void OnEnable()
     {

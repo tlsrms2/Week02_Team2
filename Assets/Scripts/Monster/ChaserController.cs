@@ -5,6 +5,7 @@ public class ChaserController : MonoBehaviour
 {
     [Header("목표")]
     [SerializeField] private Transform player;
+    [SerializeField] bool isChasing = false;
 
     [Header("움직임 힘")]
     [SerializeField] private float minSpeed = 1f;
@@ -18,6 +19,8 @@ public class ChaserController : MonoBehaviour
     [Header("연출 재질")]
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private Material glitchMaterial;
+    [SerializeField] float duration;
+    [SerializeField] Transform startPoint;
 
     [Header("GameOver")]
     [SerializeField] private GameObject gameOverPanel;
@@ -36,11 +39,7 @@ public class ChaserController : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteRenderer.material = defaultMaterial;
-
-        Vector3 pos = transform.position;
-        pos.z = -5f;
-        transform.position = pos;
+        _spriteRenderer.material = glitchMaterial;
 
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -51,17 +50,11 @@ public class ChaserController : MonoBehaviour
 
     void Update()
     {
+        if(!isChasing) return; 
         if (player == null) return;
 
         HandleChase();
         HandleLookAt();
-        CheckTrigger();
-
-        // Z값 -5 매 프레임 고정
-        Vector3 pos = transform.position;
-        pos.z = -5f;
-        transform.position = pos;
-
     }
 
     private void HandleChase()
@@ -86,6 +79,40 @@ public class ChaserController : MonoBehaviour
 
         float angle = Mathf.Atan2(dirToPlayer.y, dirToPlayer.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    public void SetChasing(bool value)
+    {
+        isChasing = value;
+    }
+    public void Init()
+    {
+        transform.position = startPoint.position;
+        isChasing = true;
+    }
+
+    public void StartGlitchFade()
+    {
+        StartCoroutine(GlitchFadeCoroutine());
+    }
+
+    private IEnumerator GlitchFadeCoroutine()
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            float value = Mathf.Lerp(1f, 0f, t);
+            _spriteRenderer.material.SetFloat("_GlitchIntensity", value);
+
+            yield return null;
+        }
+
+        _spriteRenderer.material.SetFloat("_GlitchIntensity", 0f);
+        _spriteRenderer.material = defaultMaterial;
     }
 
     private void CheckTrigger()
