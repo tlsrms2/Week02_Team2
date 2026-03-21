@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DongKeyKong_Drum
       objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 04dd737de94778649addb2af360de805, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 04dd737de94778649addb2af360de805, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.7

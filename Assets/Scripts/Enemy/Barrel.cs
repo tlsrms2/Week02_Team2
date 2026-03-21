@@ -29,6 +29,7 @@ public class Barrel : MonoBehaviour
     private float ignoreGroundY = -9999f;          // 사다리를 탈 때 윗층 바닥에 걸리지 않도록 통과시키기 위한 Y 좌표 기준
     private Vector3 currentNormal;                 // 현재 밟고 있는 바닥의 법선(기울기) 벡터
     private List<Collider> currentGrounds = new List<Collider>(); // 현재 밟고 있는 바닥들
+    private HashSet<GroundDirection> appliedGroundDirections = new HashSet<GroundDirection>(); // 이미 방향을 강제받은 바닥을 기억
 
     void Start()
     {
@@ -141,7 +142,36 @@ public class Barrel : MonoBehaviour
                 if (isFalling)
                 {
                     isFalling = false;
+
+                    // 1. 바닥에 강제 방향 스크립트가 있는지 확인
+                    GroundDirection gd = collision.gameObject.GetComponent<GroundDirection>();
+                    if (gd != null && !appliedGroundDirections.Contains(gd))
+                    {
+                        moveDirection = gd.forceDirection.normalized;
+                        appliedGroundDirections.Add(gd); // 기억해두기
+                    }
+                    else
+                    {
+                        // 2. 강제 방향이 없다면 기존처럼 바닥의 기울기에 따라 내리막길로 방향을 결정
+                        // 법선의 X값이 양수면 경사가 오른쪽으로 낮아지므로 오른쪽으로 이동
+                        if (currentNormal.x > 0.01f)
+                            moveDirection = Vector3.right;
+                        // 법선의 X값이 음수면 경사가 왼쪽으로 낮아지므로 왼쪽으로 이동
+                        else if (currentNormal.x < -0.01f)
+                            moveDirection = Vector3.left;
+                    }
+                        
                     isLadderFalling = false; // 착지 시 수직 낙하 상태 해제
+                }
+                else
+                {
+                    // 이미 굴러가고 있는 도중 강제 방향이 설정된 새로운 바닥을 밟았을 때도 적용
+                    GroundDirection gd = collision.gameObject.GetComponent<GroundDirection>();
+                    if (gd != null && !appliedGroundDirections.Contains(gd))
+                    {
+                        moveDirection = gd.forceDirection.normalized;
+                        appliedGroundDirections.Add(gd); // 기억해두기
+                    }
                 }
             }
         }
