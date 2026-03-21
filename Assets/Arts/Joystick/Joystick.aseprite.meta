@@ -234,48 +234,6 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 1452, y: 806}
-  - name: Button_Start
-    originalName: 
-    pivot: {x: 27.086206, y: 13.689655}
-    alignment: 9
-    border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
-    rect:
-      serializedVersion: 2
-      x: 1544
-      y: 1376
-      width: 29
-      height: 29
-    spriteID: 5189f63ea1d98974d89c76a737f6934b
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: 1544, y: 1376}
-  - name: Button_Exit
-    originalName: 
-    pivot: {x: 27.086206, y: 13.689655}
-    alignment: 9
-    border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
-    rect:
-      serializedVersion: 2
-      x: 1581
-      y: 1376
-      width: 29
-      height: 29
-    spriteID: aff45b55c67d6774680a785076e16780
-    spriteBone: []
-    spriteOutline: []
-    vertices: []
-    spritePhysicsOutline: []
-    indices: 
-    edges: []
-    tessellationDetail: 0
-    uvTransform: {x: 1581, y: 1376}
   - name: Post
     originalName: 
     pivot: {x: 0.5454861, y: 0.641357}
@@ -507,6 +465,48 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 1623, y: 1100}
+  - name: Button_Side1
+    originalName: 
+    pivot: {x: 27.086206, y: 13.689655}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1544
+      y: 1376
+      width: 29
+      height: 29
+    spriteID: 79eddfd116de1f94685fd8a700d81265
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1544, y: 1376}
+  - name: Button_Side2
+    originalName: 
+    pivot: {x: 27.086206, y: 13.689655}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1581
+      y: 1376
+      width: 29
+      height: 29
+    spriteID: eef79a0f062e45c4bbee5913795c61b2
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1581, y: 1376}
   asepriteLayers:
   - layerIndex: 0
     uuid:
@@ -735,17 +735,17 @@ ScriptedImporter:
     parentIndex: -1
   - layerIndex: 9
     uuid:
-      value0: 2048066625
+      value0: 623144843
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: Button_Start
+    name: Button_Side1
     layerFlags: 3
     layerType: 0
     blendMode: 0
     cells:
-    - name: Button_Start
+    - name: Button_Side1
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
@@ -753,24 +753,24 @@ ScriptedImporter:
         y: 277
         width: 29
         height: 29
-      spriteId: 5189f63ea1d98974d89c76a737f6934b
+      spriteId: 79eddfd116de1f94685fd8a700d81265
     linkedCells: []
     tileCells: []
     tileSetIndex: 0
     parentIndex: -1
   - layerIndex: 10
     uuid:
-      value0: 3256971213
+      value0: 1026429370
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: Button_Exit
+    name: Button_Side2
     layerFlags: 3
     layerType: 0
     blendMode: 0
     cells:
-    - name: Button_Exit
+    - name: Button_Side2
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
@@ -778,7 +778,7 @@ ScriptedImporter:
         y: 218
         width: 29
         height: 29
-      spriteId: aff45b55c67d6774680a785076e16780
+      spriteId: eef79a0f062e45c4bbee5913795c61b2
     linkedCells: []
     tileCells: []
     tileSetIndex: 0
