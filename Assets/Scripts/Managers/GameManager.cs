@@ -64,21 +64,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    // 빌드 세팅(Build Settings)에 등록된 순서대로 다음 씬을 로드합니다.
-    public void LoadNextScene()
-    {
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
-        {
-            SceneManager.LoadScene(nextSceneIndex);
-        }
-        else
-        {
-            Debug.Log("마지막 씬입니다. 타이틀로 돌아갑니다.");
-            LoadSceneByName("TitleScene");
-        }
-    }
     public void GuideButton()
     {
         Debug.Log("가이드 아직 없음");
@@ -281,7 +266,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
 
         StopAllCoroutines();
-        SceneManager.LoadScene("Stage01_PackMan");
+        SceneManager.LoadScene("Stage03_Tetris");
     }
 
     private IEnumerator BlackOutFade()
