@@ -2,7 +2,6 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -24,6 +23,7 @@ public class GameManager : MonoBehaviour
     public float lineDelay = 0.3f;   // 줄 간격 딜레이
     [Header("타이틀 사용")]
     [SerializeField] private Material glitchMaterial;
+    [SerializeField] private Material potMaterial;
     [SerializeField] private TMP_FontAsset StartFont;
     [SerializeField] private TMP_FontAsset LodingFont;
     private Coroutine blink;
@@ -80,77 +80,44 @@ public class GameManager : MonoBehaviour
     public void LoadSceneByName(string sceneName)
     {
         titleMenu.OutMenu();
-        StartCoroutine(StartGame(sceneName));
+        titleText.enabled = false;
+        StartCoroutine(StartGame(sceneName, 1f));
     }
-    private IEnumerator StartGame(string name)
+    private IEnumerator StartGame(string name, float duration)
     {
-        titleText.font = LodingFont;
-        titleText.text = "";
-        titleText.alignment = TextAlignmentOptions.TopLeft;
-        titleText.fontSize = 50;
-        titleText.color = Color.green;
-        yield return new WaitForSeconds(0.5f);
-
-        // 1번째 줄 - 8비트 시스템 초기화
-        yield return StartCoroutine(DotBlinkLine("8-BIT SYSTEM INITIALIZING"));
-
-        // 2번째 줄 - ROM 체크 → OK 연출
-        yield return StartCoroutine(TypeLine("CHECKING INTERNAL ROM... "));
-        yield return new WaitForSeconds(0.6f);
-        yield return StartCoroutine(TypeLine("OK"));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-
-        // 3번째 줄 - 배터리 한 칸씩 채워짐
-        yield return StartCoroutine(BatteryLine());
-
-        // 4번째 줄 - 카트리지 슬롯 읽기
-        yield return StartCoroutine(DotBlinkLine("READING CARTRIDGE SLOT"));
-
-        // 5번째 줄 - 링크 케이블
-        yield return StartCoroutine(TypeLine("LINK CABLE: NOT CONNECTED"));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-
-        // 6번째 줄 - 스프라이트 데이터 로딩 퍼센트
-        yield return StartCoroutine(LoadingLine());
-
-        // 7번째 줄 - 픽셀 엔진 준비 완료
-        yield return StartCoroutine(TypeLine("PIXEL ENGINE READY."));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-
-        // 빈 줄
-        titleText.text += "\n";
-
-        // 마지막 줄
-        yield return StartCoroutine(TypeLine("PLEASE WAIT A SECOND..."));
-
-        // 커서 깜빡임
-        blink = StartCoroutine(BlinkCursor());
-        yield return new WaitForSeconds(2f);
-        StopCoroutine(blink);
-        titleText.text = titleText.text.TrimEnd('_'); // 혹시 _ 남아있으면 제거
-        yield return StartCoroutine(FadeOut(1f));
-
-        // 글리치 효과 시작
+        titlePanel.enabled = true;
         titlePanel.material = glitchMaterial;
         titlePanel.material.SetFloat("_GlitchIntensity", 0f);
 
-        float intensity = 0f;
-        while (intensity < 1f)
+        float elapsed = 0f;
+
+        while (elapsed < duration)
         {
-            intensity = Mathf.MoveTowards(intensity, 1f, 0.3f * Time.deltaTime);
-            titlePanel.material.SetFloat("_GlitchIntensity", intensity);
+            elapsed += Time.deltaTime;
+            titlePanel.material.SetFloat("_GlitchIntensity", Mathf.Lerp(0f, 1f, elapsed / duration));
             yield return null;
         }
 
         titlePanel.material.SetFloat("_GlitchIntensity", 1f);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
 
+        titlePanel.material = potMaterial;
+        titlePanel.material.SetFloat("_Reveal", 0f);
+
+        // EmissionIntensity 0 → 1
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            titlePanel.material.SetFloat("_Reveal", Mathf.Lerp(0f, 1f, elapsed / duration));
+            yield return null;
+        }
+        titlePanel.material.SetFloat("_Reveal", 1f);
+
+        yield return new WaitForSeconds(0.3f);
         // 씬 전환
-        SceneManager.LoadScene(name);
+        //SceneManager.LoadScene(name);
     }
 
 
@@ -218,21 +185,6 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(FadeIn(2f));
 
     }
-    private IEnumerator StartGame()
-    {
-        titlePanel.material = glitchMaterial;
-        titlePanel.material.SetFloat("_GlitchIntensity", 0f);
-
-        float intensity = 0f;
-
-        while (intensity < 1f)
-        {
-            intensity = Mathf.MoveTowards(intensity, 1f, 0.3f * Time.deltaTime);
-            titlePanel.material.SetFloat("_GlitchIntensity", intensity);
-            yield return null;
-        }
-        titlePanel.material.SetFloat("_GlitchIntensity", 1f);
-    }
     private IEnumerator FadeIn(float duration)
     {
         float elapsed = 0f;
@@ -294,7 +246,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < totalBars; i++)
         {
             titleText.text += (i < filledBars) ? "■" : "□";
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.1f);
         }
         titleText.text += suffix + "\n";
         yield return new WaitForSeconds(lineDelay);
@@ -307,7 +259,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             titleText.text += ".";
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.1f);
         }
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
