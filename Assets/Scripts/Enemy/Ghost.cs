@@ -14,7 +14,9 @@ public class Ghost : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Vector3 moveDirection = Vector3.up; // 현재 이동 방향 (로컬 기준)
-
+    [Header("Stun")]
+    [SerializeField] LayerMask targerLayer;
+    [SerializeField] float stunTime;
     void Start()
     {
         // 유령 오브젝트가 가지고 있는 SpriteRenderer 컴포넌트를 가져옵니다.
@@ -75,6 +77,14 @@ public class Ghost : MonoBehaviour
 
         // 선택된 방향으로 계속 직진
         transform.Translate(moveDirection * speed * Time.deltaTime, Space.Self); 
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        
+        if((targerLayer.value &(1 << other.gameObject.layer)) != 0)
+        {
+            other.gameObject.GetComponent<PlayerHealth>().TakeStun(stunTime);
+        }
     }
 
     // 현재 이동 방향을 확인하여 스프라이트 이미지를 교체하는 함수
