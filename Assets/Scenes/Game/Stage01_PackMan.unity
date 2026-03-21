@@ -3460,6 +3460,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1378815700}
     - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
+      propertyPath: triggerY
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: gameOverPanel
       value: 
       objectReference: {fileID: 54642633}

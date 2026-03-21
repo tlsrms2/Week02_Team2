@@ -38,6 +38,10 @@ public class ChaserController : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRenderer.material = defaultMaterial;
 
+        Vector3 pos = transform.position;
+        pos.z = -5f;
+        transform.position = pos;
+
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
@@ -52,6 +56,12 @@ public class ChaserController : MonoBehaviour
         HandleChase();
         HandleLookAt();
         CheckTrigger();
+
+        // Z값 -5 매 프레임 고정
+        Vector3 pos = transform.position;
+        pos.z = -5f;
+        transform.position = pos;
+
     }
 
     private void HandleChase()
