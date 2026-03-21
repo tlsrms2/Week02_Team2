@@ -1341,8 +1341,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f9c598fe749e945a8c7293e48b6afc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DrumControlle
-  destination: {fileID: 1851982192}
-  moveSpeed: 2
 --- !u!1 &653941013
 GameObject:
   m_ObjectHideFlags: 0
@@ -7873,8 +7871,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f9c598fe749e945a8c7293e48b6afc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DrumControlle
-  destination: {fileID: 765059551}
-  moveSpeed: 2
 --- !u!1 &1687678943
 GameObject:
   m_ObjectHideFlags: 0
@@ -8557,8 +8553,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11f9c598fe749e945a8c7293e48b6afc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DrumControlle
-  destination: {fileID: 2019369243}
-  moveSpeed: 0.3
 --- !u!1 &1895721780
 GameObject:
   m_ObjectHideFlags: 0
