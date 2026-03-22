@@ -24,6 +24,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TitleMenuController titleMenu;
     public float typingSpeed = 0.05f; // 글자 타이핑 속도
     public float lineDelay = 0.3f;   // 줄 간격 딜레이
+    
+    [Header("타이핑 사운드 설정")]
+    [SerializeField] private AudioSource typeAudioSource;
+    [SerializeField] private AudioClip typeSound;
+    [SerializeField] [Range(0f, 0.5f)] private float pitchRange = 0.1f;
+
     [Header("타이틀 사용")]
     [SerializeField] private Material glitchMaterial;
     [SerializeField] private Material potMaterial;
@@ -34,11 +40,6 @@ public class GameManager : MonoBehaviour
     // 게임 전체에서 공유될 현재 조작 기기 상태
     public InputDeviceType currentInputDevice = InputDeviceType.KeyboardMouse;
     private Coroutine blink;
-
-    [Header("컷씬")]
-    [SerializeField] private RectTransform[] cutScenes; // 4개 Image RectTransform
-    [SerializeField] private float cutSceneDuration = 1f;  // 각 컷씬 슬라이드 시간
-    [SerializeField] private float cutSceneHoldTime = 1.5f; // 컷씬 머무는 시간
 
     private void Start()
     {
@@ -63,10 +64,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-    public void GuideButton()
-    {
-        Debug.Log("가이드 아직 없음");
     }
     public void ExitButton()
     {
@@ -116,129 +113,9 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         titlePanel.material = null;
 
-        yield return StartCoroutine(PlayCutScenes());
-    }
-    // 컷씬 슬라이스
-    private IEnumerator PlayCutScenes()
-    {
-        Vector2[] targetPositions = new Vector2[]
-        {
-        new Vector2(-172f, 145f),
-        new Vector2(223f, 125f),
-        new Vector2(-173f, -319f),
-        new Vector2(179f, -213f)
-        };
-
-        float[] startOffsetX = new float[]
-        {
-        -Screen.width,
-         Screen.width,
-        -Screen.width,
-         Screen.width
-        };
-
-        bool skipped = false;
-
-        // 하나씩 순차적으로 슬라이드 인
-        for (int i = 0; i < cutScenes.Length; i++)
-        {
-            if (skipped) break;
-
-            cutScenes[i].gameObject.SetActive(true);
-
-            Vector2 startPos = new Vector2(
-                targetPositions[i].x + startOffsetX[i],
-                targetPositions[i].y
-            );
-            cutScenes[i].anchoredPosition = startPos;
-
-            // 슬라이드 인
-            float elapsed = 0f;
-            while (elapsed < cutSceneDuration)
-            {
-                // ESC 스킵 감지
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    skipped = true;
-                    break;
-                }
-
-                elapsed += Time.deltaTime;
-                float t = Mathf.SmoothStep(0f, 1f, elapsed / cutSceneDuration);
-                cutScenes[i].anchoredPosition = Vector2.Lerp(startPos, targetPositions[i], t);
-                yield return null;
-            }
-
-            if (skipped) break;
-
-            cutScenes[i].anchoredPosition = targetPositions[i];
-
-            // 대기 중에도 ESC 감지
-            float holdElapsed = 0f;
-            while (holdElapsed < cutSceneHoldTime)
-            {
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    skipped = true;
-                    break;
-                }
-                holdElapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        // 전체 머무는 시간 (스킵 안 했을 때만)
-        if (!skipped)
-        {
-            float holdElapsed = 0f;
-            while (holdElapsed < cutSceneHoldTime)
-            {
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    skipped = true;
-                    break;
-                }
-                holdElapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        // 스킵 시 모든 컷씬 즉시 비활성화
-        if (skipped)
-        {
-            for (int i = 0; i < cutScenes.Length; i++)
-                cutScenes[i].gameObject.SetActive(false);
-
-            yield return StartCoroutine(TwistEffect());
-        }
-
-        // 동시에 슬라이드 아웃
-        float outElapsed = 0f;
-        Vector2[] currentPositions = new Vector2[cutScenes.Length];
-        for (int i = 0; i < cutScenes.Length; i++)
-            currentPositions[i] = cutScenes[i].anchoredPosition;
-
-        while (outElapsed < cutSceneDuration)
-        {
-            outElapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, outElapsed / cutSceneDuration);
-
-            for (int i = 0; i < cutScenes.Length; i++)
-            {
-                Vector2 exitPos = new Vector2(
-                    targetPositions[i].x - startOffsetX[i],
-                    targetPositions[i].y
-                );
-                cutScenes[i].anchoredPosition = Vector2.Lerp(currentPositions[i], exitPos, t);
-            }
-            yield return null;
-        }
-
-        for (int i = 0; i < cutScenes.Length; i++)
-            cutScenes[i].gameObject.SetActive(false);
-
         yield return StartCoroutine(TwistEffect());
     }
+
     // 인게임 전 마지막 플레이 영상
     private IEnumerator TwistEffect()
     {
@@ -296,9 +173,11 @@ public class GameManager : MonoBehaviour
     private IEnumerator Glitch_Title()
     {
         // 1번째 줄 - 일반 타이핑
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("SYSTEM BOOT GameLab A2-Team.Unity...\n"));
 
         // 2번째 줄 - CHECKING → OK 연출
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("CHECKING INTERNAL RAM... "));
         yield return new WaitForSeconds(0.6f);
         yield return StartCoroutine(TypeLine("OK"));
@@ -309,6 +188,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(BatteryLine());
 
         // 4번째 줄 - 점 깜빡이며 카트리지 삽입
+        PlayTypingSound();
         yield return StartCoroutine(DotBlinkLine("INSERTING CARTRIDGE"));
 
         // 5번째 줄 - 팀이름
@@ -319,6 +199,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(lineDelay);
 
         // 6번째 줄 - 팀 명
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("TEAM A2: Jo Shin Geun..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
@@ -327,6 +208,7 @@ public class GameManager : MonoBehaviour
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
         // 6번째 줄 - 팀 명
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("TEAM A2: Han Tae Hui..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
@@ -338,6 +220,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(TypeLine("TEAM A2: Jeong Seok Hee..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
+        PlayTypingSound();
 
         // 7번째 줄 - FAILED → SUCCESS 연출
         yield return StartCoroutine(TypeLine("TEAM NAME DATA... "));
@@ -348,6 +231,7 @@ public class GameManager : MonoBehaviour
         // FAILED 제거 후 SUCCESS 출력
         string current = titleText.text;
         titleText.text = current.Substring(0, current.Length - "FAILED".Length);
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("SUCCESS"));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
@@ -372,7 +256,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         yield return StartCoroutine(FadeIn(2f));
-
     }
     private IEnumerator FadeIn(float duration)
     {
@@ -399,6 +282,8 @@ public class GameManager : MonoBehaviour
     // 페이드 아웃 (1 → 0)
     private IEnumerator FadeOut(float duration)
     {
+        SoundManager.Instance.PlayTitleBgm();
+        
         float elapsed = 0f;
         Color color = titleText.color;
 
@@ -416,9 +301,11 @@ public class GameManager : MonoBehaviour
     // 기본 타이핑 (줄바꿈 없이)
     private IEnumerator TypeLine(string line)
     {
+        int charCount = 0;
         foreach (char letter in line)
         {
             titleText.text += letter;
+            charCount++;
             yield return new WaitForSeconds(typingSpeed);
         }
     }
@@ -470,6 +357,16 @@ public class GameManager : MonoBehaviour
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
     }
+
+    private void PlayTypingSound()
+    {
+        if (typeAudioSource != null && typeSound != null)
+        {
+            typeAudioSource.pitch = Random.Range(1f - pitchRange, 1f + pitchRange);
+            typeAudioSource.PlayOneShot(typeSound);
+        }
+    }
+
     IEnumerator BlinkCursor()
     {
         while (true)

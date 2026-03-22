@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TetrisBossSpawner : MonoBehaviour
@@ -17,6 +18,8 @@ public class TetrisBossSpawner : MonoBehaviour
     private int spawnedLines = 0;
     private Coroutine spawnRoutine;
 
+    private List<GameObject> preBoss = new List<GameObject>();
+
     private void Start()
     {
         if (bossLinePrefab == null)
@@ -25,19 +28,44 @@ public class TetrisBossSpawner : MonoBehaviour
             return;
         }
 
+
+    }
+
+    public void StartTetrisBoss()
+    {
         spawnRoutine = StartCoroutine(SpawnRoutine());
+    }
+
+    public void ReStartTetrisBoss()
+    {
+        StopCoroutine(spawnRoutine);
+        spawnRoutine = null;
+        spawnedLines = 0;
+        spawnRoutine = StartCoroutine(SpawnRoutine());
+        foreach (var obj in preBoss)
+        {
+            Destroy(obj);
+        }
+        preBoss = new List<GameObject>();
     }
 
     private IEnumerator SpawnRoutine()
     {
+        // 첫 번째 줄 - 7초 대기 후 생성
+        yield return new WaitForSeconds(15f);
+
+        Vector3 spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
+        var obj = Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);
+        preBoss.Add(obj);
+        spawnedLines++;
+        // 이후 줄 - spawnInterval 마다 생성
         while (true)
         {
             yield return new WaitForSeconds(spawnInterval);
 
-            // 현재 스포너의 위치를 기준으로 ySpacing 만큼 위로 올리며 생성
-            Vector3 spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
-            GameObject newBossLine = Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);
-            
+            spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
+            var objt = Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);
+            preBoss.Add(objt);
             spawnedLines++;
         }
     }

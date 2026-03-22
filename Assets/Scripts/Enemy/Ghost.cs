@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Rendering.Universal;
 
 public class Ghost : MonoBehaviour
 {
     public float speed = 2.0f;       // 유령 이동 속도
-
+    public bool isStart = false;
     [Header("Pathfinding")]
     public MazeNode startNode;       // 유령이 처음 시작할 위치(노드)
 
@@ -29,18 +30,13 @@ public class Ghost : MonoBehaviour
     {
         // 유령 오브젝트가 가지고 있는 SpriteRenderer 컴포넌트를 가져옵니다.
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        
-        if (startNode != null)
-        {
-            // 시작 노드로 유령 위치를 맞추고 다음 이동할 목표를 계산합니다.
-            transform.position = startNode.transform.position;
-            currentNode = startNode;
-            ChooseNextNode();
-        }
+
+        Init();
     }
 
     void Update()
     {
+        if (!isStart) return;
         if (targetNode != null)
         {
             // 목표 노드를 향해 부드럽게 이동합니다.
@@ -53,6 +49,19 @@ public class Ghost : MonoBehaviour
                 currentNode = targetNode;
                 ChooseNextNode();
             }
+        }
+    }
+
+    public void Init()
+    {
+        isStart = true;
+        gameObject.SetActive(true);
+        if (startNode != null)
+        {
+            // 시작 노드로 유령 위치를 맞추고 다음 이동할 목표를 계산합니다.
+            transform.position = startNode.transform.position;
+            currentNode = startNode;
+            ChooseNextNode();
         }
     }
 

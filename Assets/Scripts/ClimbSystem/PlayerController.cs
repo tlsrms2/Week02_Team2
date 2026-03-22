@@ -138,6 +138,14 @@ public class PlayerController : MonoBehaviour
         SetCursor(true);
     }
 
+    public void Init()
+    {
+        foreach (var limb in limbs) InitGrab(limb);
+
+        prevBodyPos = body.position;
+        SetCursor(true);
+    }
+
     // ── 이벤트 등록 / 해제 ─────────────────────────
     void OnEnable()
     {
@@ -277,7 +285,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     } */
-    
+
     void PollTriggers()
     {
         var gp = Gamepad.current;
@@ -479,10 +487,10 @@ public class PlayerController : MonoBehaviour
         stunTimer = Mathf.Max(stunTimer, time);
         blinkTimer = 0f;
         haptics?.PlayStun(time);
-        
+
         // 기절 효과음 재생
         SoundManager.Instance?.PlayStun();
-        
+
         if (activeLimb != null)
         {
             RemoveOutline(activeLimb);
@@ -509,7 +517,7 @@ public class PlayerController : MonoBehaviour
         slideBlinkTimer = 0f;
         slideActive = true;
         haptics?.PlaySlideStart();
-        
+
         // 슬라이딩 효과음 재생
         SoundManager.Instance?.PlaySlide();
 
@@ -688,10 +696,10 @@ public class PlayerController : MonoBehaviour
         SetCursor(true);
 
         haptics?.PlayGrab();
-        
+
         // 벽 잡기 성공 효과음 재생 (Climbing 사운드 사용)
         SoundManager.Instance?.PlayClimbing();
-        
+
         return true;
     }
 
@@ -911,4 +919,8 @@ public class PlayerController : MonoBehaviour
             SetCursor(false); // 커서 해제
         }
     }
+    // PlayerController에 임시로 추가
+    
+
+   
 }

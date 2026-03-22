@@ -3,21 +3,30 @@ using UnityEngine;
 
 public class ChaserController : MonoBehaviour
 {
-    [Header("¸ñÇ¥")]
+    public enum BossType
+    {
+        None,
+        PackMan,
+        DonkeyKong
+    }
+    [Header("State")]
     [SerializeField] private Transform player;
-
-    [Header("¿òÁ÷ÀÓ Èû")]
+    [SerializeField] bool isChasing = false;
+    [SerializeField] BossType bossType; 
+    [Header("Follow")]
     [SerializeField] private float minSpeed = 1f;
     [SerializeField] private float maxSpeed = 8f;
     [SerializeField] private float minDistance = 2f;
     [SerializeField] private float maxDistance = 15f;
 
-    [Header("º¸½º Ã¼ÀÎÀú")]
+    [Header("Trigger")]
     [SerializeField] private float triggerY = 10f;
 
-    [Header("¿¬Ãâ ÀçÁú")]
+    [Header("Directing")]
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private Material glitchMaterial;
+    [SerializeField] float duration;
+    [SerializeField] Transform startPoint;
 
     [Header("GameOver")]
     [SerializeField] private GameObject gameOverPanel;
@@ -36,22 +45,26 @@ public class ChaserController : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteRenderer.material = defaultMaterial;
+        _spriteRenderer.material = glitchMaterial;
 
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player == null)
-            Debug.LogError("ChaserController: Player¸¦ Ã£Áö ¸øÇß½À´Ï´Ù!");
+            Debug.LogError("ChaserController: Playerï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½!");
     }
 
     void Update()
     {
+        if(!isChasing) return; 
         if (player == null) return;
-
+        if (bossType == BossType.DonkeyKong)
+        {
+            HandleChaseUp();
+            return;
+        }
         HandleChase();
         HandleLookAt();
-        CheckTrigger();
     }
 
     private void HandleChase()
@@ -68,6 +81,20 @@ public class ChaserController : MonoBehaviour
         );
     }
 
+    private void HandleChaseUp()
+    {
+        float distanceY = player.position.y - transform.position.y;
+        float speed = Mathf.Lerp(minSpeed, maxSpeed,
+            Mathf.InverseLerp(minDistance, maxDistance, Mathf.Abs(distanceY)));
+
+        Vector3 target = new Vector3(transform.position.x, player.position.y, transform.position.z);
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            target,
+            speed * Time.deltaTime
+        );
+    }
+
     private void HandleLookAt()
     {
         Vector3 dirToPlayer = player.position - transform.position;
@@ -76,6 +103,40 @@ public class ChaserController : MonoBehaviour
 
         float angle = Mathf.Atan2(dirToPlayer.y, dirToPlayer.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    public void SetChasing(bool value)
+    {
+        isChasing = value;
+    }
+    public void Init()
+    {
+        transform.position = startPoint.position;
+        isChasing = true;
+    }
+
+    public void StartGlitchFade()
+    {
+        StartCoroutine(GlitchFadeCoroutine());
+    }
+
+    private IEnumerator GlitchFadeCoroutine()
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            float value = Mathf.Lerp(1f, 0f, t);
+            _spriteRenderer.material.SetFloat("_GlitchIntensity", value);
+
+            yield return null;
+        }
+
+        _spriteRenderer.material.SetFloat("_GlitchIntensity", 0f);
+        _spriteRenderer.material = defaultMaterial;
     }
 
     private void CheckTrigger()
@@ -110,7 +171,7 @@ public class ChaserController : MonoBehaviour
         Time.timeScale = 0f;
         gameOverPanel.SetActive(true);
 
-        // InGameManager¿¡ °ÔÀÓ¿À¹ö ¾Ë¸²
+        // InGameManagerï¿½ï¿½ ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½
         InGameManager inGameManager = FindAnyObjectByType<InGameManager>();
         if (inGameManager != null)
             inGameManager.SetGameOver();

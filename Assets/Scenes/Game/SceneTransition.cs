@@ -13,8 +13,6 @@ public class SceneTransition : MonoBehaviour
     private AudioSource adSfx;
     private AudioSource adBgm;
 
-
-
     // 일반적인 물리 충돌체에 부딪혔을 때 작동
     private void OnCollisionEnter(Collision collision)
     {
@@ -33,16 +31,15 @@ public class SceneTransition : MonoBehaviour
         }
     }
 
-    private void LoadTargetScene()
+    public void LoadTargetScene() // 튜토리얼 스킵버튼과 연결하기 위해 public으로 변경
     {
-        if (!string.IsNullOrEmpty(targetSceneName)) 
+        if (!string.IsNullOrEmpty(targetSceneName))
         {
             SceneManager.LoadScene(targetSceneName);
             adSfx = SoundManager.Instance.sfxSource;
             adSfx.Stop();
             adBgm = SoundManager.Instance.bgmSource;
             adBgm.Stop();
-            
         }
         else
             Debug.LogWarning("[SceneTransition] 이동할 씬의 이름이 설정되지 않았습니다!");

@@ -101,11 +101,16 @@ public class TitleButton : MonoBehaviour
     public void ReStart_Button(string name)
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     public void mainMenu_Button()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("TitleScene");
+    }
+    public void inGameMenu_Button()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("inGameMainMenu");
     }
 }
