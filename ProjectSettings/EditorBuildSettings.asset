@@ -9,13 +9,13 @@ EditorBuildSettings:
     path: Assets/Scenes/Game/TitleScene.unity
     guid: 0235a689c82b78940b7056b607fe7e9d
   - enabled: 1
-    path: Assets/Scenes/Game/Stage01_PackMan.unity
+    path: Assets/Scenes/Game/Stage02_PacMan.unity
     guid: 0fc3cb7231b30864eacf50696250972a
   - enabled: 1
-    path: Assets/Scenes/Game/Stage02_DongKingKong.unity
+    path: Assets/Scenes/Game/Stage03_DongKingKong.unity
     guid: ecf3786e172f51140abddb90ad1ec9fa
   - enabled: 1
-    path: Assets/Scenes/Game/Stage03_Tetris.unity
+    path: Assets/Scenes/Game/Stage01_Tetris.unity
     guid: 7e316311e0bce404b85eb034171f50d1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
