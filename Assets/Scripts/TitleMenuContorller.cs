@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -9,6 +10,9 @@ public class TitleMenuController : MonoBehaviour
 {
     [Header("버튼 목록 (위에서 아래 순서)")]
     [SerializeField] private TitleButton[] menuButtons;
+    [SerializeField] private TextMeshProUGUI[] ButtonArrows;
+    [Header("가이드 패널")]
+    [SerializeField] private Image guidePanel;
 
     [Header("클릭 이벤트")]
     [SerializeField] public UnityEvent onClickEvent;
@@ -25,6 +29,7 @@ public class TitleMenuController : MonoBehaviour
     public int _selectedIndex = 0;
     private bool _stickMoved = false;
     private bool _isClickPlaying = false;
+    private bool _isGuideOpen = false;
 
     private enum InputMode { Keyboard, Mouse }
     private InputMode _inputMode = InputMode.Keyboard;
@@ -37,8 +42,59 @@ public class TitleMenuController : MonoBehaviour
     }
     void Update()
     {
+        if(_isGuideOpen)
+        {
+            HandleGuideInput();
+            return;
+        }
         HandleNavigation();
         HandleMouse();
+    }
+    // ── 가이드 패널 입력 ───────────────────────────
+
+    private void HandleGuideInput()
+    {
+        // Space, Enter, ESC → 가이드 닫기
+        if (Input.GetKeyDown(KeyCode.Return) ||
+            Input.GetKeyDown(KeyCode.Space) ||
+            Input.GetKeyDown(KeyCode.Escape) ||
+            Input.GetKeyDown(KeyCode.JoystickButton0) ||
+            Input.GetKeyDown(KeyCode.JoystickButton1))
+        {
+            CloseGuide();
+        }
+    }
+    public void OpenGuide()
+    {
+        _isGuideOpen = true;
+
+        if (guidePanel != null)
+            guidePanel.gameObject.SetActive(true);
+
+        // 기존 버튼들 숨김
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+            menuButtons[i].gameObject.SetActive(false);
+            ButtonArrows[i].gameObject.SetActive(false);
+        }
+    }
+
+    public void CloseGuide()
+    {
+        _isGuideOpen = false;
+
+        if (guidePanel != null)
+            guidePanel.gameObject.SetActive(false);
+
+        // 기존 버튼들 다시 표시
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+            menuButtons[i].gameObject.SetActive(true);
+            ButtonArrows[i].gameObject.SetActive(true);
+        }
+
+        // 현재 선택 복구
+        SetSelected(_selectedIndex);
     }
 
 

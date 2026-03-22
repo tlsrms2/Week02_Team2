@@ -4,41 +4,40 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class InGameMenuManager: MonoBehaviour
 {
-    public static GameManager Instance;
-    
-    public enum InputDeviceType 
-    { 
-        KeyboardMouse, 
-        Gamepad 
+    public static InGameMenuManager Instance;
+
+    public enum InputDeviceType
+    {
+        KeyboardMouse,
+        Gamepad
     }
 
-    [Header("ì¹´ë©”ë¼ í˜ì´ë“œ")]
+    [Header("Ä«¸Ş¶ó ÆäÀÌµå")]
     [SerializeField] private Image blackOutImage;
     [SerializeField] private float fadeDuration = 1.5f;
 
-    [Header("íƒ€ì´í‹€ ì°¸ì¡°")]
+    [Header("Å¸ÀÌÆ² ÂüÁ¶")]
     [SerializeField] private Image titlePanel;
-    [SerializeField] private Image guidePanel;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TitleMenuController titleMenu;
-    public float typingSpeed = 0.05f; // ê¸€ì íƒ€ì´í•‘ ì†ë„
-    public float lineDelay = 0.3f;   // ì¤„ ê°„ê²© ë”œë ˆì´
-    
-    [Header("íƒ€ì´í•‘ ì‚¬ìš´ë“œ ì„¤ì •")]
+    public float typingSpeed = 0.05f; // ±ÛÀÚ Å¸ÀÌÇÎ ¼Óµµ
+    public float lineDelay = 0.3f;   // ÁÙ °£°İ µô·¹ÀÌ
+
+    [Header("Å¸ÀÌÇÎ »ç¿îµå ¼³Á¤")]
     [SerializeField] private AudioSource typeAudioSource;
     [SerializeField] private AudioClip typeSound;
-    [SerializeField] [Range(0f, 0.5f)] private float pitchRange = 0.1f;
+    [SerializeField][Range(0f, 0.5f)] private float pitchRange = 0.1f;
 
-    [Header("íƒ€ì´í‹€ ì‚¬ìš©")]
+    [Header("Å¸ÀÌÆ² »ç¿ë")]
     [SerializeField] private Material glitchMaterial;
     [SerializeField] private Material potMaterial;
     [SerializeField] private Material twistMaterial;
     [SerializeField] private TMP_FontAsset StartFont;
     [SerializeField] private TMP_FontAsset LodingFont;
-    [Header("ì¡°ì‘ ì„¤ì •")]
-    // ê²Œì„ ì „ì²´ì—ì„œ ê³µìœ ë  í˜„ì¬ ì¡°ì‘ ê¸°ê¸° ìƒíƒœ
+    [Header("Á¶ÀÛ ¼³Á¤")]
+    // °ÔÀÓ ÀüÃ¼¿¡¼­ °øÀ¯µÉ ÇöÀç Á¶ÀÛ ±â±â »óÅÂ
     public InputDeviceType currentInputDevice = InputDeviceType.KeyboardMouse;
     private Coroutine blink;
 
@@ -55,7 +54,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // ì‹±ê¸€í†¤ íŒ¨í„´: ê²Œì„ ë§¤ë‹ˆì €ê°€ ì˜¤ì§ í•œ ê°œë§Œ ì¡´ì¬í•˜ë„ë¡ ë³´ì¥í•˜ê³ , ì”¬ì´ ë„˜ì–´ê°€ë„ ìœ ì§€í•©ë‹ˆë‹¤.
+        // ½Ì±ÛÅæ ÆĞÅÏ: °ÔÀÓ ¸Å´ÏÀú°¡ ¿ÀÁ÷ ÇÑ °³¸¸ Á¸ÀçÇÏµµ·Ï º¸ÀåÇÏ°í, ¾ÀÀÌ ³Ñ¾î°¡µµ À¯ÁöÇÕ´Ï´Ù.
         if (Instance == null)
         {
             Instance = this;
@@ -68,21 +67,21 @@ public class GameManager : MonoBehaviour
     }
     public void GuideButton()
     {
-        guidePanel.enabled = true;
+        
     }
     public void ExitButton()
     {
         Application.Quit();
     }
 
-    // íŠ¹ì • ì”¬ ì´ë¦„ìœ¼ë¡œ ë°”ë¡œ ë„˜ì–´ê°€ëŠ” ê¸°ëŠ¥ (ì˜ˆ: GameManager.Instance.LoadSceneByName(GameManager.SceneStage1))
+    // Æ¯Á¤ ¾À ÀÌ¸§À¸·Î ¹Ù·Î ³Ñ¾î°¡´Â ±â´É (¿¹: GameManager.Instance.LoadSceneByName(GameManager.SceneStage1))
     public void LoadSceneByName(string sceneName)
     {
         titleMenu.OutMenu();
         titleText.enabled = false;
         StartCoroutine(StartGame(sceneName, 1f));
     }
-    // ê²Œì„ ì‹œì‘ ë²„íŠ¼
+    // °ÔÀÓ ½ÃÀÛ ¹öÆ°
     private IEnumerator StartGame(string name, float duration)
     {
         titlePanel.enabled = true;
@@ -105,7 +104,7 @@ public class GameManager : MonoBehaviour
         titlePanel.material = potMaterial;
         titlePanel.material.SetFloat("_Reveal", 0f);
 
-        // EmissionIntensity 0 â†’ 1
+        // EmissionIntensity 0 ¡æ 1
         elapsed = 0f;
         while (elapsed < duration)
         {
@@ -121,7 +120,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(TwistEffect());
     }
 
-    // ì¸ê²Œì„ ì „ ë§ˆì§€ë§‰ í”Œë ˆì´ ì˜ìƒ
+    // ÀÎ°ÔÀÓ Àü ¸¶Áö¸· ÇÃ·¹ÀÌ ¿µ»ó
     private IEnumerator TwistEffect()
     {
         float twistDuration = 1.5f;
@@ -130,7 +129,7 @@ public class GameManager : MonoBehaviour
         titlePanel.material = twistMaterial;
         titlePanel.material.SetFloat("_SwitrlStrength", 0f);
 
-        // 0 â†’ 50
+        // 0 ¡æ 50
         float elapsed = 0f;
         while (elapsed < twistDuration)
         {
@@ -142,7 +141,7 @@ public class GameManager : MonoBehaviour
 
         titlePanel.material.SetFloat("_SwitrlStrength", 50f);
 
-        // ë¸”ë™ì•„ì›ƒ í˜ì´ë“œ ì•„ì›ƒ
+        // ºí·¢¾Æ¿ô ÆäÀÌµå ¾Æ¿ô
         yield return StartCoroutine(BlackOutFade());
 
         yield return new WaitForSeconds(0.3f);
@@ -153,14 +152,14 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator BlackOutFade()
     {
-        // í™œì„±í™” + ì•ŒíŒŒ 0ìœ¼ë¡œ ì‹œì‘
+        // È°¼ºÈ­ + ¾ËÆÄ 0À¸·Î ½ÃÀÛ
         blackOutImage.gameObject.SetActive(true);
 
         Color color = Color.black;
         color.a = 0f;
         blackOutImage.color = color;
 
-        // ì•ŒíŒŒ 0 â†’ 1
+        // ¾ËÆÄ 0 ¡æ 1
         float elapsed = 0f;
         while (elapsed < fadeDuration)
         {
@@ -174,88 +173,9 @@ public class GameManager : MonoBehaviour
         blackOutImage.color = color;
     }
 
-    // ê²Œì„ ì‹œì‘ í• ë•Œ ì‹¤í–‰ë¨.
+    // °ÔÀÓ ½ÃÀÛ ÇÒ¶§ ½ÇÇàµÊ.
     private IEnumerator Glitch_Title()
     {
-        // 1ë²ˆì§¸ ì¤„ - ì¼ë°˜ íƒ€ì´í•‘
-        PlayTypingSound();
-        yield return StartCoroutine(TypeLine("SYSTEM BOOT GameLab A2-Team.Unity...\n"));
-
-        // 2ë²ˆì§¸ ì¤„ - CHECKING â†’ OK ì—°ì¶œ
-        PlayTypingSound();
-        yield return StartCoroutine(TypeLine("CHECKING INTERNAL RAM... "));
-        yield return new WaitForSeconds(0.6f);
-        yield return StartCoroutine(TypeLine("OK"));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-
-        // 3ë²ˆì§¸ ì¤„ - ë°°í„°ë¦¬ í•œ ì¹¸ì”© ì±„ì›Œì§
-        yield return StartCoroutine(BatteryLine());
-
-        // 4ë²ˆì§¸ ì¤„ - ì  ê¹œë¹¡ì´ë©° ì¹´íŠ¸ë¦¬ì§€ ì‚½ì…
-        PlayTypingSound();
-        yield return StartCoroutine(DotBlinkLine("INSERTING CARTRIDGE"));
-
-        // 5ë²ˆì§¸ ì¤„ - íŒ€ì´ë¦„
-        yield return StartCoroutine(TypeLine("TEAM NAME INPUT... "));
-        yield return new WaitForSeconds(0.6f);
-        yield return StartCoroutine(TypeLine("OK"));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-
-        // 6ë²ˆì§¸ ì¤„ - íŒ€ ëª…
-        PlayTypingSound();
-        yield return StartCoroutine(TypeLine("TEAM A2: Jo Shin Geun..."));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-        // 6ë²ˆì§¸ ì¤„ - íŒ€ ëª…
-        yield return StartCoroutine(TypeLine("TEAM A2: Song Ha Bin..."));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-        // 6ë²ˆì§¸ ì¤„ - íŒ€ ëª…
-        PlayTypingSound();
-        yield return StartCoroutine(TypeLine("TEAM A2: Han Tae Hui..."));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-        // 6ë²ˆì§¸ ì¤„ - íŒ€ ëª…
-        yield return StartCoroutine(TypeLine("TEAM A2: Kim Kang Hyeon..."));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-        // 6ë²ˆì§¸ ì¤„ - íŒ€ ëª…
-        yield return StartCoroutine(TypeLine("TEAM A2: Jeong Seok Hee..."));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-        PlayTypingSound();
-
-        // 7ë²ˆì§¸ ì¤„ - FAILED â†’ SUCCESS ì—°ì¶œ
-        yield return StartCoroutine(TypeLine("TEAM NAME DATA... "));
-        yield return new WaitForSeconds(0.3f);
-        yield return StartCoroutine(TypeLine("FAILED"));
-        yield return new WaitForSeconds(0.5f);
-
-        // FAILED ì œê±° í›„ SUCCESS ì¶œë ¥
-        string current = titleText.text;
-        titleText.text = current.Substring(0, current.Length - "FAILED".Length);
-        PlayTypingSound();
-        yield return StartCoroutine(TypeLine("SUCCESS"));
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-
-        // 8ë²ˆì§¸ ì¤„ - ë¡œë”© í¼ì„¼íŠ¸ ì—°ì¶œ
-        yield return StartCoroutine(LoadingLine());
-
-        // ë¹ˆ ì¤„
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-
-        // ë§ˆì§€ë§‰ ì¤„
-        yield return StartCoroutine(TypeLine("PLEASE WAIT A SECOND..."));
-
-        blink = StartCoroutine(BlinkCursor());
-        yield return new WaitForSeconds(2f);
-        StopCoroutine(blink);
-        titleText.text = titleText.text.TrimEnd('_'); // í˜¹ì‹œ _ ë‚¨ì•„ìˆìœ¼ë©´ ì œê±°
-
         yield return StartCoroutine(FadeOut(1f));
 
         yield return new WaitForSeconds(1f);
@@ -266,7 +186,7 @@ public class GameManager : MonoBehaviour
     {
         float elapsed = 0f;
         Color color = Color.white;
-        titleText.text = "ì†Œë…„ì€ ëë‚˜ì§€ ì•ŠëŠ”ë‹¤\n\n\n\n\n";
+        titleText.text = "¼Ò³âÀº ³¡³ªÁö ¾Ê´Â´Ù\n\n\n\n\n";
         titleText.alignment = TextAlignmentOptions.Center;
         titleText.fontSize = 68.3f;
         titleText.font = StartFont;
@@ -284,11 +204,11 @@ public class GameManager : MonoBehaviour
         titleMenu.InitMenu();
     }
 
-    // í˜ì´ë“œ ì•„ì›ƒ (1 â†’ 0)
+    // ÆäÀÌµå ¾Æ¿ô (1 ¡æ 0)
     private IEnumerator FadeOut(float duration)
     {
         SoundManager.Instance.PlayTitleBgm();
-        
+
         float elapsed = 0f;
         Color color = titleText.color;
 
@@ -303,7 +223,7 @@ public class GameManager : MonoBehaviour
         color.a = 0f;
         titleText.color = color;
     }
-    // ê¸°ë³¸ íƒ€ì´í•‘ (ì¤„ë°”ê¿ˆ ì—†ì´)
+    // ±âº» Å¸ÀÌÇÎ (ÁÙ¹Ù²Ş ¾øÀÌ)
     private IEnumerator TypeLine(string line)
     {
         int charCount = 0;
@@ -315,7 +235,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ë°°í„°ë¦¬ ì±„ì›Œì§€ëŠ” ì—°ì¶œ
+    // ¹èÅÍ¸® Ã¤¿öÁö´Â ¿¬Ãâ
     private IEnumerator BatteryLine()
     {
         string prefix = "BATTERY LEVEL: [";
@@ -326,14 +246,14 @@ public class GameManager : MonoBehaviour
         titleText.text += prefix;
         for (int i = 0; i < totalBars; i++)
         {
-            titleText.text += (i < filledBars) ? "â– " : "â–¡";
+            titleText.text += (i < filledBars) ? "¡á" : "¡à";
             yield return new WaitForSeconds(0.1f);
         }
         titleText.text += suffix + "\n";
         yield return new WaitForSeconds(lineDelay);
     }
 
-    // ì  3ê°œ ê¹œë¹¡ì´ë©° ì¶”ê°€ë˜ëŠ” ì—°ì¶œ
+    // Á¡ 3°³ ±ôºıÀÌ¸ç Ãß°¡µÇ´Â ¿¬Ãâ
     private IEnumerator DotBlinkLine(string text)
     {
         titleText.text += text;
@@ -346,7 +266,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(lineDelay);
     }
 
-    // ë¡œë”© í¼ì„¼íŠ¸ ì—°ì¶œ
+    // ·Îµù ÆÛ¼¾Æ® ¿¬Ãâ
     private IEnumerator LoadingLine()
     {
         string prefix = "LOADING GAME ASSETS... ";
@@ -355,7 +275,7 @@ public class GameManager : MonoBehaviour
         int baseLen = titleText.text.Length;
         for (int i = 0; i <= 100; i += 10)
         {
-            // ì´ì „ í¼ì„¼íŠ¸ ì§€ìš°ê³  ìƒˆë¡œ ì¶œë ¥
+            // ÀÌÀü ÆÛ¼¾Æ® Áö¿ì°í »õ·Î Ãâ·Â
             titleText.text = titleText.text.Substring(0, baseLen) + i + "%";
             yield return new WaitForSeconds(0.08f);
         }
