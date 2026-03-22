@@ -24,6 +24,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TitleMenuController titleMenu;
     public float typingSpeed = 0.05f; // 글자 타이핑 속도
     public float lineDelay = 0.3f;   // 줄 간격 딜레이
+    
+    [Header("타이핑 사운드 설정")]
+    [SerializeField] private AudioSource typeAudioSource;
+    [SerializeField] private AudioClip typeSound;
+    [SerializeField] [Range(0f, 0.5f)] private float pitchRange = 0.1f;
+
     [Header("타이틀 사용")]
     [SerializeField] private Material glitchMaterial;
     [SerializeField] private Material potMaterial;
@@ -171,9 +177,11 @@ public class GameManager : MonoBehaviour
     private IEnumerator Glitch_Title()
     {
         // 1번째 줄 - 일반 타이핑
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("SYSTEM BOOT GameLab A2-Team.Unity...\n"));
 
         // 2번째 줄 - CHECKING → OK 연출
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("CHECKING INTERNAL RAM... "));
         yield return new WaitForSeconds(0.6f);
         yield return StartCoroutine(TypeLine("OK"));
@@ -184,6 +192,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(BatteryLine());
 
         // 4번째 줄 - 점 깜빡이며 카트리지 삽입
+        PlayTypingSound();
         yield return StartCoroutine(DotBlinkLine("INSERTING CARTRIDGE"));
 
         // 5번째 줄 - 팀이름
@@ -194,6 +203,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(lineDelay);
 
         // 6번째 줄 - 팀 명
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("TEAM A2: Jo Shin Geun..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
@@ -202,6 +212,7 @@ public class GameManager : MonoBehaviour
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
         // 6번째 줄 - 팀 명
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("TEAM A2: Han Tae Hui..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
@@ -213,6 +224,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(TypeLine("TEAM A2: Jeong Seok Hee..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
+        PlayTypingSound();
 
         // 7번째 줄 - FAILED → SUCCESS 연출
         yield return StartCoroutine(TypeLine("TEAM NAME DATA... "));
@@ -223,6 +235,7 @@ public class GameManager : MonoBehaviour
         // FAILED 제거 후 SUCCESS 출력
         string current = titleText.text;
         titleText.text = current.Substring(0, current.Length - "FAILED".Length);
+        PlayTypingSound();
         yield return StartCoroutine(TypeLine("SUCCESS"));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
@@ -292,9 +305,11 @@ public class GameManager : MonoBehaviour
     // 기본 타이핑 (줄바꿈 없이)
     private IEnumerator TypeLine(string line)
     {
+        int charCount = 0;
         foreach (char letter in line)
         {
             titleText.text += letter;
+            charCount++;
             yield return new WaitForSeconds(typingSpeed);
         }
     }
@@ -346,6 +361,16 @@ public class GameManager : MonoBehaviour
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
     }
+
+    private void PlayTypingSound()
+    {
+        if (typeAudioSource != null && typeSound != null)
+        {
+            typeAudioSource.pitch = Random.Range(1f - pitchRange, 1f + pitchRange);
+            typeAudioSource.PlayOneShot(typeSound);
+        }
+    }
+
     IEnumerator BlinkCursor()
     {
         while (true)
