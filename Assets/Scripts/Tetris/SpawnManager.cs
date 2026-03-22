@@ -53,6 +53,18 @@ public sealed class SpawnManager : MonoBehaviour
             return;
         }
 
+
+    }
+
+    public void StartGame()
+    {
+        spawnRoutine = StartCoroutine(SpawnSequence());
+    }
+
+    public void ReStartGame()
+    {
+        StopCoroutine(spawnRoutine);
+        spawnRoutine = null;
         spawnRoutine = StartCoroutine(SpawnSequence());
     }
 
