@@ -4803,7 +4803,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 792876781}
         m_TargetAssemblyTypeName: TitleButton, Assembly-CSharp
-        m_MethodName: mainMenu_Button
+        m_MethodName: inGameMenu_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6114,7 +6114,7 @@ Transform:
   m_GameObject: {fileID: 1088483950}
   serializedVersion: 2
   m_LocalRotation: {x: 2.0836562e-23, y: -0.000000005505466, z: 1.1471498e-31, w: 1}
-  m_LocalPosition: {x: -6.6511803, y: 60.9776, z: -11}
+  m_LocalPosition: {x: 0, y: 5, z: -11.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7270,7 +7270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d605d7779ff7afe4db4dcfed8dd5f794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneTransition
-  targetSceneName: Stage01_PackMan
+  targetSceneName: Stage02_PacMan
   targetTag: Player
 --- !u!54 &1357830530
 Rigidbody:
@@ -13986,7 +13986,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1771463521}
         m_TargetAssemblyTypeName: TitleButton, Assembly-CSharp
-        m_MethodName: mainMenu_Button
+        m_MethodName: inGameMenu_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

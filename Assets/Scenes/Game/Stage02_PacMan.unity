@@ -5461,7 +5461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d605d7779ff7afe4db4dcfed8dd5f794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneTransition
-  targetSceneName: Stage02_DongKingKong
+  targetSceneName: Stage03_DongKingKong
   targetTag: Player
 --- !u!1001 &561873163
 PrefabInstance:
@@ -5744,7 +5744,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 596373145}
         m_TargetAssemblyTypeName: TitleButton, Assembly-CSharp
-        m_MethodName: mainMenu_Button
+        m_MethodName: inGameMenu_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9002,7 +9002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d605d7779ff7afe4db4dcfed8dd5f794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneTransition
-  targetSceneName: Stage02_DongKingKong
+  targetSceneName: Stage03_DongKingKong
   targetTag: Player
 --- !u!1 &1020308588 stripped
 GameObject:
@@ -21379,9 +21379,9 @@ MonoBehaviour:
   onClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2020548846}
+      - m_Target: {fileID: 596373145}
         m_TargetAssemblyTypeName: TitleButton, Assembly-CSharp
-        m_MethodName: mainMenu_Button
+        m_MethodName: inGameMenu_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

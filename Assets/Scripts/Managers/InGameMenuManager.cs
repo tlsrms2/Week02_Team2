@@ -65,14 +65,6 @@ public class InGameMenuManager: MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void GuideButton()
-    {
-        
-    }
-    public void ExitButton()
-    {
-        Application.Quit();
-    }
 
     // 특정 씬 이름으로 바로 넘어가는 기능 (예: GameManager.Instance.LoadSceneByName(GameManager.SceneStage1))
     public void LoadSceneByName(string sceneName)

@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour
 
     [Header("타이틀 참조")]
     [SerializeField] private Image titlePanel;
-    [SerializeField] private Image guidePanel;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TitleMenuController titleMenu;
     public float typingSpeed = 0.05f; // 글자 타이핑 속도
@@ -65,10 +64,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-    public void GuideButton()
-    {
-        guidePanel.enabled = true;
     }
     public void ExitButton()
     {

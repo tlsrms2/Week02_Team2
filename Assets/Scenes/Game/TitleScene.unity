@@ -1139,9 +1139,9 @@ MonoBehaviour:
   onClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 892360302}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: GuideButton
+      - m_Target: {fileID: 1514482252}
+        m_TargetAssemblyTypeName: TitleMenuController, Assembly-CSharp
+        m_MethodName: OpenGuide
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1211,19 +1211,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 613533161}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1514482252}
-        m_TargetAssemblyTypeName: TitleMenuController, Assembly-CSharp
-        m_MethodName: CloseGuide
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &613533161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2418,7 +2406,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Stage01_PackMan
+          m_StringArgument: Stage03_Tetris
           m_BoolArgument: 0
         m_CallState: 2
   blinkCount: 3
@@ -5816,6 +5804,10 @@ PrefabInstance:
       propertyPath: typeSound
       value: 
       objectReference: {fileID: 8300000, guid: 044d002384c2d984795548fb804f4f14, type: 3}
+    - target: {fileID: 1261628220145012571, guid: 006b6da8281261242bbd743333f5918d, type: 3}
+      propertyPath: guidePanel
+      value: 
+      objectReference: {fileID: 1755100265}
     - target: {fileID: 1261628220145012571, guid: 006b6da8281261242bbd743333f5918d, type: 3}
       propertyPath: pitchRange
       value: 0.05

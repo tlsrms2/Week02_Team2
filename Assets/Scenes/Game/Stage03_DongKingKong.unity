@@ -8851,7 +8851,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1299815651}
         m_TargetAssemblyTypeName: TitleButton, Assembly-CSharp
-        m_MethodName: mainMenu_Button
+        m_MethodName: inGameMenu_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17822,7 +17822,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1699419681}
         m_TargetAssemblyTypeName: TitleButton, Assembly-CSharp
-        m_MethodName: mainMenu_Button
+        m_MethodName: inGameMenu_Button
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

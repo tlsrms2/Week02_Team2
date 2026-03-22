@@ -108,4 +108,9 @@ public class TitleButton : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene("TitleScene");
     }
+    public void inGameMenu_Button()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("inGameMainMenu");
+    }
 }
