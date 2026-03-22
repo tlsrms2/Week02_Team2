@@ -18,6 +18,18 @@ public class TetrisSceneDirector : MonoBehaviour
     public SpawnManager spawnManager;
 
     public List<GameObject> startHolder;
+
+    private AudioSource adSfx;
+    private AudioSource adBgm;
+    private StageBgmTrigger stageBgmTrigger;
+
+    void Awake()
+    {
+        stageBgmTrigger = FindAnyObjectByType<StageBgmTrigger>();
+        adSfx = SoundManager.Instance.sfxSource;
+        adBgm = SoundManager.Instance.bgmSource;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -55,6 +67,13 @@ public class TetrisSceneDirector : MonoBehaviour
         panel.SetActive(false);
         pausePanel.SetActive(false);
         playerController.Init();
+        adSfx.Stop();
+        adBgm.Stop();
+        stageBgmTrigger.gameObject.SetActive(false);
+
+
+
+        stageBgmTrigger.gameObject.SetActive(true);
 
         spawnManager.ReStartGame();
         spawner.ReStartTetrisBoss();

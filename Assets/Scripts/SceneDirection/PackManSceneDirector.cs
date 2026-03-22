@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -20,6 +21,17 @@ public class PackManSceneDirector : MonoBehaviour
     public ChaserController chaserController;
 
     public InGameManager gameManager;
+
+    private AudioSource adSfx;
+    private AudioSource adBgm;
+    private StageBgmTrigger stageBgmTrigger;
+
+    void Awake()
+    {
+        stageBgmTrigger = FindAnyObjectByType<StageBgmTrigger>();
+        adSfx = SoundManager.Instance.sfxSource;
+        adBgm = SoundManager.Instance.bgmSource;
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -70,7 +82,11 @@ public class PackManSceneDirector : MonoBehaviour
         }
         panel.SetActive(false);
         pausePanel.SetActive(false);
+        adSfx.Stop();
+        adBgm.Stop();
+        stageBgmTrigger.gameObject.SetActive(false);
         playerController.Init();
+
 
         for (int i = 0; i < coins.Length; i++)
         {
@@ -82,6 +98,8 @@ public class PackManSceneDirector : MonoBehaviour
             ghosts[i].Init();
         }
         chaserController.Init();
+
+        stageBgmTrigger.gameObject.SetActive(true);
 
         gameManager.ResumeGame();
         gameManager.SetGameOver(false);

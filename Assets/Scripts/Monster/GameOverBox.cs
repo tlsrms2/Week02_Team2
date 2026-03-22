@@ -25,7 +25,8 @@ public class GameOverBox : MonoBehaviour
         Time.timeScale = 0f;
         gameOverPanel.SetActive(true);
 
-        // InGameManager¿¡ °ÔÀÓ¿À¹ö ¾Ë¸²
+        SoundManager.Instance.PlayGameOverBgm();
+        // InGameManagerï¿½ï¿½ ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½
         InGameManager inGameManager = FindAnyObjectByType<InGameManager>();
         if (inGameManager != null)
             inGameManager.SetGameOver();

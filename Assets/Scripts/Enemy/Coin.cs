@@ -21,6 +21,8 @@ public class Coin : MonoBehaviour
             Instantiate(coinBurstEffect, transform.position, transform.rotation);
         }
 
+        SoundManager.Instance.PlayCoinEating();
+
         gameObject.SetActive(false);
     }
 }

@@ -15,7 +15,7 @@ public class StageBgmTrigger : MonoBehaviour
     [Header("이 씬이 시작될 때 재생할 BGM 선택")]
     public StageType currentStage;
 
-    private void Start()
+    private void OnEnable()
     {
         if (SoundManager.Instance == null) return;
 
