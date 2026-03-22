@@ -3,20 +3,26 @@ using UnityEngine;
 
 public class ChaserController : MonoBehaviour
 {
-    [Header("��ǥ")]
+    public enum BossType
+    {
+        None,
+        PackMan,
+        DonkeyKong
+    }
+    [Header("State")]
     [SerializeField] private Transform player;
     [SerializeField] bool isChasing = false;
-
-    [Header("������ ��")]
+    [SerializeField] BossType bossType; 
+    [Header("Follow")]
     [SerializeField] private float minSpeed = 1f;
     [SerializeField] private float maxSpeed = 8f;
     [SerializeField] private float minDistance = 2f;
     [SerializeField] private float maxDistance = 15f;
 
-    [Header("���� ü����")]
+    [Header("Trigger")]
     [SerializeField] private float triggerY = 10f;
 
-    [Header("���� ����")]
+    [Header("Directing")]
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private Material glitchMaterial;
     [SerializeField] float duration;
@@ -52,7 +58,11 @@ public class ChaserController : MonoBehaviour
     {
         if(!isChasing) return; 
         if (player == null) return;
-
+        if (bossType == BossType.DonkeyKong)
+        {
+            HandleChaseUp();
+            return;
+        }
         HandleChase();
         HandleLookAt();
     }
@@ -67,6 +77,20 @@ public class ChaserController : MonoBehaviour
         transform.position = Vector3.MoveTowards(
             transform.position,
             player.position,
+            speed * Time.deltaTime
+        );
+    }
+
+    private void HandleChaseUp()
+    {
+        float distanceY = player.position.y - transform.position.y;
+        float speed = Mathf.Lerp(minSpeed, maxSpeed,
+            Mathf.InverseLerp(minDistance, maxDistance, Mathf.Abs(distanceY)));
+
+        Vector3 target = new Vector3(transform.position.x, player.position.y, transform.position.z);
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            target,
             speed * Time.deltaTime
         );
     }
