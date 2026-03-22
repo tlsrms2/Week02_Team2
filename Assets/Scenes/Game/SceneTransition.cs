@@ -10,6 +10,11 @@ public class SceneTransition : MonoBehaviour
     [Tooltip("이 태그를 가진 오브젝트와 충돌했을 때만 씬이 넘어갑니다.")]
     public string targetTag = "Player";
 
+    private AudioSource adSfx;
+    private AudioSource adBgm;
+
+
+
     // 일반적인 물리 충돌체에 부딪혔을 때 작동
     private void OnCollisionEnter(Collision collision)
     {
@@ -30,8 +35,15 @@ public class SceneTransition : MonoBehaviour
 
     private void LoadTargetScene()
     {
-        if (!string.IsNullOrEmpty(targetSceneName))
+        if (!string.IsNullOrEmpty(targetSceneName)) 
+        {
             SceneManager.LoadScene(targetSceneName);
+            adSfx = SoundManager.Instance.sfxSource;
+            adSfx.Stop();
+            adBgm = SoundManager.Instance.bgmSource;
+            adBgm.Stop();
+            
+        }
         else
             Debug.LogWarning("[SceneTransition] 이동할 씬의 이름이 설정되지 않았습니다!");
     }
