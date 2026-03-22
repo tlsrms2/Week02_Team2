@@ -182,16 +182,16 @@ MonoBehaviour:
     volume: 0.1
   titleBgm:
     clip: {fileID: 8300000, guid: b6fdc4b5117452449881edff02a8d2e3, type: 3}
-    volume: 0.4
+    volume: 0.3
   stage1Bgm:
     clip: {fileID: 8300000, guid: 3bd581b572f9a02478f17bbc40645859, type: 3}
-    volume: 0.3
+    volume: 0.2
   stage2Bgm:
     clip: {fileID: 8300000, guid: a056bf6625f79f34eb532e323a0453dd, type: 3}
-    volume: 0.4
+    volume: 0.1
   stage3Bgm:
     clip: {fileID: 8300000, guid: 7b45f1b0a7e9df64bb20b2766228f124, type: 3}
-    volume: 0.4
+    volume: 0.3
   stage3BossIntroBgm:
     clip: {fileID: 8300000, guid: 39f67088808ca5e449ee1ba4dbeab719, type: 3}
     volume: 0.55
@@ -200,7 +200,7 @@ MonoBehaviour:
     volume: 0.4
   gameOverBgm:
     clip: {fileID: 8300000, guid: 04cadf9361e07d848aabcd31e947f5f9, type: 3}
-    volume: 0.4
+    volume: 0.15
   buttonClickSfx:
     clip: {fileID: 8300000, guid: e942deda48cdff340985aca37c4d0952, type: 3}
     volume: 0.5
@@ -215,7 +215,7 @@ MonoBehaviour:
     volume: 0.5
   coinEatingSfx:
     clip: {fileID: 8300000, guid: 51183c5adc2d1014089ba1464cbe8034, type: 3}
-    volume: 0.5
+    volume: 0.1
 --- !u!1 &8821082962437285918
 GameObject:
   m_ObjectHideFlags: 0

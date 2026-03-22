@@ -7531,7 +7531,7 @@ MonoBehaviour:
   typeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
   startDelay: 1
   typingSpeed: 0.1
-  pitchRange: 0.01
+  pitchRange: 0.05
   dialogueEntries:
   - sentence: "\uC624\uB79C\uB9CC\uC774\uB124\uC694.\n\uC815\uB9D0 \uAE34 \uC2DC\uAC04\uC774\uC5C8\uC5B4\uC694."
     duration: 2

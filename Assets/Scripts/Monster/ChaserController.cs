@@ -171,6 +171,7 @@ public class ChaserController : MonoBehaviour
         Time.timeScale = 0f;
         gameOverPanel.SetActive(true);
 
+        SoundManager.Instance.PlayGameOverBgm();
         // InGameManager�� ���ӿ��� �˸�
         InGameManager inGameManager = FindAnyObjectByType<InGameManager>();
         if (inGameManager != null)

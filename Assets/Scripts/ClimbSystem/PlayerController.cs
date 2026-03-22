@@ -140,10 +140,40 @@ public class PlayerController : MonoBehaviour
 
     public void Init()
     {
+        ResetState();
+
         foreach (var limb in limbs) InitGrab(limb);
 
         prevBodyPos = body.position;
         SetCursor(true);
+    }
+
+    void ResetState()
+    {
+        // 스턴 해제
+        stunTimer = 0f;
+        blinkTimer = 0f;
+        if (blinkTarget != null)
+            blinkTarget.SetActive(true);
+
+        // 슬라이드 해제
+        slideActive = false;
+        slideForceTimer = 0f;
+        slideBlinkTimer = 0f;
+        haptics?.StopSlide();
+        if (leftHandEffect != null) leftHandEffect.SetActive(false);
+        if (rightHandEffect != null) rightHandEffect.SetActive(false);
+
+        // 활성 사지 정리
+        if (activeLimb != null)
+        {
+            RemoveOutline(activeLimb);
+            activeLimb = null;
+        }
+
+        // 입력 차단 해제
+        inputBlocked = false;
+        _externalBlocked = false;
     }
 
     // ── 이벤트 등록 / 해제 ─────────────────────────
