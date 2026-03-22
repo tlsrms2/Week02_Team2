@@ -1022,7 +1022,7 @@
     "m_ObjectId": "22fee3390fdb41cfb9d874faf4fa3d84",
     "m_Title": "Dissolve(알파 깨짐)",
     "m_Position": {
-        "x": -1422.0001220703125,
+        "x": -1421.999755859375,
         "y": 438.0
     }
 }
@@ -2076,8 +2076,8 @@
     "m_ObjectId": "6f1e92a2f70c4de1aa0f9d71d3ea22b1",
     "m_Title": "Flicker(시간 진동)",
     "m_Position": {
-        "x": -1706.0001220703125,
-        "y": -274.0000305175781
+        "x": -1705.9996337890625,
+        "y": -273.9999694824219
     }
 }
 
@@ -2087,8 +2087,8 @@
     "m_ObjectId": "6f6cc8827ce04479ad4fa126c7bbd7ad",
     "m_Title": "BlockNoise",
     "m_Position": {
-        "x": -2115.000244140625,
-        "y": 171.00001525878907
+        "x": -2114.999755859375,
+        "y": 171.0000457763672
     }
 }
 
@@ -3000,8 +3000,8 @@
     "m_ObjectId": "a51eb17834154e6ab9a58bba840746bf",
     "m_Title": "Horizontal Jitter (찢김 현상)",
     "m_Position": {
-        "x": -1443.0001220703125,
-        "y": -3.0000076293945314
+        "x": -1442.999755859375,
+        "y": -2.9999961853027345
     }
 }
 
@@ -3758,7 +3758,7 @@
     "m_StageCapability": 3,
     "m_BareResource": false,
     "m_Texture": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"70a9980ed61b9c5438d8d76bfd5c52d5\",\"type\":3}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"ef090a217530f5944bb9150b73d0095c\",\"type\":3}}",
         "m_Guid": ""
     },
     "m_DefaultType": 0
