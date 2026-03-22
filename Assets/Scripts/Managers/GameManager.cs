@@ -247,7 +247,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         yield return StartCoroutine(FadeIn(2f));
-
     }
     private IEnumerator FadeIn(float duration)
     {
@@ -274,6 +273,8 @@ public class GameManager : MonoBehaviour
     // 페이드 아웃 (1 → 0)
     private IEnumerator FadeOut(float duration)
     {
+        SoundManager.Instance.PlayTitleBgm();
+        
         float elapsed = 0f;
         Color color = titleText.color;
 
