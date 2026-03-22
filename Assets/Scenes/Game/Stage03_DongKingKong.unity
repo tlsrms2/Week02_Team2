@@ -1770,7 +1770,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &193931225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20930,6 +20930,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: a94c8b186e13a3541b876b8692bc8d30, type: 2}
     - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
+      propertyPath: bodyFollowWeight
+      value: 0.285
+      objectReference: {fileID: 0}
+    - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
       propertyPath: holdLayer.m_Bits
       value: 4992
       objectReference: {fileID: 0}
@@ -20947,7 +20951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
       propertyPath: naturalHangLength
-      value: 0.7
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1347484165613625172, guid: 94911c27c1f3bba47a4b88d16bddfa19, type: 3}
       propertyPath: rightArm.renderer
