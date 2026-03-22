@@ -126,6 +126,10 @@ public class InGameManager : MonoBehaviour
             pauseButtons[i].SetHighlight(false, normalColor);
     }
 
+    public void SetGameOver(bool value)
+    {
+        _isGameOver = value;
+    }
     // ── 공통 네비게이션 ────────────────────────────
 
     private void HandleNavigation(TitleButton[] buttons, ref int selectedIndex)
