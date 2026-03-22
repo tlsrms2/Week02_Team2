@@ -28,7 +28,7 @@ public class SceneTransition : MonoBehaviour
         }
     }
 
-    private void LoadTargetScene()
+    public void LoadTargetScene() // 튜토리얼 스킵버튼과 연결하기 위해 public으로 변경
     {
         if (!string.IsNullOrEmpty(targetSceneName))
             SceneManager.LoadScene(targetSceneName);
