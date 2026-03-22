@@ -1,4 +1,7 @@
+using NUnit.Framework;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BarrelSpawner : MonoBehaviour
@@ -8,8 +11,10 @@ public class BarrelSpawner : MonoBehaviour
     public int spawnIntervalMin;
     public int spawnIntervalMax;
     private int spawnInterval;
-    bool isSpawned = true;
+    bool isActive = true;
+    Coroutine coroutine;
 
+    List<GameObject> currentBarrels = new List<GameObject>();
     [Header("이동 방향 설정")]
     [Tooltip("소환된 술통이 굴러갈 초기 방향 (오른쪽: 1,0,0 / 왼쪽: -1,0,0)")]
     public Vector3 spawnDirection = Vector3.right;
@@ -18,18 +23,39 @@ public class BarrelSpawner : MonoBehaviour
 
     void Update()
     {
-        if (isSpawned)
-        {
-            spawnInterval = UnityEngine.Random.Range(spawnIntervalMin, spawnIntervalMax);
-            isSpawned = false;
-        }
 
-        timer += Time.deltaTime;
-        if (timer >= spawnInterval)
+
+    }
+
+
+    public void SetActive(bool value)
+    {
+        isActive = value;
+    }
+    public void StartSpawnBarrel()
+    {
+        coroutine = StartCoroutine(SpawnBarrelCour());
+    }
+
+    public void ReStartSpawnBarrel()
+    {
+        StopCoroutine(coroutine);
+        coroutine = null;
+
+        foreach (var barrel in currentBarrels)
+        {
+            Destroy(barrel);
+        }
+        currentBarrels = new List<GameObject>();
+        coroutine = StartCoroutine(SpawnBarrelCour());
+    }
+    IEnumerator SpawnBarrelCour()
+    {
+        while (isActive)
         {
             SpawnBarrel();
-            timer = 0f;
-            isSpawned = true;
+            spawnInterval = UnityEngine.Random.Range(spawnIntervalMin, spawnIntervalMax);
+            yield return new WaitForSeconds(spawnInterval);
         }
     }
 
@@ -39,7 +65,7 @@ public class BarrelSpawner : MonoBehaviour
 
         // 스포너의 위치와 회전값을 기준으로 술통 소환
         GameObject barrelObj = Instantiate(barrelPrefab, transform.position, transform.rotation);
-        
+        currentBarrels.Add(barrelObj);
         // 소환된 술통 스크립트의 이동 방향을 인스펙터에서 설정한 방향으로 덮어씌움
         Barrel barrel = barrelObj.GetComponent<Barrel>();
         if (barrel != null)
