@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59e6d650c4e1fcd4e9d108e3d26c8245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Barrel
-  moveSpeed: 8
+  moveSpeed: 6.5
   fallSpeed: 10
   ladderDropChance: 0.5
   ladderWaitTime: 0.2

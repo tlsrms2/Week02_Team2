@@ -5897,7 +5897,7 @@ Transform:
   m_GameObject: {fileID: 807915860}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.2, y: -9.2, z: -5}
+  m_LocalPosition: {x: -12.2, y: -15, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8990,8 +8990,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarrelSpawner
   barrelPrefab: {fileID: 6057917780987896680, guid: 96b57e0531d26d445ba732c34d8579d4, type: 3}
-  spawnIntervalMin: 1
-  spawnIntervalMax: 1
+  spawnIntervalMin: 6
+  spawnIntervalMax: 9
   spawnDirection: {x: 1, y: 0, z: 0}
 --- !u!4 &1312432751
 Transform:
@@ -15091,7 +15091,7 @@ Transform:
   m_GameObject: {fileID: 1427683153}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.17, y: 4.8, z: -15.92}
+  m_LocalPosition: {x: -13.17, y: -15, z: -15.92}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16461,7 +16461,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1237634000986108710, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -9.2
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 1237634000986108710, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -16501,7 +16501,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 146a83e9445fe114cb896f746b97778f, type: 2}
     - target: {fileID: 3276648262394535761, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: m_Size.x
-      value: 8
+      value: 6.5
       objectReference: {fileID: 0}
     - target: {fileID: 3276648262394535761, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: m_Size.y
@@ -16520,8 +16520,12 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
+      propertyPath: maxSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: minSpeed
-      value: 0.1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 3885600927725685036, guid: 8017d21f17d6ae340a4ab6e49e19f02e, type: 3}
       propertyPath: triggerY
