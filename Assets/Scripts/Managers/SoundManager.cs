@@ -14,8 +14,8 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource bgmSource;
-    [SerializeField] private AudioSource sfxSource;
+    public AudioSource bgmSource;
+    public AudioSource sfxSource;
 
     [Header("BGM Clips")]
     [SerializeField] private SoundData tutorialBgm;
