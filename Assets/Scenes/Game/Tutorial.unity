@@ -1309,12 +1309,15 @@ MonoBehaviour:
   SetupQuestion: {fileID: 1406706032}
   additionalDialogueText: {fileID: 480852799}
   additionalDialogues:
-  - sentence: "\uB3D9\uD574\uBB3C\uACFC \uBC31\uB450\uC0B0\uC774 \uB9C8\uB974\uACE0
-      \uB2F3\uB3C4\uB85D....."
-    duration: 2
-  - sentence: "\uD558\uB290\uB2D8\uC774 \uBCF4\uC6B0\uD558\uC0AC \uC6B0\uB9AC\uB098\uB77C
-      \uB9CC\uC138...."
-    duration: 2
+  - sentence: "\uC544\uBB34 \uC0DD\uAC01 \uC5C6\uC774 \uAC8C\uC784\uAE30\uB97C \uAC00\uC9C0\uACE0
+      \uB180\uB358 \uC720\uB144\uC758 \uAE30\uC5B5."
+    duration: 3
+  - sentence: "\uD56D\uC0C1 \uB3D9\uC2EC\uC744 \uC78A\uC9C0 \uBABB\uD574 \uACFC\uAC70\uB97C
+      \uD5A5\uD588\uB358 \uB098\uC758 \uC2DC\uC120."
+    duration: 3
+  - sentence: "\uC624\uB298 \uC624\uB798\uB41C \uAC8C\uC784\uAE30\uB97C \uC815\uB9AC\uD558\uAE30
+      \uC804,\n\uB9C8\uC9C0\uB9C9\uC73C\uB85C \uC804\uC6D0\uC744 \uCF1C\uBCF8\uB2E4."
+    duration: 3
   typeSpeed: 0.1
   pitchRange: 0.05
   typeAudioSource: {fileID: 1894791765}
@@ -7184,33 +7187,28 @@ MonoBehaviour:
   typingSpeed: 0.1
   pitchRange: 0.05
   dialogueEntries:
-  - sentence: "\uC548\uB155\uD558\uC138\uC694!"
-    duration: 1
-  - sentence: "\uC624\uB79C\uB9CC\uC5D0 \uC624\uC168\uB124\uC694."
-    duration: 1
-  - sentence: "\uD604\uC2E4\uC774 \uC880 \uD30D\uD30D\uD588\uB098 \uBD10\uC694.\n\uBA3C\uC9C0
-      \uC313\uC778 \uC800\uB97C\n\uC624\uB79C\uB9CC\uC5D0 \uCF20 \uAC78 \uBCF4\uBA74."
-    duration: 1
-  - sentence: "\uAC71\uC815 \uB9C8\uC694. \uC5EC\uAE34 \uC544\uC9C1 \uC6B0\uB9AC\n\uC544\uC9C0\uD2B8\uB2C8\uAE4C.
-      \uB2E4 \uAE30\uC5B5\uB098\uC8E0?"
-    duration: 1
+  - sentence: "\uC624\uB79C\uB9CC\uC774\uB124\uC694.\n\uC815\uB9D0 \uAE34 \uC2DC\uAC04\uC774\uC5C8\uC5B4\uC694."
+    duration: 2
+  - sentence: "\uADF8 \uC0AC\uC774\uC5D0 \uB9CE\uC774 \uCEF8\uAD70\uC694."
+    duration: 2
+  - sentence: "\uC870\uC791\uBC95\uC740 \uC870\uAE08\n\uC78A\uC73C\uC168\uC744\uC9C0\uB3C4
+      \uBAA8\uB974\uACA0\uB124\uC694."
+    duration: 2
+  - sentence: "\uAD1C\uCC2E\uC544\uC694.\n\uC774\uBBF8 \uC775\uC219\uD588\uB358 \uAC83\uB4E4\uC774\uC5D0\uC694."
+    duration: 2
   - sentence: "{LH}\uC640 {RH}\uB97C \uB20C\uB7EC\n\uC591 \uC190\uC744 \uCEE8\uD2B8\uB864\uD574\uBD10\uC694.\n\uC548
       \uBBF8\uB044\uB7EC\uC9C0\uAC8C."
-    duration: 1
+    duration: 3
   - sentence: "{LF}\uC640 {RF}\uB85C\uB3C4 \uD55C \uBC1C\uC529\uB9CC\n\uB5BC\uBD10\uC694.
       \uCC9C\uCC9C\uD788."
-    duration: 1
-  - sentence: "\uC138 \uAC1C\uC758 \uC2A4\uD14C\uC774\uC9C0\uB97C \uC9C0\uB098\uBA74\n\uAF2D\uB300\uAE30\uC608\uC694.
-      \uAC70\uAE30\uC11C \uAE30\uB2E4\uB9B4\uAC8C\uC694."
-    duration: 1
-  - sentence: "\uB108\uBB34 \uBCF5\uC7A1\uD558\uAC8C \uC0DD\uAC01\uD560 \uAC83 \uC5C6\uC5B4\uC694.\n\uADF8\uB0E5
-      \uD55C \uD310 \uD558\uACE0 \uAC00\uB294 \uAC70\uC8E0."
-    duration: 1
-  - sentence: "\uC900\uBE44\uB410\uC73C\uBA74 \uB4E4\uC5B4\uC640\uC694.\n\uD654\uBA74
-      \uC548\uC5D0\uC11C \uAE30\uB2E4\uB9B4\uAC8C\uC694."
-    duration: 1
-  - sentence: '{LF} {RH}'
-    duration: 1
+    duration: 3
+  - sentence: "\uBCF4\uC138\uC694.\n\uAE08\uBC29 \uB5A0\uC62C\uB9AC\uC168\uC796\uC544\uC694."
+    duration: 3
+  - sentence: "\uC790, \uC774\uC81C \uD654\uBA74 \uC18D\uC73C\uB85C\n\uB4E4\uC5B4\uC640
+      \uC8FC\uC138\uC694."
+    duration: 5
+  - sentence: "\uC7A0\uC2DC\uB9CC\uC774\uB77C\uB3C4\n\uADF8 \uC2DC\uC808\uB85C \uB3CC\uC544\uAC00\uBD05\uC2DC\uB2E4."
+    duration: 15
   keyHighlightColor: '#50FF50'
   isGamepadMode: 0
 --- !u!82 &1894791765
