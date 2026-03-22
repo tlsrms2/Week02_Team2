@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2482851027739463599}
-  - component: {fileID: 1261628220145012571}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -32,34 +31,3 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1261628220145012571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5900930863463441577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62736231e20cdd543824a8c6ba024f1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  blackOutImage: {fileID: 0}
-  fadeDuration: 1.5
-  titlePanel: {fileID: 0}
-  titleText: {fileID: 0}
-  titleMenu: {fileID: 0}
-  typingSpeed: 0.01
-  lineDelay: 0.1
-  glitchMaterial: {fileID: 2100000, guid: 1d4d027e6a973a447a0219479a716c9b, type: 2}
-  potMaterial: {fileID: 2100000, guid: 3385ed6a6b8d6ac4fa792706841937c3, type: 2}
-  twistMaterial: {fileID: 2100000, guid: e6fcd335bc44ff742a46c574c41b3b24, type: 2}
-  StartFont: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
-  LodingFont: {fileID: 11400000, guid: f1359438c38a9e548839a31b820f9609, type: 2}
-  cutScenes:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  cutSceneDuration: 1
-  cutSceneHoldTime: 1.5

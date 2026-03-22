@@ -19,8 +19,6 @@ public class BarrelSpawner : MonoBehaviour
     [Tooltip("소환된 술통이 굴러갈 초기 방향 (오른쪽: 1,0,0 / 왼쪽: -1,0,0)")]
     public Vector3 spawnDirection = Vector3.right;
 
-    private float timer = 0f;
-
     void Update()
     {
 
