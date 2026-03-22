@@ -1321,7 +1321,7 @@ MonoBehaviour:
   typeSpeed: 0.1
   pitchRange: 0.05
   typeAudioSource: {fileID: 1894791765}
-  typeSound: {fileID: 0}
+  typeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
 --- !u!114 &891529048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7182,7 +7182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Dialogue
   dialogueText: {fileID: 559434530}
   audioSource: {fileID: 1894791765}
-  typeSound: {fileID: 8300000, guid: e7992d172691ce147bde04a9ea103f2c, type: 3}
+  typeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
   startDelay: 2
   typingSpeed: 0.1
   pitchRange: 0.05
