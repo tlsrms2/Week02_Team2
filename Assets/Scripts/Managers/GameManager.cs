@@ -35,11 +35,6 @@ public class GameManager : MonoBehaviour
     public InputDeviceType currentInputDevice = InputDeviceType.KeyboardMouse;
     private Coroutine blink;
 
-    [Header("컷씬")]
-    [SerializeField] private RectTransform[] cutScenes; // 4개 Image RectTransform
-    [SerializeField] private float cutSceneDuration = 1f;  // 각 컷씬 슬라이드 시간
-    [SerializeField] private float cutSceneHoldTime = 1.5f; // 컷씬 머무는 시간
-
     private void Start()
     {
         titlePanel.material.SetFloat("_GlitchIntensity", 0f);
@@ -116,129 +111,9 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         titlePanel.material = null;
 
-        yield return StartCoroutine(PlayCutScenes());
-    }
-    // 컷씬 슬라이스
-    private IEnumerator PlayCutScenes()
-    {
-        Vector2[] targetPositions = new Vector2[]
-        {
-        new Vector2(-172f, 145f),
-        new Vector2(223f, 125f),
-        new Vector2(-173f, -319f),
-        new Vector2(179f, -213f)
-        };
-
-        float[] startOffsetX = new float[]
-        {
-        -Screen.width,
-         Screen.width,
-        -Screen.width,
-         Screen.width
-        };
-
-        bool skipped = false;
-
-        // 하나씩 순차적으로 슬라이드 인
-        for (int i = 0; i < cutScenes.Length; i++)
-        {
-            if (skipped) break;
-
-            cutScenes[i].gameObject.SetActive(true);
-
-            Vector2 startPos = new Vector2(
-                targetPositions[i].x + startOffsetX[i],
-                targetPositions[i].y
-            );
-            cutScenes[i].anchoredPosition = startPos;
-
-            // 슬라이드 인
-            float elapsed = 0f;
-            while (elapsed < cutSceneDuration)
-            {
-                // ESC 스킵 감지
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    skipped = true;
-                    break;
-                }
-
-                elapsed += Time.deltaTime;
-                float t = Mathf.SmoothStep(0f, 1f, elapsed / cutSceneDuration);
-                cutScenes[i].anchoredPosition = Vector2.Lerp(startPos, targetPositions[i], t);
-                yield return null;
-            }
-
-            if (skipped) break;
-
-            cutScenes[i].anchoredPosition = targetPositions[i];
-
-            // 대기 중에도 ESC 감지
-            float holdElapsed = 0f;
-            while (holdElapsed < cutSceneHoldTime)
-            {
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    skipped = true;
-                    break;
-                }
-                holdElapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        // 전체 머무는 시간 (스킵 안 했을 때만)
-        if (!skipped)
-        {
-            float holdElapsed = 0f;
-            while (holdElapsed < cutSceneHoldTime)
-            {
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    skipped = true;
-                    break;
-                }
-                holdElapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
-
-        // 스킵 시 모든 컷씬 즉시 비활성화
-        if (skipped)
-        {
-            for (int i = 0; i < cutScenes.Length; i++)
-                cutScenes[i].gameObject.SetActive(false);
-
-            yield return StartCoroutine(TwistEffect());
-        }
-
-        // 동시에 슬라이드 아웃
-        float outElapsed = 0f;
-        Vector2[] currentPositions = new Vector2[cutScenes.Length];
-        for (int i = 0; i < cutScenes.Length; i++)
-            currentPositions[i] = cutScenes[i].anchoredPosition;
-
-        while (outElapsed < cutSceneDuration)
-        {
-            outElapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, outElapsed / cutSceneDuration);
-
-            for (int i = 0; i < cutScenes.Length; i++)
-            {
-                Vector2 exitPos = new Vector2(
-                    targetPositions[i].x - startOffsetX[i],
-                    targetPositions[i].y
-                );
-                cutScenes[i].anchoredPosition = Vector2.Lerp(currentPositions[i], exitPos, t);
-            }
-            yield return null;
-        }
-
-        for (int i = 0; i < cutScenes.Length; i++)
-            cutScenes[i].gameObject.SetActive(false);
-
         yield return StartCoroutine(TwistEffect());
     }
+
     // 인게임 전 마지막 플레이 영상
     private IEnumerator TwistEffect()
     {
@@ -372,7 +247,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         yield return StartCoroutine(FadeIn(2f));
-
     }
     private IEnumerator FadeIn(float duration)
     {
@@ -399,6 +273,8 @@ public class GameManager : MonoBehaviour
     // 페이드 아웃 (1 → 0)
     private IEnumerator FadeOut(float duration)
     {
+        SoundManager.Instance.PlayTitleBgm();
+        
         float elapsed = 0f;
         Color color = titleText.color;
 
