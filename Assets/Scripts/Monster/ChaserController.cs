@@ -3,20 +3,20 @@ using UnityEngine;
 
 public class ChaserController : MonoBehaviour
 {
-    [Header("¸ñÇ¥")]
+    [Header("ï¿½ï¿½Ç¥")]
     [SerializeField] private Transform player;
     [SerializeField] bool isChasing = false;
 
-    [Header("¿òÁ÷ÀÓ Èû")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½")]
     [SerializeField] private float minSpeed = 1f;
     [SerializeField] private float maxSpeed = 8f;
     [SerializeField] private float minDistance = 2f;
     [SerializeField] private float maxDistance = 15f;
 
-    [Header("º¸½º Ã¼ÀÎÀú")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private float triggerY = 10f;
 
-    [Header("¿¬Ãâ ÀçÁú")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private Material glitchMaterial;
     [SerializeField] float duration;
@@ -45,7 +45,7 @@ public class ChaserController : MonoBehaviour
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player == null)
-            Debug.LogError("ChaserController: Player¸¦ Ã£Áö ¸øÇß½À´Ï´Ù!");
+            Debug.LogError("ChaserController: Playerï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½!");
     }
 
     void Update()
@@ -147,7 +147,7 @@ public class ChaserController : MonoBehaviour
         Time.timeScale = 0f;
         gameOverPanel.SetActive(true);
 
-        // InGameManager¿¡ °ÔÀÓ¿À¹ö ¾Ë¸²
+        // InGameManagerï¿½ï¿½ ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½
         InGameManager inGameManager = FindAnyObjectByType<InGameManager>();
         if (inGameManager != null)
             inGameManager.SetGameOver();

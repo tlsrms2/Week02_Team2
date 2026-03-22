@@ -31,7 +31,7 @@ public class TetrisBossSpawner : MonoBehaviour
     private IEnumerator SpawnRoutine()
     {
         // 첫 번째 줄 - 7초 대기 후 생성
-        yield return new WaitForSeconds(7f);
+        yield return new WaitForSeconds(15f);
 
         Vector3 spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
         Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);
