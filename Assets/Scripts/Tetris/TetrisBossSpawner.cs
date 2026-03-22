@@ -14,7 +14,7 @@ public class TetrisBossSpawner : MonoBehaviour
     [Header("타이머(속도) 설정")]
     [Tooltip("몇 초마다 한 줄씩 차오를지 설정하세요. (인스펙터에서 조절 가능)")]
     public float spawnInterval = 3.0f;
-
+    public float spawnTime =10f;
     private int spawnedLines = 0;
     private Coroutine spawnRoutine;
 
@@ -51,8 +51,8 @@ public class TetrisBossSpawner : MonoBehaviour
 
     private IEnumerator SpawnRoutine()
     {
-        // 첫 번째 줄 - 7초 대기 후 생성
-        yield return new WaitForSeconds(15f);
+        // 첫 번째 줄 - N초 대기 후 생성
+        yield return new WaitForSeconds(spawnTime);
 
         Vector3 spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
         var obj = Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);

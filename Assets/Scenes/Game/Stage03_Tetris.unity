@@ -1486,6 +1486,7 @@ MonoBehaviour:
   bossLinePrefab: {fileID: 7346718279037473827, guid: 3bf44ff42312f3b40ac4dc69b41a1cc3, type: 3}
   ySpacing: 1.88
   spawnInterval: 4
+  spawnTime: 10
 --- !u!4 &64878214
 Transform:
   m_ObjectHideFlags: 0
@@ -6114,7 +6115,7 @@ Transform:
   m_GameObject: {fileID: 1088483950}
   serializedVersion: 2
   m_LocalRotation: {x: 2.0836562e-23, y: -0.000000005505466, z: 1.1471498e-31, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: -11.3}
+  m_LocalPosition: {x: -6.6511803, y: 60.9776, z: -11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15171,6 +15172,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GateBackground
       objectReference: {fileID: 0}
+    - target: {fileID: 5995593595727496962, guid: 1ee2627598116ef49b7fc405f7e529ef, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15415,6 +15420,10 @@ PrefabInstance:
     - target: {fileID: 7464683974712231646, guid: f9c333dcb99b6bd49ac6a9801006be51, type: 3}
       propertyPath: m_Name
       value: PackmanGate
+      objectReference: {fileID: 0}
+    - target: {fileID: 7464683974712231646, guid: f9c333dcb99b6bd49ac6a9801006be51, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7982886961109627540, guid: f9c333dcb99b6bd49ac6a9801006be51, type: 3}
       propertyPath: m_SortingOrder
