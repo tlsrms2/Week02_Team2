@@ -4170,6 +4170,8 @@ MonoBehaviour:
   - {fileID: 1014382231}
   - {fileID: 1667371928}
   - {fileID: 1285085611}
+  debugBool: 0
+  StageNum: 1
 --- !u!4 &511724738
 Transform:
   m_ObjectHideFlags: 0
@@ -7088,7 +7090,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3880229158886882917, guid: f474f53a4b2c57a4680141356d0b57d5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 60.88
+      value: 4.45
       objectReference: {fileID: 0}
     - target: {fileID: 3880229158886882917, guid: f474f53a4b2c57a4680141356d0b57d5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7128,7 +7130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5471310546678212943, guid: f474f53a4b2c57a4680141356d0b57d5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7501,7 +7503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 230263697195537589, guid: c38c60f3249cddb4e846939932863b12, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8048429606098691131, guid: c38c60f3249cddb4e846939932863b12, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7509,7 +7511,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8048429606098691131, guid: c38c60f3249cddb4e846939932863b12, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 60.88
+      value: 4.45
       objectReference: {fileID: 0}
     - target: {fileID: 8048429606098691131, guid: c38c60f3249cddb4e846939932863b12, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7793,10 +7795,10 @@ MonoBehaviour:
   onClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 511724737}
-        m_TargetAssemblyTypeName: TetrisSceneDirector, Assembly-CSharp
-        m_MethodName: ReStartGame
-        m_Mode: 1
+      - m_Target: {fileID: 1501642381}
+        m_TargetAssemblyTypeName: InGameManager, Assembly-CSharp
+        m_MethodName: ReStart_Button
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -7968,10 +7970,10 @@ MonoBehaviour:
   onClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 511724737}
-        m_TargetAssemblyTypeName: TetrisSceneDirector, Assembly-CSharp
-        m_MethodName: ReStartGame
-        m_Mode: 1
+      - m_Target: {fileID: 1501642381}
+        m_TargetAssemblyTypeName: InGameManager, Assembly-CSharp
+        m_MethodName: ReStart_Button
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -13902,6 +13904,12 @@ MonoBehaviour:
   fallSpeed: 15
   spawnHeightOffset: 2
   spawnedZPosition: -1
+  startHolder:
+  - {fileID: 1061338220}
+  - {fileID: 843951668}
+  - {fileID: 1014382231}
+  - {fileID: 1667371928}
+  - {fileID: 1285085611}
 --- !u!1 &1449255326
 GameObject:
   m_ObjectHideFlags: 0
@@ -15913,7 +15921,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5814271224513370964, guid: 0027c977f7f82514f9a037913e9618f1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 61.21
+      value: 4.779998
       objectReference: {fileID: 0}
     - target: {fileID: 5814271224513370964, guid: 0027c977f7f82514f9a037913e9618f1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -15953,7 +15961,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6099822493462115868, guid: 0027c977f7f82514f9a037913e9618f1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -16696,7 +16704,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: c83b1295d0b672f4db8f2b552dd5a83e, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -16799,7 +16807,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 514945043369172788, guid: 62709c1b9bfbfe24fa5163bb5f65b801, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 61.2
+      value: 4.7699995
       objectReference: {fileID: 0}
     - target: {fileID: 514945043369172788, guid: 62709c1b9bfbfe24fa5163bb5f65b801, type: 3}
       propertyPath: m_LocalPosition.z
@@ -16839,7 +16847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4526174866427938501, guid: 62709c1b9bfbfe24fa5163bb5f65b801, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

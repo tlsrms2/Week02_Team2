@@ -4146,7 +4146,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: d0667c56b984d8c4b872ddfe2c0dda29, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -19199,16 +19199,16 @@ MonoBehaviour:
   onClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2129725816}
-        m_TargetAssemblyTypeName: DonkeyKongDirector, Assembly-CSharp
-        m_MethodName: GameReStart
-        m_Mode: 1
+      - m_Target: {fileID: 1115030484}
+        m_TargetAssemblyTypeName: InGameManager, Assembly-CSharp
+        m_MethodName: ReStart_Button
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Stage02_DongKingKong
+          m_StringArgument: Stage03_DongKingKong
           m_BoolArgument: 0
         m_CallState: 2
   blinkCount: 3
@@ -21877,16 +21877,16 @@ MonoBehaviour:
   onClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2129725816}
-        m_TargetAssemblyTypeName: DonkeyKongDirector, Assembly-CSharp
-        m_MethodName: GameReStart
-        m_Mode: 1
+      - m_Target: {fileID: 1115030484}
+        m_TargetAssemblyTypeName: InGameManager, Assembly-CSharp
+        m_MethodName: ReStart_Button
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Stage02_DongKingKong
+          m_StringArgument: Stage03_DongKingKong
           m_BoolArgument: 0
         m_CallState: 2
   blinkCount: 3
@@ -23231,6 +23231,8 @@ MonoBehaviour:
   chaserController: {fileID: 1525574039}
   gameManager: {fileID: 1115030484}
   barrelSpawner: {fileID: 1312432750}
+  debugBool: 0
+  StageNum: 3
 --- !u!1 &2130086833
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class ChaserController : MonoBehaviour
 {
@@ -119,7 +120,11 @@ public class ChaserController : MonoBehaviour
     {
         StartCoroutine(GlitchFadeCoroutine());
     }
+    public void SetGlitch() { 
 
+        _spriteRenderer.material.SetFloat("_GlitchIntensity", 0);
+        _spriteRenderer.material = defaultMaterial;
+    }
     private IEnumerator GlitchFadeCoroutine()
     {
         float elapsed = 0f;

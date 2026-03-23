@@ -24,67 +24,47 @@ public class TetrisSceneDirector : MonoBehaviour
     private AudioSource adBgm;
     private StageBgmTrigger stageBgmTrigger;
 
-    void Awake()
-    {
-        stageBgmTrigger = FindAnyObjectByType<StageBgmTrigger>();
-        adSfx = SoundManager.Instance.sfxSource;
-        adBgm = SoundManager.Instance.bgmSource;
-    }
+    public bool debugBool;
+    public int StageNum = 1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        director.Play();
-
-        for (int i = 0; i < Targets.Length; i++)
+        if (debugBool)
         {
-            TargetPos.Add(Targets[i].transform.position);
+            director.Play();
+            return;
+        }
+        if (!PlayerPrefs.HasKey("CutSceneSeen_" + StageNum))
+        {
+            // 처음 보는 스테이지 → 컷신 재생
+            director.Play();
+
+            // 봤다고 저장
+            PlayerPrefs.SetInt("CutSceneSeen_" + StageNum, 1);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            StartGame();
         }
     }
-
     // Update is called once per frame
     void Update()
     {
         
     }
+    public void StopGame()
+    {
+
+    }
+
     public void StartGame()
     {
         playerController.gameObject.SetActive(true);
         spawnManager.StartGame();
         spawner.StartTetrisBoss();
-        foreach (var v in startHolder)
-        {
-            v.SetActive(true);
-        }
-    }
-    public void ReStartGame()
-    {
-        playerController.gameObject.transform.position = playerStartPoint.position;
 
-        for (int i = 0; i < Targets.Length; i++)
-        {
-            Targets[i].transform.position = TargetPos[i];
-        }
-        panel.SetActive(false);
-        pausePanel.SetActive(false);
-        playerController.Init();
-        adSfx.Stop();
-        adBgm.Stop();
-        stageBgmTrigger.gameObject.SetActive(false);
-        stageBgmTrigger.gameObject.SetActive(true);
-        adSfx.Play();
-        adBgm.Play();
-        StartCoroutine(ResetBgmTrigger());
-        spawnManager.ReStartGame();
-        spawner.ReStartTetrisBoss();
-        gameManager.ResumeGame();
-        gameManager.SetGameOver(false);
-    }
-    private IEnumerator ResetBgmTrigger()
-    {
-        stageBgmTrigger.gameObject.SetActive(false);
-        yield return null; // 한 프레임 대기
-        stageBgmTrigger.gameObject.SetActive(true);
     }
 
 }
