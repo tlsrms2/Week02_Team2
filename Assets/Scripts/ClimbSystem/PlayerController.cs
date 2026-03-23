@@ -13,9 +13,9 @@ public class PlayerController : MonoBehaviour
         public bool isLeg;
         public Renderer renderer;
 
-        [HideInInspector] public Vector3 grabPos;
+        public Vector3 grabPos;
         [HideInInspector] public Vector3 grabNormal;
-        [HideInInspector] public bool grabbed;
+        public bool grabbed;
 
         public float MaxReach(float arm, float leg) => isLeg ? leg : arm;
     }
@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour
     public float bodyWallOffset = 0.3f;
     public float normalTrackSpeed = 2f;
     public float naturalHangLength = 1.1f;
+    public float handPercent = 0.85f;
 
     [Header("균형")]
     [Range(0f, 1f)] public float balanceWeight = 0.6f;
@@ -837,7 +838,7 @@ public class PlayerController : MonoBehaviour
         if (activeLimb != null && !activeLimb.isLeg)
         {
             float activeY = activeLimb.ik.data.target.position.y;
-            baseY = Mathf.Lerp(baseY, activeY - naturalHangLength, 0.85f);
+            baseY = Mathf.Lerp(baseY, activeY - naturalHangLength, handPercent);
         }
 
         foreach (var limb in limbs)
