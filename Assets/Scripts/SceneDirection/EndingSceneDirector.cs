@@ -14,6 +14,11 @@ public class EndingFrame
     public bool useCenterText;
     [Tooltip("체크하면 일러스트가 완전히 사라지고 검은 배경만 남습니다. (마지막 연출용)")]
     public bool hideImage;
+    
+    // ── 새로 추가된 부분: 개별 대사 사운드 ──
+    [Header("사운드 설정 (선택사항)")]
+    [Tooltip("이 대사에만 사용할 특별한 목소리(사운드)를 넣으세요. 비워두면 기본 사운드가 재생됩니다.")]
+    public AudioClip customTypeSound;
 }
 
 public class EndingSceneDirector : MonoBehaviour
@@ -36,9 +41,10 @@ public class EndingSceneDirector : MonoBehaviour
     [Tooltip("매 초당 증가할 크기 비율 (예: 0.01은 초당 1%씩 증가)")]
     public float zoomSpeed = 0.01f; 
 
-    [Header("사운드 설정")]
+    [Header("사운드 설정 (기본값)")]
     public AudioSource typeAudioSource;
-    public AudioClip typeSound;
+    [Tooltip("프레임에 커스텀 사운드가 없을 때 재생될 기본 사운드입니다.")]
+    public AudioClip defaultTypeSound;
     [Range(0f, 0.5f)] public float pitchRange = 0.1f;
 
     [Header("엔딩 프레임 (씬 구성)")]
@@ -58,7 +64,6 @@ public class EndingSceneDirector : MonoBehaviour
         if (bottomTextUI != null) bottomTextUI.text = "";
         if (centerTextUI != null) centerTextUI.text = "";
         
-        // 씬 시작 시 메인 이미지를 할당하고 화면에 표시
         if (illustrationImage != null && mainIllustration != null)
         {
             illustrationImage.sprite = mainIllustration;
@@ -71,7 +76,6 @@ public class EndingSceneDirector : MonoBehaviour
 
     private IEnumerator PlayEndingSequence()
     {
-        // 대사 출력과 별개로, 씬 시작과 동시에 줌 애니메이션을 단 한 번만 시작
         if (illustrationImage != null && mainIllustration != null)
         {
             activeZoomCoroutine = StartCoroutine(ZoomImageCoroutine());
@@ -84,33 +88,31 @@ public class EndingSceneDirector : MonoBehaviour
             TextMeshProUGUI activeTextUI = frame.useCenterText ? centerTextUI : bottomTextUI;
             activeTextUI.text = ""; 
 
-            // 현재 프레임이 이미지를 숨겨야 하는 프레임(마지막 검은 배경)이라면
             if (frame.hideImage)
             {
-                StopActiveZoom(); // 줌 멈춤
+                StopActiveZoom(); 
                 if (illustrationImage != null)
                 {
-                    illustrationImage.color = new Color(1, 1, 1, 0); // 완전 투명화
+                    illustrationImage.color = new Color(1, 1, 1, 0); 
                 }
             }
 
-            // 대사 타이핑
-            yield return StartCoroutine(TypeLine(activeTextUI, frame.dialogue));
+            // ── 핵심 로직: 현재 프레임에 커스텀 사운드가 있으면 그것을, 없으면 기본 사운드를 선택합니다 ──
+            AudioClip soundToPlay = (frame.customTypeSound != null) ? frame.customTypeSound : defaultTypeSound;
+
+            // 대사 타이핑 (선택된 사운드를 같이 넘겨줍니다)
+            yield return StartCoroutine(TypeLine(activeTextUI, frame.dialogue, soundToPlay));
             
-            // 대기 시간
             yield return new WaitForSeconds(delayBetweenLines);
 
-            // 다음 대사를 위해 텍스트 지우기
             activeTextUI.text = ""; 
         }
 
-        // 모든 대사가 끝난 후 안전하게 줌 정지
         StopActiveZoom();
         
         onEndingComplete?.Invoke();
     }
 
-    // 이미지를 끊김없이 계속 키우는 코루틴
     private IEnumerator ZoomImageCoroutine()
     {
         RectTransform rt = illustrationImage.rectTransform;
@@ -123,7 +125,6 @@ public class EndingSceneDirector : MonoBehaviour
         }
     }
 
-    // 줌 코루틴을 멈추는 기능
     private void StopActiveZoom()
     {
         if (activeZoomCoroutine != null)
@@ -133,7 +134,8 @@ public class EndingSceneDirector : MonoBehaviour
         }
     }
 
-    private IEnumerator TypeLine(TextMeshProUGUI targetUI, string line)
+    // ── 사운드 매개변수(currentSound)가 추가되었습니다 ──
+    private IEnumerator TypeLine(TextMeshProUGUI targetUI, string line, AudioClip currentSound)
     {
         int charIndex = 0;
         while (charIndex < line.Length)
@@ -153,10 +155,11 @@ public class EndingSceneDirector : MonoBehaviour
             targetUI.text += line[charIndex];
             charIndex++;
 
-            if (typeAudioSource != null && typeSound != null && line[charIndex - 1] != ' ')
+            // 여기서 넘어온 currentSound를 재생합니다.
+            if (typeAudioSource != null && currentSound != null && line[charIndex - 1] != ' ')
             {
                 typeAudioSource.pitch = Random.Range(1f - pitchRange, 1f + pitchRange);
-                typeAudioSource.PlayOneShot(typeSound);
+                typeAudioSource.PlayOneShot(currentSound);
             }
 
             yield return new WaitForSeconds(typeSpeed);

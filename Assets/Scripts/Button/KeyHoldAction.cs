@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.InputSystem; // 게임패드 감지를 위해 추가
 
 public class KeyHoldAction : MonoBehaviour
 {
     [Header("입력 설정")]
-    [Tooltip("꾹 누를 키를 선택하세요")]
+    [Tooltip("꾹 누를 키보드 키를 선택하세요")]
     public KeyCode holdKey = KeyCode.Space;
     
     [Tooltip("키를 누르고 있어야 하는 시간 (초)")]
@@ -28,8 +29,8 @@ public class KeyHoldAction : MonoBehaviour
         // 이벤트가 이미 실행되었다면(스킵 완료), 더 이상 입력을 받지 않음
         if (isActionTriggered) return;
 
-        // 지정된 키를 꾹 누르고 있는 동안
-        if (Input.GetKey(holdKey))
+        // ── 변경점: 캡슐화된 입력 확인 메서드를 호출합니다 ──
+        if (IsSkipInputActive())
         {
             currentHoldTime += Time.deltaTime; // 시간 누적
 
@@ -55,6 +56,24 @@ public class KeyHoldAction : MonoBehaviour
                 ResetHold();
             }
         }
+    }
+
+    // ── 핵심 추가: 어떤 기기로든 입력이 들어왔는지 확인하는 캡슐화 로직 ──
+    private bool IsSkipInputActive()
+    {
+        // 1. 키보드 입력 확인 (인스펙터에서 설정한 holdKey)
+        bool isKeyboardPressed = Input.GetKey(holdKey);
+
+        // 2. 게임패드 입력 확인 (B 버튼 = buttonEast)
+        // 주의: isPressed는 누르고 있는 동안 계속 true를 반환합니다.
+        bool isGamepadPressed = false;
+        if (Gamepad.current != null)
+        {
+            isGamepadPressed = Gamepad.current.buttonEast.isPressed;
+        }
+
+        // 키보드나 패드 둘 중 하나라도 눌려있으면 true를 반환합니다. (OR 연산자)
+        return isKeyboardPressed || isGamepadPressed;
     }
 
     // 시간과 UI를 초기 상태로 되돌리는 캡슐화된 함수
