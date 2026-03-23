@@ -21627,10 +21627,10 @@ MonoBehaviour:
       - m_Target: {fileID: 2143777909}
         m_TargetAssemblyTypeName: SpeedController, Assembly-CSharp
         m_MethodName: EnableSliderControl
-        m_Mode: 1
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 63694605}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Stage01_PackMan
