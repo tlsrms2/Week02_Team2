@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -69,13 +70,25 @@ public class TetrisSceneDirector : MonoBehaviour
         playerController.Init();
         adSfx.Stop();
         adBgm.Stop();
+<<<<<<< Updated upstream
         stageBgmTrigger.gameObject.SetActive(false);
         stageBgmTrigger.gameObject.SetActive(true);
         adSfx.Play();
         adBgm.Play();
+=======
+        StartCoroutine(ResetBgmTrigger());
+
+>>>>>>> Stashed changes
         spawnManager.ReStartGame();
         spawner.ReStartTetrisBoss();
         gameManager.ResumeGame();
         gameManager.SetGameOver(false);
     }
+    private IEnumerator ResetBgmTrigger()
+    {
+        stageBgmTrigger.gameObject.SetActive(false);
+        yield return null; // 한 프레임 대기
+        stageBgmTrigger.gameObject.SetActive(true);
+    }
+
 }
