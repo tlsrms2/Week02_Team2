@@ -70,11 +70,9 @@ public class TetrisSceneDirector : MonoBehaviour
         adSfx.Stop();
         adBgm.Stop();
         stageBgmTrigger.gameObject.SetActive(false);
-
-
-
         stageBgmTrigger.gameObject.SetActive(true);
-
+        adSfx.Play();
+        adBgm.Play();
         spawnManager.ReStartGame();
         spawner.ReStartTetrisBoss();
         gameManager.ResumeGame();
