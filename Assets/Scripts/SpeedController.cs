@@ -23,7 +23,6 @@ public class SpeedController : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -42,6 +41,8 @@ public class SpeedController : MonoBehaviour
         // 기존 슬라이더 리스너 제거
         if (sensitivitySlider != null)
             sensitivitySlider.onValueChanged.RemoveListener(OnSliderChanged);
+
+        sensitivitySlider = newSlider;
 
 
         // 저장된 값으로 노브 위치 복원
@@ -67,6 +68,10 @@ public class SpeedController : MonoBehaviour
 
     void Update()
     {
+        // Update가 실행되는지 확인
+        if (_sliderActive)
+            Debug.Log("SpeedController Update 실행중");
+
         HandleKeyboard();
         HandleGamepad();
     }
@@ -78,26 +83,32 @@ public class SpeedController : MonoBehaviour
 
         if (sensitivitySlider == null) return;
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.RightBracket))
             AdjustSlider(0.05f);
-        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(KeyCode.LeftBracket))
             AdjustSlider(-0.05f);
     }
 
     private void HandleGamepad()
     {
+        if (!_sliderActive) return;
         if (sensitivitySlider == null) return;
 
-        float vertical = Input.GetAxisRaw("Vertical");
+        // 오른쪽 조이스틱 수평축
+        var gp = UnityEngine.InputSystem.Gamepad.current;
+        if (gp == null) return;
 
-        if (!_stickMoved && Mathf.Abs(vertical) > 0.5f)
+        float horizontal = gp.rightStick.x.ReadValue();
+
+        if (!_stickMoved && Mathf.Abs(horizontal) > 0.5f)
         {
             _stickMoved = true;
-            AdjustSlider(vertical > 0 ? 0.05f : -0.05f);
+            AdjustSlider(horizontal > 0 ? 0.05f : -0.05f);
         }
 
-        if (Mathf.Abs(vertical) < 0.2f)
+        if (Mathf.Abs(horizontal) < 0.2f)
             _stickMoved = false;
+
     }
 
     private void AdjustSlider(float delta)
@@ -119,13 +130,25 @@ public class SpeedController : MonoBehaviour
         SensitivityMultiplier = Mathf.Lerp(minMultiplier, maxMultiplier, sliderValue);
     }
 
-    public void EnableSliderControl()
+    public void EnableSliderControl(Slider newSlider = null)
     {
+        if (newSlider != null)
+            UpdateSlider(newSlider);
+
         _sliderActive = true;
+
+        Debug.Log($"EnableSliderControl 호출됨 / _sliderActive: {_sliderActive} / gameObject 활성화: {gameObject.activeSelf}");
+
+        if (sensitivitySlider != null)
+        {
+            float saved = PlayerPrefs.GetFloat("SensitivitySlider", 0.5f);
+            sensitivitySlider.value = saved;
+        }
     }
 
     public void DisableSliderControl()
     {
         _sliderActive = false;
+        _stickMoved = false;
     }
 }

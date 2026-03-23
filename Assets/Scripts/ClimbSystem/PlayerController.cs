@@ -443,14 +443,6 @@ public class PlayerController : MonoBehaviour
     // ───────────────────────────────────────────────
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Slide(4);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            Stun(2);
-        }
         //inputBlocked = stunTimer > 0f || (slideActive && slideForceTimer > 0f);
 
         // 외부 차단 OR 스턴/슬라이드 차단
@@ -973,16 +965,27 @@ public class PlayerController : MonoBehaviour
     // 외부에서 입력 차단 제어
     public void SetInputBlocked(bool blocked)
     {
-        inputBlocked = blocked;
+        _externalBlocked = blocked;
 
-        // 차단 시 활성 사지 초기화
-        if (blocked && activeLimb != null)
+        if (blocked)
         {
-            RemoveOutline(activeLimb);
-            activeLimb.grabbed = true;
-            activeLimb.ik.data.target.position = activeLimb.grabPos;
-            activeLimb = null;
-            SetCursor(false); // 커서 해제
+            // 활성 사지 초기화
+            if (activeLimb != null)
+            {
+                RemoveOutline(activeLimb);
+                activeLimb.grabbed = true;
+                activeLimb.ik.data.target.position = activeLimb.grabPos;
+                activeLimb = null;
+                SetCursor(false);
+            }
+
+            // 진동 강제 정지
+            haptics?.StopSlide();
+
+            // 게임패드 진동 강제 정지
+            var gp = UnityEngine.InputSystem.Gamepad.current;
+            if (gp != null)
+                gp.SetMotorSpeeds(0f, 0f);
         }
     }
     // PlayerController에 임시로 추가

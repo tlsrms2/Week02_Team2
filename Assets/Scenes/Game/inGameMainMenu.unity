@@ -844,7 +844,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 2134918772}
+      - m_Target: {fileID: 5188070071103597462}
         m_TargetAssemblyTypeName: SpeedController, Assembly-CSharp
         m_MethodName: EnableSliderControl
         m_Mode: 1
@@ -2501,7 +2501,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uAC10\uB3C4 \uC124\uC815\uC785\uB2C8\uB2E4\\n50%\\n\\n<- {S} {W} ->"
+  m_text: "\uAC10\uB3C4 \uC124\uC815\uC785\uB2C8\uB2E4\\n50%\\n<- {S, \uC544\uB798}
+    {W, \uC704} ->"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   m_sharedMaterial: {fileID: 7280347126543357249, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
@@ -5092,7 +5093,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 2134918772}
+      - m_Target: {fileID: 5188070071103597462}
         m_TargetAssemblyTypeName: SpeedController, Assembly-CSharp
         m_MethodName: DisableSliderControl
         m_Mode: 1
@@ -5965,7 +5966,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2134918770}
   - {fileID: 802675586}
   - {fileID: 1178162246}
   - {fileID: 1515723330}
@@ -7109,78 +7109,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2118445927}
   m_CullTransparentMesh: 1
---- !u!1 &2134918769
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2134918770}
-  - component: {fileID: 2134918772}
-  - component: {fileID: 2134918771}
-  m_Layer: 2
-  m_Name: SpeedController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &2134918770
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2134918769}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1699795403}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50, y: -50}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2134918771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2134918769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fabb8b49f99bd2e4f986393ed3b00fa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TitleButton
-  label: {fileID: 0}
-  outline: {fileID: 0}
-  arrow: {fileID: 0}
-  onClickEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  blinkCount: 3
-  blinkInterval: 0.08
---- !u!114 &2134918772
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2134918769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3513aaf6700030e41a58735751925d18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpeedController
-  sensitivitySlider: {fileID: 1975752838}
-  minMultiplier: 0.5
-  maxMultiplier: 3
 --- !u!1001 &5188070071103597456
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7287,6 +7215,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5900930863463441577, guid: 006b6da8281261242bbd743333f5918d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5188070071103597458}
+    - targetCorrespondingSourceObject: {fileID: 5900930863463441577, guid: 006b6da8281261242bbd743333f5918d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5188070071103597462}
   m_SourcePrefab: {fileID: 100100000, guid: 006b6da8281261242bbd743333f5918d, type: 3}
 --- !u!1 &5188070071103597457 stripped
 GameObject:
@@ -7418,6 +7349,21 @@ MonoBehaviour:
   StartFont: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   LodingFont: {fileID: 11400000, guid: f1359438c38a9e548839a31b820f9609, type: 2}
   currentInputDevice: 0
+--- !u!114 &5188070071103597462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5188070071103597457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3513aaf6700030e41a58735751925d18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedController
+  sensitivitySlider: {fileID: 1975752838}
+  minMultiplier: 0.5
+  maxMultiplier: 3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

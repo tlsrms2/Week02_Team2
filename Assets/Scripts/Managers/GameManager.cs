@@ -58,7 +58,6 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -217,7 +216,7 @@ public class GameManager : MonoBehaviour
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
         // 6번째 줄 - 팀 명
-        yield return StartCoroutine(TypeLine("TEAM A2: Jeong Seok Hee..."));
+        yield return StartCoroutine(TypeLine("TEAM A2: Jeong Suk Hee..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
         PlayTypingSound();
