@@ -24,7 +24,7 @@ public class ChaserController : MonoBehaviour
     [SerializeField] private float triggerY = 10f;
 
     [Header("Directing")]
-    [SerializeField] private Material defaultMaterial;
+    [SerializeField] public Material defaultMaterial;
     [SerializeField] private Material glitchMaterial;
     [SerializeField] float duration;
     [SerializeField] Transform startPoint;
@@ -109,7 +109,6 @@ public class ChaserController : MonoBehaviour
     public void SetChasing(bool value)
     {
         isChasing = value;
-        SetGlitch();
     }
     public void Init()
     {
