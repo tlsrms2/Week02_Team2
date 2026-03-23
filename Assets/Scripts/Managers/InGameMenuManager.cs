@@ -58,12 +58,15 @@ public class InGameMenuManager: MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+    public void ExitButton()
+    {
+        Application.Quit();
     }
 
     // 특정 씬 이름으로 바로 넘어가는 기능 (예: GameManager.Instance.LoadSceneByName(GameManager.SceneStage1))
@@ -78,20 +81,6 @@ public class InGameMenuManager: MonoBehaviour
     {
         titlePanel.enabled = true;
         float elapsed = 0f;
-
-        //titlePanel.material = glitchMaterial;
-        //titlePanel.material.SetFloat("_GlitchIntensity", 0f);
-
-        //while (elapsed < duration)
-        //{
-        //    elapsed += Time.deltaTime;
-        //    titlePanel.material.SetFloat("_GlitchIntensity", Mathf.Lerp(0f, 1f, elapsed / duration));
-        //    yield return null;
-        //}
-
-        //titlePanel.material.SetFloat("_GlitchIntensity", 1f);
-
-        //yield return new WaitForSeconds(0.3f);
 
         titlePanel.material = potMaterial;
         titlePanel.material.SetFloat("_Reveal", 0f);
@@ -214,85 +203,5 @@ public class InGameMenuManager: MonoBehaviour
 
         color.a = 0f;
         titleText.color = color;
-    }
-    // 기본 타이핑 (줄바꿈 없이)
-    private IEnumerator TypeLine(string line)
-    {
-        int charCount = 0;
-        foreach (char letter in line)
-        {
-            titleText.text += letter;
-            charCount++;
-            yield return new WaitForSeconds(typingSpeed);
-        }
-    }
-
-    // 배터리 채워지는 연출
-    private IEnumerator BatteryLine()
-    {
-        string prefix = "BATTERY LEVEL: [";
-        string suffix = "] 80%";
-        int totalBars = 5;
-        int filledBars = 4;
-
-        titleText.text += prefix;
-        for (int i = 0; i < totalBars; i++)
-        {
-            titleText.text += (i < filledBars) ? "■" : "□";
-            yield return new WaitForSeconds(0.1f);
-        }
-        titleText.text += suffix + "\n";
-        yield return new WaitForSeconds(lineDelay);
-    }
-
-    // 점 3개 깜빡이며 추가되는 연출
-    private IEnumerator DotBlinkLine(string text)
-    {
-        titleText.text += text;
-        for (int i = 0; i < 3; i++)
-        {
-            titleText.text += ".";
-            yield return new WaitForSeconds(0.1f);
-        }
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-    }
-
-    // 로딩 퍼센트 연출
-    private IEnumerator LoadingLine()
-    {
-        string prefix = "LOADING GAME ASSETS... ";
-        titleText.text += prefix;
-
-        int baseLen = titleText.text.Length;
-        for (int i = 0; i <= 100; i += 10)
-        {
-            // 이전 퍼센트 지우고 새로 출력
-            titleText.text = titleText.text.Substring(0, baseLen) + i + "%";
-            yield return new WaitForSeconds(0.08f);
-        }
-        titleText.text += "\n";
-        yield return new WaitForSeconds(lineDelay);
-    }
-
-    private void PlayTypingSound()
-    {
-        if (typeAudioSource != null && typeSound != null)
-        {
-            typeAudioSource.pitch = Random.Range(1f - pitchRange, 1f + pitchRange);
-            typeAudioSource.PlayOneShot(typeSound);
-        }
-    }
-
-    IEnumerator BlinkCursor()
-    {
-        while (true)
-        {
-            string originalText = titleText.text;
-            titleText.text = originalText + "_";
-            yield return new WaitForSeconds(0.5f);
-            titleText.text = originalText;
-            yield return new WaitForSeconds(0.5f);
-        }
     }
 }

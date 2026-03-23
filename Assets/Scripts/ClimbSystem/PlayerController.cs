@@ -52,6 +52,9 @@ public class PlayerController : MonoBehaviour
     public LayerMask wallLayer;
     public LayerMask holdLayer;
 
+    [Range(0.1f, 3f)]
+    public float sensitivityMultiplier = 1f;
+
     [Header("리치")]
     public float maxReachArm = 2.4f;
     public float maxReachLeg = 1.8f;
@@ -638,17 +641,22 @@ public class PlayerController : MonoBehaviour
     // ── 활성 사지 이동 ────────────────────────────
     void MoveActiveLimb()
     {
+        // SpeedController에서 배율 가져오기
+        float mult = SpeedController.Instance != null
+            ? SpeedController.Instance.SensitivityMultiplier
+            : 1f;
+
         float mx, my;
 
         if (usingGamepad)
         {
-            mx = moveInput.x * stickSensitivity * Time.deltaTime;
-            my = moveInput.y * stickSensitivity * Time.deltaTime;
+            mx = moveInput.x * stickSensitivity * mult * Time.deltaTime;
+            my = moveInput.y * stickSensitivity * mult * Time.deltaTime;
         }
         else
         {
-            mx = moveInput.x * mouseSensitivity * Time.deltaTime;
-            my = moveInput.y * mouseSensitivity * Time.deltaTime;
+            mx = moveInput.x * mouseSensitivity * mult * Time.deltaTime;
+            my = moveInput.y * mouseSensitivity * mult * Time.deltaTime;
         }
 
         var target = activeLimb.ik.data.target;
@@ -665,6 +673,34 @@ public class PlayerController : MonoBehaviour
         pos = ClampReach(pos, activeLimb);
 
         target.position = pos;
+
+        //float mx, my;
+
+        //if (usingGamepad)
+        //{
+        //    mx = moveInput.x * stickSensitivity * sensitivityMultiplier * Time.deltaTime;
+        //    my = moveInput.y * stickSensitivity * sensitivityMultiplier * Time.deltaTime;
+        //}
+        //else
+        //{
+        //    mx = moveInput.x * mouseSensitivity * sensitivityMultiplier * Time.deltaTime;
+        //    my = moveInput.y * mouseSensitivity * sensitivityMultiplier * Time.deltaTime;
+        //}
+
+        //var target = activeLimb.ik.data.target;
+        //var pos = target.position;
+
+        //var normal = GetNormalAt(pos);
+        //var worldRef = Mathf.Abs(Vector3.Dot(normal, Vector3.up)) > 0.9f
+        //    ? Vector3.forward : Vector3.up;
+        //var right = Vector3.Cross(normal, worldRef).normalized;
+        //var up = Vector3.Cross(right, normal).normalized;
+
+        //pos += right * mx + up * my;
+        //pos = SnapToSurface(pos, GetNormalAt(pos), target.position);
+        //pos = ClampReach(pos, activeLimb);
+
+        //target.position = pos;
     }
 
     Vector3 SnapToSurface(Vector3 pos, Vector3 normal, Vector3 fallback)

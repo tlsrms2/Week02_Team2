@@ -67,13 +67,17 @@ public class Dialogue : MonoBehaviour
         string lFoot = isGamepad ? "[LT]" : "[A]";
         string rFoot = isGamepad ? "[RT]" : "[D]";
 
+        string grab = isGamepad ? "[왼쪽 조이스틱]" : "[마우스]";
+        string andText = isGamepad ? "은" : "를";
+
         string result = originalText;
         result = result.Replace("{LH}", $"<color={keyHighlightColor}><b>{lHand}</b></color>");
         result = result.Replace("{RH}", $"<color={keyHighlightColor}><b>{rHand}</b></color>");
         result = result.Replace("{LF}", $"<color={keyHighlightColor}><b>{lFoot}</b></color>");
         result = result.Replace("{RF}", $"<color={keyHighlightColor}><b>{rFoot}</b></color>");
 
-        return result;
+        result = result.Replace("{JOY}", $"<color={keyHighlightColor}><b>{grab}</b></color>" + andText);   
+            return result;
     }
 
     private IEnumerator TypeText(string targetText)
