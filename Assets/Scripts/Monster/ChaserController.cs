@@ -119,6 +119,7 @@ public class ChaserController : MonoBehaviour
     public void StartGlitchFade()
     {
         StartCoroutine(GlitchFadeCoroutine());
+        SetGlitch();
     }
     public void SetGlitch() { 
 
