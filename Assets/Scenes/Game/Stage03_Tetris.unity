@@ -8301,7 +8301,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uAC10\uB3C4 \uC124\uC815\uC785\uB2C8\uB2E4\\n50%\\n<- {S} {W} ->"
+  m_text: "\uAC10\uB3C4 \uC124\uC815\uC785\uB2C8\uB2E4\\n50%\\n\\n<- [ ], \uC624\uB978\uCABD
+    \uC870\uC774\uC2A4\uD2F1 ->"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   m_sharedMaterial: {fileID: 7280347126543357249, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}

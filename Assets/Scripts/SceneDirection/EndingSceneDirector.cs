@@ -168,6 +168,8 @@ public class EndingSceneDirector : MonoBehaviour
 
     public void LoadTitleScene()
     {
+        Time.timeScale = 1f;
+        StopAllCoroutines();
         SceneManager.LoadScene(titleSceneName);
     }
 }

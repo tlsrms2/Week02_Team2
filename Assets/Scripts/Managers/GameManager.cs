@@ -64,6 +64,14 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    private void OnDestroy()
+    {
+        // 씬 전환 시 코루틴 정지 + Instance 초기화
+        StopAllCoroutines();
+
+        if (Instance == this)
+            Instance = null;
+    }
     public void ExitButton()
     {
         Application.Quit();
