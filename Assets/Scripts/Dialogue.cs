@@ -67,7 +67,7 @@ public class Dialogue : MonoBehaviour
         string lFoot = isGamepad ? "[LT]" : "[A]";
         string rFoot = isGamepad ? "[RT]" : "[D]";
 
-        string grab = isGamepad ? "[왼쪽 조이스틱]" : "[마우스]";
+        string grab = isGamepad ? "[왼쪽 조이스틱]" : "[마우스 좌클릭]";
         string andText = isGamepad ? "은" : "를";
 
         string result = originalText;
