@@ -40,7 +40,15 @@ public class GameManager : MonoBehaviour
     // 게임 전체에서 공유될 현재 조작 기기 상태
     public InputDeviceType currentInputDevice = InputDeviceType.KeyboardMouse;
     private Coroutine blink;
-
+    void Awake()
+    {
+        ResetAllPrefs();
+    }
+    public void ResetAllPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+    }
     private void Start()
     {
         titlePanel.material.SetFloat("_GlitchIntensity", 0f);
