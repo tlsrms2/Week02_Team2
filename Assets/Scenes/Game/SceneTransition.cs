@@ -13,6 +13,14 @@ public class SceneTransition : MonoBehaviour
     private AudioSource adSfx;
     private AudioSource adBgm;
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F10))
+        {
+            LoadTargetScene();
+        }
+    }
+
     // 일반적인 물리 충돌체에 부딪혔을 때 작동
     private void OnCollisionEnter(Collision collision)
     {
