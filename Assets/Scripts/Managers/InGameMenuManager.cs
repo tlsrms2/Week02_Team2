@@ -161,9 +161,9 @@ public class InGameMenuManager: MonoBehaviour
     {
         float elapsed = 0f;
         Color color = Color.white;
-        titleText.text = "소년은 끝나지 않는다\n\n\n\n\n";
+        titleText.text = "소년은 끝나지 않는다\n\n\n\n\n\n";
         titleText.alignment = TextAlignmentOptions.Center;
-        titleText.fontSize = 68.3f;
+        titleText.fontSize = 90f;
         titleText.font = StartFont;
         while (elapsed < duration)
         {
