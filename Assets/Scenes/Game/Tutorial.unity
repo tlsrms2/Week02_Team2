@@ -1150,6 +1150,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: endingBgm.volume
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
       propertyPath: tutorialBgm.volume
       value: 0.1
       objectReference: {fileID: 0}
