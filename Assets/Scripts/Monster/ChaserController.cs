@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static UnityEngine.Rendering.DebugUI;
 
 public class ChaserController : MonoBehaviour
@@ -24,7 +25,7 @@ public class ChaserController : MonoBehaviour
     [SerializeField] private float triggerY = 10f;
 
     [Header("Directing")]
-    [SerializeField] private Material defaultMaterial;
+    [SerializeField] public Material defaultMaterial;
     [SerializeField] private Material glitchMaterial;
     [SerializeField] float duration;
     [SerializeField] Transform startPoint;
@@ -42,7 +43,7 @@ public class ChaserController : MonoBehaviour
             GameOver();
     }
 
-    void Start()
+    void Awake()
     {
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -52,7 +53,7 @@ public class ChaserController : MonoBehaviour
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (player == null)
-            Debug.LogError("ChaserController: Player�� ã�� ���߽��ϴ�!");
+            Debug.LogError("ChaserController: Player");
     }
 
     void Update()
@@ -108,8 +109,9 @@ public class ChaserController : MonoBehaviour
 
     public void SetChasing(bool value)
     {
+        if(SceneManager.sceneCount == 5)
+            _spriteRenderer.material = defaultMaterial;
         isChasing = value;
-        SetGlitch();
     }
     public void Init()
     {
@@ -120,7 +122,7 @@ public class ChaserController : MonoBehaviour
     public void StartGlitchFade()
     {
         StartCoroutine(GlitchFadeCoroutine());
-        SetGlitch();
+        //SetGlitch();
     }
     public void SetGlitch() { 
 
@@ -144,6 +146,7 @@ public class ChaserController : MonoBehaviour
 
         _spriteRenderer.material.SetFloat("_GlitchIntensity", 0f);
         _spriteRenderer.material = defaultMaterial;
+        yield return null;
     }
 
     private void CheckTrigger()

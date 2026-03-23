@@ -28,12 +28,6 @@ public class DonkeyKongDirector : MonoBehaviour
     public bool debugBool = false;
     public int StageNum = 3;
 
-    void Awake()
-    {
-        stageBgmTrigger = FindAnyObjectByType<StageBgmTrigger>();
-        adSfx = SoundManager.Instance.sfxSource;
-        adBgm = SoundManager.Instance.bgmSource;
-    }
 
     void Start()
     {
@@ -69,8 +63,8 @@ public class DonkeyKongDirector : MonoBehaviour
     public void GameStart()
     {
         barrelSpawner.StartSpawnBarrel();
+        chaserController.GetComponent<SpriteRenderer>().material = chaserController.defaultMaterial;
         chaserController.SetChasing(true);
-
     }
 
     public void ActivePlayer()
