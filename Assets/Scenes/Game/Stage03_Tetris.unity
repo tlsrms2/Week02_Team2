@@ -15070,7 +15070,11 @@ PrefabInstance:
     - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
       propertyPath: TetrisFilledSfx.clip
       value: 
-      objectReference: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
+      objectReference: {fileID: 8300000, guid: 4761f6046bae71144a6024dca03b0d60, type: 3}
+    - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: TetrisFilledSfx.volume
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.78424
