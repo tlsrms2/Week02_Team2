@@ -112,6 +112,7 @@ public class TitleMenuController : MonoBehaviour
             menuButtons[i].gameObject.SetActive(false);
             ButtonArrows[i].gameObject.SetActive(false);
         }
+        SpeedController.Instance?.EnableSliderControl();
     }
 
     public void CloseSpeed()
@@ -128,6 +129,7 @@ public class TitleMenuController : MonoBehaviour
             ButtonArrows[i].gameObject.SetActive(true);
         }
 
+        SpeedController.Instance?.DisableSliderControl();
         // 현재 선택 복구
         SetSelected(_selectedIndex);
     }

@@ -18,6 +18,9 @@ public class TetrisBossSpawner : MonoBehaviour
     private int spawnedLines = 0;
     private Coroutine spawnRoutine;
 
+    [Header("테트리스 차오를 때 생성할 파티클")]
+    [SerializeField] private ParticleSystem TetrisFilledParticle;
+
     private List<GameObject> preBoss = new List<GameObject>();
 
     private void Start()
@@ -56,6 +59,9 @@ public class TetrisBossSpawner : MonoBehaviour
 
         Vector3 spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
         var obj = Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);
+        Debug.Log("한칸 차오름!");
+        SoundManager.Instance.PlayTetrisFilled();
+        Instantiate(TetrisFilledParticle, transform.position, Quaternion.Euler(0f, 180f, 0f), transform);
         preBoss.Add(obj);
         spawnedLines++;
         // 이후 줄 - spawnInterval 마다 생성
@@ -65,11 +71,14 @@ public class TetrisBossSpawner : MonoBehaviour
 
             spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
             var objt = Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);
+            Debug.Log("한칸 차오름!");
+            Instantiate(TetrisFilledParticle, spawnPosition, Quaternion.Euler(0f, 180f, 0f), transform);
+            SoundManager.Instance.PlayTetrisFilled();
             preBoss.Add(objt);
             spawnedLines++;
         }
     }
-
+    
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

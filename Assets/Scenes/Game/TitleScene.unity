@@ -252,7 +252,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uAC10\uB3C4 \uC124\uC815\uC785\uB2C8\uB2E4\\n50%\\n\\n<- {S} {W} ->"
+  m_text: "\uAC10\uB3C4 \uC124\uC815\uC785\uB2C8\uB2E4\\nKey: <color=green>[ ]</color>\\n\uAC8C\uC784
+    \uD328\uB4DC: <color=green>\uC624\uB978\uCABD \uC870\uC774\uC2A4\uD2F1</color>\\n<-
+    \uB0B4\uB9AC\uAE30\\t\uC62C\uB9AC\uAE30 ->"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   m_sharedMaterial: {fileID: 7280347126543357249, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
@@ -1088,6 +1090,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: endingBgm.volume
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6128335764423050123, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
       propertyPath: m_LocalPosition.x
       value: 447
@@ -2592,18 +2598,6 @@ MonoBehaviour:
           m_StringArgument: Stage03_Tetris
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1064741358}
-        m_TargetAssemblyTypeName: SpeedController, Assembly-CSharp
-        m_MethodName: EnableSliderControl
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Stage03_Tetris
-          m_BoolArgument: 0
-        m_CallState: 2
   blinkCount: 3
   blinkInterval: 0.08
 --- !u!114 &1038713799
@@ -2760,57 +2754,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1044435403}
   m_CullTransparentMesh: 1
---- !u!1 &1064741356
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1064741357}
-  - component: {fileID: 1064741358}
-  m_Layer: 2
-  m_Name: SpeedController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1064741357
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1064741356}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1184856220}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50, y: -50}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1064741358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1064741356}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3513aaf6700030e41a58735751925d18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpeedController
-  sensitivitySlider: {fileID: 1447107604}
-  minMultiplier: 0.5
-  maxMultiplier: 3
 --- !u!1 &1134078885
 GameObject:
   m_ObjectHideFlags: 0
@@ -3072,7 +3015,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1064741358}
+      - m_Target: {fileID: 1763700983}
         m_TargetAssemblyTypeName: SpeedController, Assembly-CSharp
         m_MethodName: DisableSliderControl
         m_Mode: 1
@@ -3229,7 +3172,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1064741357}
   - {fileID: 233324746}
   - {fileID: 1964496235}
   - {fileID: 1145632405}
@@ -5192,8 +5134,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 68.3
-  m_fontSizeBase: 68.3
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5665,6 +5607,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5900930863463441577, guid: 006b6da8281261242bbd743333f5918d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1763700981}
+    - targetCorrespondingSourceObject: {fileID: 5900930863463441577, guid: 006b6da8281261242bbd743333f5918d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1763700983}
   m_SourcePrefab: {fileID: 100100000, guid: 006b6da8281261242bbd743333f5918d, type: 3}
 --- !u!1 &1763700980 stripped
 GameObject:
@@ -5794,8 +5739,23 @@ MonoBehaviour:
   potMaterial: {fileID: 2100000, guid: 3385ed6a6b8d6ac4fa792706841937c3, type: 2}
   twistMaterial: {fileID: 2100000, guid: e6fcd335bc44ff742a46c574c41b3b24, type: 2}
   StartFont: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
-  LodingFont: {fileID: 11400000, guid: f1359438c38a9e548839a31b820f9609, type: 2}
+  LodingFont: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   currentInputDevice: 0
+--- !u!114 &1763700983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763700980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3513aaf6700030e41a58735751925d18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedController
+  sensitivitySlider: {fileID: 1447107604}
+  minMultiplier: 0.5
+  maxMultiplier: 3
 --- !u!1 &1769531608
 GameObject:
   m_ObjectHideFlags: 0
@@ -6941,9 +6901,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1763700980}
-        m_TargetAssemblyTypeName: TitleMenuController, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: 1763700983}
+        m_TargetAssemblyTypeName: SpeedController, Assembly-CSharp
+        m_MethodName: EnableSliderControl
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

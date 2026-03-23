@@ -412,49 +412,61 @@ MonoBehaviour:
   typeSpeed: 0.1
   zoomSpeed: 0.003
   typeAudioSource: {fileID: 115228752}
-  typeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
+  defaultTypeSound: {fileID: 8300000, guid: b95a6e681a6a3b44dba8e702ed03aca6, type: 3}
   pitchRange: 0.01
   endingFrames:
   - dialogue: ...
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uC5EC\uAE30\uAE4C\uC9C0 \uC798 \uC624\uC168\uC5B4\uC694."
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uC774 \uC21C\uAC04\uC744 \uC624\uB798 \uAE30\uB2E4\uB838\uC5B4\uC694."
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uC54C\uACE0 \uC788\uC5B4\uC694. \uACFC\uAC70\uC640\uC758 \uC791\uBCC4\uC740,
       \uC5B8\uC81C\uB098 \uC5B4\uB824\uC6B4 \uC77C\uC774\uC8E0."
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uC5B8\uC81C\uB098 \uB4A4\uB97C \uBCF8 \uCC44 \uC55E\uC73C\uB85C \uAC78\uC744
       \uC21C \uC5C6\uC796\uC544\uC694."
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uADF8\uB7EC\uB2C8 \uC774\uC81C \uC55E\uC744 \uBCF4\uC138\uC694."
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uAC71\uC815\uD558\uC9C0\uB9C8\uC138\uC694. \uC800\uB294 \uC5B8\uC81C\uB098
       \uB2F9\uC2E0\uC758 \uB4A4\uC5D0 \uC788\uACA0\uC2B5\uB2C8\uB2E4."
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uC9C0\uC6B0\uB294 \uAC8C \uC544\uB2D9\uB2C8\uB2E4."
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uB0A8\uAE30\uB294 \uAC81\uB2C8\uB2E4."
     useCenterText: 0
     hideImage: 0
+    customTypeSound: {fileID: 0}
   - dialogue: "\uC0C1\uC2E4\uC744 \uB3D9\uBC18\uD558\uB294 \uC131\uC7A5\uC5D0 \uB300\uD558\uC5EC"
     useCenterText: 1
     hideImage: 1
+    customTypeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
   - dialogue: "\uADF8\uB9AC\uACE0, \uC2DC\uC808\uC744 \uD5A5\uD55C \uC791\uBCC4\uC5D0
       \uB300\uD558\uC5EC."
     useCenterText: 1
     hideImage: 1
+    customTypeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
   - dialogue: '- The End -'
     useCenterText: 1
     hideImage: 1
+    customTypeSound: {fileID: 8300000, guid: 3f237b4113f4b7d4286792ff81baeee2, type: 3}
   onEndingComplete:
     m_PersistentCalls:
       m_Calls:
@@ -6087,7 +6099,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 452d471e57ed4e741aa6d011a525f631, type: 3}
     - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
       propertyPath: endingBgm.volume
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
       propertyPath: stage3Bgm.volume

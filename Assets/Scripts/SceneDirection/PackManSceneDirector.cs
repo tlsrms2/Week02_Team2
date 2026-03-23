@@ -99,7 +99,8 @@ public class PackManSceneDirector : MonoBehaviour
         chaserController.Init();
 
         stageBgmTrigger.gameObject.SetActive(true);
-
+        adSfx.Play();
+        adBgm.Play();
         gameManager.ResumeGame();
         gameManager.SetGameOver(false);
     }

@@ -55,14 +55,8 @@ public class InGameMenuManager: MonoBehaviour
     private void Awake()
     {
         // 싱글톤 패턴: 게임 매니저가 오직 한 개만 존재하도록 보장하고, 씬이 넘어가도 유지합니다.
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        //if (Instance == null) Instance = this;
+        //else Destroy(gameObject);
     }
     public void ExitButton()
     {
@@ -167,9 +161,9 @@ public class InGameMenuManager: MonoBehaviour
     {
         float elapsed = 0f;
         Color color = Color.white;
-        titleText.text = "소년은 끝나지 않는다\n\n\n\n\n";
+        titleText.text = "소년은 끝나지 않는다\n\n\n\n\n\n";
         titleText.alignment = TextAlignmentOptions.Center;
-        titleText.fontSize = 68.3f;
+        titleText.fontSize = 90f;
         titleText.font = StartFont;
         while (elapsed < duration)
         {

@@ -130,6 +130,7 @@ public class InGameManager : MonoBehaviour
             pauseButtons[i].gameObject.SetActive(false);
             pauseArrow[i].gameObject.SetActive(false);
         }
+        SpeedController.Instance?.EnableSliderControl();
     }
 
     public void CloseSpeed()
@@ -145,6 +146,7 @@ public class InGameManager : MonoBehaviour
             pauseButtons[i].gameObject.SetActive(true);
             pauseArrow[i].gameObject.SetActive(true);
         }
+        SpeedController.Instance?.DisableSliderControl();
     }
 
     private void PauseGame()

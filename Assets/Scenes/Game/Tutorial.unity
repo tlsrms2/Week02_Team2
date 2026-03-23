@@ -306,7 +306,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 699, y: -504.2}
+  m_AnchoredPosition: {x: 625, y: -504.2}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &128303552
@@ -329,7 +329,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "[ Space bar ] \uB97C \uAFB9 \uB20C\uB7EC \uD29C\uD1A0\uB9AC\uC5BC \uAC74\uB108\uB6F0\uAE30"
+  m_text: "[ Space bar ] \uD639\uC740 ( B ) \uB97C \uAFB9 \uB20C\uB7EC \uD29C\uD1A0\uB9AC\uC5BC
+    \uAC74\uB108\uB6F0\uAE30"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   m_sharedMaterial: {fileID: 7280347126543357249, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
@@ -869,7 +870,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC548\uB155\uD558\uC138\uC694!"
+  m_text: CenterText
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   m_sharedMaterial: {fileID: 7280347126543357249, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
@@ -1148,6 +1149,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
+      propertyPath: endingBgm.volume
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1531210062560842554, guid: f3dc2a0e6e111ee4a96d82460557fe78, type: 3}
       propertyPath: tutorialBgm.volume
       value: 0.1
@@ -1980,7 +1985,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 417.4, y: -503.9}
+  m_AnchoredPosition: {x: 282, y: -503.9}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1290633691
@@ -2515,10 +2520,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Dialogue
   dialogueText: {fileID: 559434530}
   audioSource: {fileID: 1894791765}
-  typeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
+  typeSound: {fileID: 8300000, guid: b95a6e681a6a3b44dba8e702ed03aca6, type: 3}
   startDelay: 1
   typingSpeed: 0.1
-  pitchRange: 0.05
+  pitchRange: 0.02
   dialogueEntries:
   - sentence: "\uC624\uB79C\uB9CC\uC774\uB124\uC694.\n\uC815\uB9D0 \uAE34 \uC2DC\uAC04\uC774\uC5C8\uC5B4\uC694."
     duration: 2
@@ -2540,11 +2545,13 @@ MonoBehaviour:
     duration: 6
   - sentence: "\uBCF4\uC138\uC694.\n\uAE08\uBC29 \uB5A0\uC62C\uB9AC\uC168\uC796\uC544\uC694."
     duration: 3
+  - sentence: "\uB9CC\uC57D \uC190\uBC1C\uC774 \uB108\uBB34 \uBB34\uAC81\uB2E4\uBA74\n\uC774\uD6C4
+      <color=#50FF50>[ \uAC10\uB3C4\uC124\uC815 ]</color> \uC5D0\uC11C\n\uC870\uC808\uD560
+      \uC218 \uC788\uC5B4\uC694. "
+    duration: 3
   - sentence: "\uC790, \uC774\uC81C \uD654\uBA74 \uC18D\uC73C\uB85C\n\uB4E4\uC5B4\uC640
       \uC8FC\uC138\uC694."
-    duration: 5
-  - sentence: "\uC7A0\uC2DC\uB9CC\uC774\uB77C\uB3C4\n\uADF8 \uC2DC\uC808\uB85C \uB3CC\uC544\uAC00\uBD05\uC2DC\uB2E4."
-    duration: 50
+    duration: 100
   keyHighlightColor: '#50FF50'
   isGamepadMode: 0
 --- !u!82 &1894791765

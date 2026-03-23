@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         titleText.font = LodingFont;
         titleText.text = "";
         titleText.alignment = TextAlignmentOptions.TopLeft;
-        titleText.fontSize = 50;
+        titleText.fontSize = 30;
         titleText.color = Color.green;
         StartCoroutine(Glitch_Title());
     }
@@ -58,12 +58,19 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+    private void OnDestroy()
+    {
+        // 씬 전환 시 코루틴 정지 + Instance 초기화
+        StopAllCoroutines();
+
+        if (Instance == this)
+            Instance = null;
     }
     public void ExitButton()
     {
@@ -217,7 +224,7 @@ public class GameManager : MonoBehaviour
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
         // 6번째 줄 - 팀 명
-        yield return StartCoroutine(TypeLine("TEAM A2: Jeong Seok Hee..."));
+        yield return StartCoroutine(TypeLine("TEAM A2: Jeong Suk Hee..."));
         titleText.text += "\n";
         yield return new WaitForSeconds(lineDelay);
         PlayTypingSound();
@@ -261,9 +268,9 @@ public class GameManager : MonoBehaviour
     {
         float elapsed = 0f;
         Color color = Color.white;
-        titleText.text = "소년은 끝나지 않는다\n\n\n\n\n";
+        titleText.text = "소년은 끝나지 않는다\n\n\n\n\n\n";
         titleText.alignment = TextAlignmentOptions.Center;
-        titleText.fontSize = 68.3f;
+        titleText.fontSize = 90f;
         titleText.font = StartFont;
         while (elapsed < duration)
         {
