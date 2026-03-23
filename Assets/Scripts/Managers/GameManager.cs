@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         titleText.font = LodingFont;
         titleText.text = "";
         titleText.alignment = TextAlignmentOptions.TopLeft;
-        titleText.fontSize = 50;
+        titleText.fontSize = 30;
         titleText.color = Color.green;
         StartCoroutine(Glitch_Title());
     }

@@ -5192,8 +5192,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 68.3
-  m_fontSizeBase: 68.3
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5794,7 +5794,7 @@ MonoBehaviour:
   potMaterial: {fileID: 2100000, guid: 3385ed6a6b8d6ac4fa792706841937c3, type: 2}
   twistMaterial: {fileID: 2100000, guid: e6fcd335bc44ff742a46c574c41b3b24, type: 2}
   StartFont: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
-  LodingFont: {fileID: 11400000, guid: f1359438c38a9e548839a31b820f9609, type: 2}
+  LodingFont: {fileID: 11400000, guid: 4823a77f083c55749aa96cb047f02b9a, type: 2}
   currentInputDevice: 0
 --- !u!1 &1769531608
 GameObject:
