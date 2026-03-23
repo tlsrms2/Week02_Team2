@@ -11,6 +11,8 @@ public class GoEnding : MonoBehaviour
     [Header("Settings")]
     public float fadeDuration = 1.0f; // 페이드에 걸리는 시간 (초)
 
+    public GameObject Monster;
+
     private bool isFading = false;
 
     private void Awake()
@@ -32,6 +34,7 @@ public class GoEnding : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Monster.GetComponent<BoxCollider>().enabled = false;
             LoadSceneWithFade("Ending");
         }
     }
