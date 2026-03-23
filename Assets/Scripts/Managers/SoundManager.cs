@@ -33,7 +33,8 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private SoundData slideSfx;
     [SerializeField] private SoundData climbingSfx;
     [SerializeField] private SoundData coinEatingSfx;
-
+    [SerializeField] private SoundData TetrisFilledSfx;
+    
     private float masterBgmVolume = 1f;       // 전체 BGM 마스터 볼륨 설정값
     private float currentBgmVolumeScale = 1f; // 현재 재생중인 BGM의 개별 볼륨값
     private Coroutine bgmTransitionCoroutine; // BGM 자동 전환 코루틴 추적용
@@ -131,6 +132,8 @@ public class SoundManager : MonoBehaviour
     public void PlaySlide() => PlaySfx(slideSfx);
     public void PlayClimbing() => PlaySfx(climbingSfx);
     public void PlayCoinEating() => PlaySfx(coinEatingSfx);
+
+    public void PlayTetrisFilled() => PlaySfx(TetrisFilledSfx);
 
     #endregion
 

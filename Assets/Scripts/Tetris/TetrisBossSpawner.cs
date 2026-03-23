@@ -56,6 +56,8 @@ public class TetrisBossSpawner : MonoBehaviour
 
         Vector3 spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
         var obj = Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);
+        Debug.Log("한칸 차오름!");
+        SoundManager.Instance.PlayTetrisFilled();
         preBoss.Add(obj);
         spawnedLines++;
         // 이후 줄 - spawnInterval 마다 생성
@@ -65,6 +67,8 @@ public class TetrisBossSpawner : MonoBehaviour
 
             spawnPosition = transform.position + (Vector3.up * (spawnedLines * ySpacing));
             var objt = Instantiate(bossLinePrefab, spawnPosition, transform.rotation, transform);
+            Debug.Log("한칸 차오름!");
+            SoundManager.Instance.PlayTetrisFilled();
             preBoss.Add(objt);
             spawnedLines++;
         }
