@@ -408,7 +408,7 @@ MonoBehaviour:
   centerTextUI: {fileID: 1344123742}
   mainIllustration: {fileID: 21300000, guid: 61047510cfc4f004bb3d7ca1889ce171, type: 3}
   initialDelay: 0.1
-  delayBetweenLines: 2.7
+  delayBetweenLines: 3
   typeSpeed: 0.1
   zoomSpeed: 0.003
   typeAudioSource: {fileID: 115228752}
@@ -416,10 +416,6 @@ MonoBehaviour:
   pitchRange: 0.01
   endingFrames:
   - dialogue: ...
-    useCenterText: 0
-    hideImage: 0
-    customTypeSound: {fileID: 0}
-  - dialogue: "\uC5EC\uAE30\uAE4C\uC9C0 \uC798 \uC624\uC168\uC5B4\uC694."
     useCenterText: 0
     hideImage: 0
     customTypeSound: {fileID: 0}
@@ -432,12 +428,7 @@ MonoBehaviour:
     useCenterText: 0
     hideImage: 0
     customTypeSound: {fileID: 0}
-  - dialogue: "\uC5B8\uC81C\uB098 \uB4A4\uB97C \uBCF8 \uCC44 \uC55E\uC73C\uB85C \uAC78\uC744
-      \uC21C \uC5C6\uC796\uC544\uC694."
-    useCenterText: 0
-    hideImage: 0
-    customTypeSound: {fileID: 0}
-  - dialogue: "\uADF8\uB7EC\uB2C8 \uC774\uC81C \uC55E\uC744 \uBCF4\uC138\uC694."
+  - dialogue: "\uC774\uC81C \uC55E\uC744 \uBCF4\uC138\uC694."
     useCenterText: 0
     hideImage: 0
     customTypeSound: {fileID: 0}
@@ -446,23 +437,6 @@ MonoBehaviour:
     useCenterText: 0
     hideImage: 0
     customTypeSound: {fileID: 0}
-  - dialogue: "\uC9C0\uC6B0\uB294 \uAC8C \uC544\uB2D9\uB2C8\uB2E4."
-    useCenterText: 0
-    hideImage: 0
-    customTypeSound: {fileID: 0}
-  - dialogue: "\uB0A8\uAE30\uB294 \uAC81\uB2C8\uB2E4."
-    useCenterText: 0
-    hideImage: 0
-    customTypeSound: {fileID: 0}
-  - dialogue: "\uC0C1\uC2E4\uC744 \uB3D9\uBC18\uD558\uB294 \uC131\uC7A5\uC5D0 \uB300\uD558\uC5EC"
-    useCenterText: 1
-    hideImage: 1
-    customTypeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
-  - dialogue: "\uADF8\uB9AC\uACE0, \uC2DC\uC808\uC744 \uD5A5\uD55C \uC791\uBCC4\uC5D0
-      \uB300\uD558\uC5EC."
-    useCenterText: 1
-    hideImage: 1
-    customTypeSound: {fileID: 8300000, guid: 48e2bf43b61e1a94c9691b879f6a1c22, type: 3}
   - dialogue: '- The End -'
     useCenterText: 1
     hideImage: 1

@@ -22,6 +22,8 @@ public class ControllerSetupUI : MonoBehaviour
 
     [Header("선택 후 추가 대사 설정")]
     public GameObject SetupQuestion;
+
+    public GameObject RecommendText;
     public TextMeshProUGUI additionalDialogueText; // 추가 대사를 띄울 UI 텍스트 연결
     public Dialogue.DialogueEntry[] additionalDialogues; // 인스펙터에서 대사 목록 작성
     public float typeSpeed = 0.05f;
@@ -163,6 +165,7 @@ public class ControllerSetupUI : MonoBehaviour
         // 기존 선택지 텍스트 숨기기
 
         SetupQuestion.SetActive(false);
+        RecommendText.SetActive(false);
         foreach (var text in optionTexts)
         {
             text.gameObject.SetActive(false);
