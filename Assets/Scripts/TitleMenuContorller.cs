@@ -12,6 +12,7 @@ public class TitleMenuController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI[] ButtonArrows;
     [Header("가이드 패널")]
     [SerializeField] private Image guidePanel;
+    [SerializeField] private Image speedPanel;
 
     [Header("클릭 이벤트")]
     [SerializeField] public UnityEvent onClickEvent;
@@ -29,6 +30,7 @@ public class TitleMenuController : MonoBehaviour
     private bool _stickMoved = false;
     private bool _isClickPlaying = false;
     private bool _isGuideOpen = false;
+    private bool _isSpeedOpen = false;
 
     private enum InputMode { Keyboard, Mouse }
     private InputMode _inputMode = InputMode.Keyboard;
@@ -41,7 +43,7 @@ public class TitleMenuController : MonoBehaviour
     }
     void Update()
     {
-        if(_isGuideOpen)
+        if(_isGuideOpen || _isSpeedOpen)
         {
             HandleGuideInput();
             return;
@@ -60,7 +62,8 @@ public class TitleMenuController : MonoBehaviour
             Input.GetKeyDown(KeyCode.JoystickButton0) ||
             Input.GetKeyDown(KeyCode.JoystickButton1))
         {
-            CloseGuide();
+            if(guidePanel.gameObject.activeSelf) CloseGuide();
+            if(speedPanel.gameObject.activeSelf) CloseSpeed();
         }
     }
     public void OpenGuide()
@@ -96,6 +99,38 @@ public class TitleMenuController : MonoBehaviour
         SetSelected(_selectedIndex);
     }
 
+    public void OpenSpeed()
+    {
+        _isSpeedOpen = true;
+
+        if (speedPanel != null)
+            speedPanel.gameObject.SetActive(true);
+
+        // 기존 버튼들 숨김
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+            menuButtons[i].gameObject.SetActive(false);
+            ButtonArrows[i].gameObject.SetActive(false);
+        }
+    }
+
+    public void CloseSpeed()
+    {
+        _isSpeedOpen = false;
+
+        if (speedPanel != null)
+            speedPanel.gameObject.SetActive(false);
+
+        // 기존 버튼들 다시 표시
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+            menuButtons[i].gameObject.SetActive(true);
+            ButtonArrows[i].gameObject.SetActive(true);
+        }
+
+        // 현재 선택 복구
+        SetSelected(_selectedIndex);
+    }
 
     private void HandleNavigation()
     {

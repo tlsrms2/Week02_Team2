@@ -1,11 +1,13 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class InGameManager : MonoBehaviour
 {
     [Header("퍼즈 목록 (위에서 아래 순서)")]
     [SerializeField] private TitleButton[] pauseButtons;
+    [SerializeField] private GameObject[] pauseArrow;
 
     [Header("게임오버 목록 (위에서 아래 순서)")]
     [SerializeField] private TitleButton[] gameOverButtons;
@@ -21,16 +23,18 @@ public class InGameManager : MonoBehaviour
 
     [Header("퍼즈")]
     [SerializeField] private GameObject pausePanel;
+    [SerializeField] private Image speedPanel;
 
     [Header("플레이어")]
     [SerializeField] private PlayerController playerController;
 
-    private int _pauseSelectedIndex = 0;
+    public int _pauseSelectedIndex = 0;
     public int _gameOverSelectedIndex = 0;
     private bool _stickMoved = false;
     private bool _isClickPlaying = false;
     private bool _isPaused = false;
     private bool _isGameOver = false;
+    private bool _isSpeedOpen = false;
 
     private enum InputMode { Keyboard, Mouse }
     private InputMode _inputMode = InputMode.Keyboard;
@@ -46,6 +50,12 @@ public class InGameManager : MonoBehaviour
 
     void Update()
     {
+        if(_isSpeedOpen)
+        {
+            HandleSpeedInput();
+            return;
+        }
+
         if (_isGameOver)
         {
             // 게임오버 상태 → 게임오버 버튼 조작
@@ -61,6 +71,18 @@ public class InGameManager : MonoBehaviour
             // 퍼즈 상태 → 퍼즈 버튼 조작
             HandleNavigation(pauseButtons, ref _pauseSelectedIndex);
             //HandleMouse(pauseButtons, ref _pauseSelectedIndex);
+        }
+    }
+    private void HandleSpeedInput()
+    {
+        // Space, Enter, ESC → 가이드 닫기
+        if (Input.GetKeyDown(KeyCode.Return) ||
+            Input.GetKeyDown(KeyCode.Space) ||
+            Input.GetKeyDown(KeyCode.Escape) ||
+            Input.GetKeyDown(KeyCode.JoystickButton0) ||
+            Input.GetKeyDown(KeyCode.JoystickButton1))
+        {
+            CloseSpeed();
         }
     }
 
@@ -95,6 +117,35 @@ public class InGameManager : MonoBehaviour
         // 게임오버 버튼 초기화
         InitButtons(gameOverButtons, ref _gameOverSelectedIndex);
     }
+    public void OpenSpeed()
+    {
+        _isSpeedOpen = true;
+
+        if (speedPanel != null)
+            speedPanel.gameObject.SetActive(true);
+
+        // 기존 버튼들 숨김
+        for (int i = 0; i < pauseButtons.Length; i++)
+        {
+            pauseButtons[i].gameObject.SetActive(false);
+            pauseArrow[i].gameObject.SetActive(false);
+        }
+    }
+
+    public void CloseSpeed()
+    {
+        _isSpeedOpen = false;
+
+        if (speedPanel != null)
+            speedPanel.gameObject.SetActive(false);
+
+        // 기존 버튼들 다시 표시
+        for (int i = 0; i < pauseButtons.Length; i++)
+        {
+            pauseButtons[i].gameObject.SetActive(true);
+            pauseArrow[i].gameObject.SetActive(true);
+        }
+    }
 
     private void PauseGame()
     {
@@ -126,6 +177,7 @@ public class InGameManager : MonoBehaviour
             pauseButtons[i].SetHighlight(false, normalColor);
     }
 
+
     public void SetGameOver(bool value)
     {
         _isGameOver = value;
@@ -152,7 +204,7 @@ public class InGameManager : MonoBehaviour
                     (selectedIndex + 1) % buttons.Length);
 
             if (selectedIndex < 0) selectedIndex = 0;
-            if (selectedIndex > 2) selectedIndex = 1;
+            if (selectedIndex > 3) selectedIndex = 3;
 
             PlayMoveSound();
         }
