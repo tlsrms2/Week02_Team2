@@ -17,17 +17,7 @@ public class GoEnding : MonoBehaviour
 
     private void Awake()
     {
-        // 씬 시작 시 자동으로 페이드 인 (화면이 밝아짐)
-        if (fadeImage != null)
-        {
-            // 시작할 때는 검은색으로 채워둠
-            Color startColor = fadeImage.color;
-            startColor.a = 1f;
-            fadeImage.color = startColor;
-            
-            // 페이드 인 시작
-            StartCoroutine(FadeIn());
-        }
+
     }
 
     void OnTriggerEnter(Collider other)

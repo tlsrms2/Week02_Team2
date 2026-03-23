@@ -46,7 +46,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _GlitchIntensity: 1
+    - _GlitchIntensity: 0
     - _GridSize: 16
     - _Internsity: 0
     - _QueueControl: 0

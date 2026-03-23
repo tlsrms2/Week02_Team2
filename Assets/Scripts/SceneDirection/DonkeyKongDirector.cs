@@ -25,6 +25,9 @@ public class DonkeyKongDirector : MonoBehaviour
     private AudioSource adBgm;
     private StageBgmTrigger stageBgmTrigger;
 
+    public bool debugBool = false;
+    public int StageNum = 3;
+
     void Awake()
     {
         stageBgmTrigger = FindAnyObjectByType<StageBgmTrigger>();
@@ -35,11 +38,24 @@ public class DonkeyKongDirector : MonoBehaviour
     void Start()
     {
 
-        director.Play();
-
-        for (int i = 0; i < Targets.Length; i++)
+        if (debugBool)
         {
-            TargetPos.Add(Targets[i].transform.position);
+            director.Play();
+            return;
+        }
+        if (!PlayerPrefs.HasKey("CutSceneSeen_" + StageNum))
+        {
+            // 처음 보는 스테이지 → 컷신 재생
+            director.Play();
+
+            // 봤다고 저장
+            PlayerPrefs.SetInt("CutSceneSeen_" + StageNum, 1);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            GameStart();
+            ActivePlayer();
         }
 
     }

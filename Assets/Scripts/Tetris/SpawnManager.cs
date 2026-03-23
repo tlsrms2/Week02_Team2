@@ -19,6 +19,7 @@ public sealed class SpawnManager : MonoBehaviour
     private readonly List<GameObject> spawnedObjects = new List<GameObject>();
     private Coroutine spawnRoutine;
 
+    public List<GameObject> startHolder;
     private void Reset()
     {
         GameObject backgroundObject = GameObject.Find("Background");
@@ -59,6 +60,10 @@ public sealed class SpawnManager : MonoBehaviour
     public void StartGame()
     {
         spawnRoutine = StartCoroutine(SpawnSequence());
+        foreach (var v in startHolder)
+        {
+            v.SetActive(true);
+        }
     }
 
     public void ReStartGame()

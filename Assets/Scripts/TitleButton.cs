@@ -106,11 +106,31 @@ public class TitleButton : MonoBehaviour
     public void mainMenu_Button()
     {
         Time.timeScale = 1f;
+        ResetCutScenePrefs(3);
         SceneManager.LoadScene("TitleScene");
+
     }
     public void inGameMenu_Button()
     {
         Time.timeScale = 1f;
+        ResetCutScenePrefs(3);
         SceneManager.LoadScene("inGameMainMenu");
+
+    }
+    // 모든 컷신 기록 초기화
+    public void ResetCutScenePrefs(int maxStage)
+    {
+        for (int i = 1; i <= maxStage; i++)
+        {
+            PlayerPrefs.DeleteKey("CutSceneSeen_" + i);
+        }
+        PlayerPrefs.Save();
+    }
+
+    // 전체 PlayerPrefs 초기화
+    public void ResetAllPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
     }
 }

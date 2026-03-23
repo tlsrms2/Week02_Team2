@@ -51,6 +51,10 @@ public class Ghost : MonoBehaviour
             }
         }
     }
+    public void Stop()
+    {
+        isStart = false;
+    }
 
     public void Init()
     {
