@@ -35,26 +35,6 @@ public class GoEnding : MonoBehaviour
         StartCoroutine(FadeOutAndLoad(sceneName));
     }
 
-    // 화면이 밝아지는 코루틴 (투명 -> 검정)
-    private IEnumerator FadeIn()
-    {
-        isFading = true;
-        fadeImage.gameObject.SetActive(true); // 혹시 꺼져있다면 킴
-
-        float timer = 0f;
-        while (timer < fadeDuration)
-        {
-            timer += Time.deltaTime;
-            // 알파값을 1에서 0으로 서서히 줄임
-            SetImageAlpha(1f - (timer / fadeDuration));
-            yield return null;
-        }
-
-        SetImageAlpha(0f); // 확실하게 투명하게 설정
-        fadeImage.gameObject.SetActive(false); // 클릭 방지 해제를 위해 끔
-        isFading = false;
-    }
-
     // 화면이 어두워지고 씬을 로드하는 코루틴 (투명 -> 검정)
     private IEnumerator FadeOutAndLoad(string sceneName)
     {
@@ -85,5 +65,25 @@ public class GoEnding : MonoBehaviour
             color.a = Mathf.Clamp01(alpha); // 0~1 사이 값으로 제한
             fadeImage.color = color;
         }
+    }
+
+    // 화면이 밝아지는 코루틴 (투명 -> 검정)
+    private IEnumerator FadeIn()
+    {
+        isFading = true;
+        fadeImage.gameObject.SetActive(true); // 혹시 꺼져있다면 킴
+
+        float timer = 0f;
+        while (timer < fadeDuration)
+        {
+            timer += Time.deltaTime;
+            // 알파값을 1에서 0으로 서서히 줄임
+            SetImageAlpha(1f - (timer / fadeDuration));
+            yield return null;
+        }
+
+        SetImageAlpha(0f); // 확실하게 투명하게 설정
+        fadeImage.gameObject.SetActive(false); // 클릭 방지 해제를 위해 끔
+        isFading = false;
     }
 }

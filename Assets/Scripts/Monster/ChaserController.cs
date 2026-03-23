@@ -109,6 +109,7 @@ public class ChaserController : MonoBehaviour
     public void SetChasing(bool value)
     {
         isChasing = value;
+        SetGlitch();
     }
     public void Init()
     {

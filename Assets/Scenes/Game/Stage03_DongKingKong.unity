@@ -4996,7 +4996,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &511070657
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5029,7 +5029,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9726,8 +9726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dffca03bea8b68459fe2c5c9fe54ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InGameDialogue
-  sentence: "\uC5EC\uAE30\uAE4C\uC9C0 \n\uC798 \uC624\uC168\uC5B4\uC694.\r\n\uC800\uB294
-    \uC774 \uC21C\uAC04\uC744\n\uC624\uB798 \uAE30\uB2E4\uB838\uB2F5\uB2C8\uB2E4."
+  sentence: 
   typeSpeed: 0.1
   displayDuration: 5
   dialogueText: {fileID: 310978627}
@@ -18366,6 +18365,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GroundDirection
   forceDirection: {x: 1, y: 0, z: 0}
+--- !u!1001 &1515706427
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -2253911629886400664, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_Name
+      value: Flag
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -38.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 69.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7878350319992209165, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: -8435245712485981826, guid: d32f431fe36050542960c7d206eb5aca, type: 3}
 --- !u!1 &1516742423
 GameObject:
   m_ObjectHideFlags: 0
@@ -23315,10 +23371,10 @@ MonoBehaviour:
       - m_Target: {fileID: 1115030487}
         m_TargetAssemblyTypeName: SpeedController, Assembly-CSharp
         m_MethodName: EnableSliderControl
-        m_Mode: 1
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 1650854642}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Slider, UnityEngine.UI
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Stage01_PackMan
@@ -23665,3 +23721,4 @@ SceneRoots:
   - {fileID: 2129725815}
   - {fileID: 1755576367}
   - {fileID: 1200968639}
+  - {fileID: 1515706427}

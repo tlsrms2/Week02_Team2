@@ -68,10 +68,6 @@ public class SpeedController : MonoBehaviour
 
     void Update()
     {
-        // Update가 실행되는지 확인
-        if (_sliderActive)
-            Debug.Log("SpeedController Update 실행중");
-
         HandleKeyboard();
         HandleGamepad();
     }
@@ -92,6 +88,7 @@ public class SpeedController : MonoBehaviour
     private void HandleGamepad()
     {
         if (!_sliderActive) return;
+
         if (sensitivitySlider == null) return;
 
         // 오른쪽 조이스틱 수평축
@@ -132,12 +129,15 @@ public class SpeedController : MonoBehaviour
 
     public void EnableSliderControl(Slider newSlider = null)
     {
+        _sliderActive = true;
+        _stickMoved = true;
+
         if (newSlider != null)
             UpdateSlider(newSlider);
 
-        _sliderActive = true;
-
-        Debug.Log($"EnableSliderControl 호출됨 / _sliderActive: {_sliderActive} / gameObject 활성화: {gameObject.activeSelf}");
+        var gp = UnityEngine.InputSystem.Gamepad.current;
+        if (gp != null)
+            gp.SetMotorSpeeds(0f, 0f);
 
         if (sensitivitySlider != null)
         {
@@ -148,6 +148,10 @@ public class SpeedController : MonoBehaviour
 
     public void DisableSliderControl()
     {
+        var gp = UnityEngine.InputSystem.Gamepad.current;
+        if (gp != null)
+            gp.SetMotorSpeeds(0f, 0f);
+
         _sliderActive = false;
         _stickMoved = false;
     }

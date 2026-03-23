@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     // 게임 전체에서 공유될 현재 조작 기기 상태
     public InputDeviceType currentInputDevice = InputDeviceType.KeyboardMouse;
     private Coroutine blink;
+
     public void ResetAllPrefs()
     {
         PlayerPrefs.DeleteAll();
@@ -67,6 +68,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        ResetAllPrefs();
     }
     private void OnDestroy()
     {
