@@ -72,7 +72,7 @@ public class InGameDialogue : MonoBehaviour
             charCount++;
             
             // 공백이 아닐 때, 3글자마다 한 번씩 소리 재생 (자연스러운 타자 소리)
-            if (letter != ' ' && charCount % 3 == 1)
+            if (letter != ' ')
             {
                 PlayTypingSound();
             }
